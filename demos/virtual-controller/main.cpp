@@ -23,6 +23,31 @@ const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key) {
 
 	//set joysticks to nill
 	controller_report.sThumbLX = controller_report.sThumbLY = controller_report.sThumbRX = controller_report.sThumbRY = 0;
+
+	//switch statement
+	switch (pressed_key) {
+		case BindedKeys::START:
+			controller_report.wButtons = XUSB_GAMEPAD_START;
+			break;
+		case BindedKeys::BACK:
+			controller_report.wButtons = XUSB_GAMEPAD_BACK;
+			break;
+		case BindedKeys::DPAD_UP:
+			controller_report.wButtons = XUSB_GAMEPAD_DPAD_UP;
+			break;
+		case BindedKeys::DPAD_DOWN:
+			controller_report.wButtons = XUSB_GAMEPAD_DPAD_DOWN;
+			break;
+		case BindedKeys::DPAD_LEFT:
+			controller_report.wButtons = XUSB_GAMEPAD_DPAD_LEFT;
+			break;
+		case BindedKeys::DPAD_RIGHT:
+			controller_report.wButtons = XUSB_GAMEPAD_DPAD_RIGHT;
+			break;
+		default:
+			controller_report.wButtons = 0;
+			break;
+	}
 	
 	return controller_report;
 }
@@ -90,24 +115,34 @@ void run() {
 		}
 		//back key // Backspace
 		if(GetAsyncKeyState(BindedKeys::BACK)) {
-			//TODO
+			const XUSB_REPORT controller_report = controllerReportFactory(BindedKeys::BACK);
+			vigem_target_x360_update(client, pad, controller_report);
 		}
 		//dpad up // Arrow VK_UP
 		if(GetAsyncKeyState(BindedKeys::DPAD_UP)) {
-			//TODO
+			const XUSB_REPORT controller_report = controllerReportFactory(BindedKeys::DPAD_UP);
+			vigem_target_x360_update(client, pad, controller_report);
 		}
 		//dpad down // Arrow VK_DOWN
 		if(GetAsyncKeyState(BindedKeys::DPAD_DOWN)) {
-			//TODO
+			const XUSB_REPORT controller_report = controllerReportFactory(BindedKeys::DPAD_DOWN);
+			vigem_target_x360_update(client, pad, controller_report);
 		}
 		//dpad left // Arrow VK_LEFT
 		if(GetAsyncKeyState(BindedKeys::DPAD_LEFT)) {
-			//TODO
+			const XUSB_REPORT controller_report = controllerReportFactory(BindedKeys::DPAD_LEFT);
+			vigem_target_x360_update(client, pad, controller_report);
 		}
 		//dpad right // Arrow VK_RIGHT
 		if(GetAsyncKeyState(BindedKeys::DPAD_RIGHT)) {
-			//TODO
+			const XUSB_REPORT controller_report = controllerReportFactory(BindedKeys::DPAD_RIGHT);
+			vigem_target_x360_update(client, pad, controller_report);
 		}
+		//sleep for 10ms
+		Sleep(10);
+		//reset controllert to blank
+		const XUSB_REPORT controller_report = controllerReportFactory(BindedKeys::BREAK);
+		vigem_target_x360_update(client, pad, controller_report);
 		
 	}
 
