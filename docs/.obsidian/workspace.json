@@ -4,35 +4,18 @@
     "type": "split",
     "children": [
       {
-        "id": "374f4a3fdc58fbdc",
+        "id": "74fe20d2e8b3ca69",
         "type": "tabs",
         "children": [
           {
-            "id": "3607cc32aded3af6",
+            "id": "16a765f8dbc1d7a5",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ai_steps.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "c6fac6c42f00029f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "vigem/Basic.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -99,7 +82,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "vigem/Basic.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -116,7 +98,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "vigem/Basic.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,9 +119,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "vigem/Basic.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -160,7 +139,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "c6fac6c42f00029f",
+  "active": "16a765f8dbc1d7a5",
   "lastOpenFiles": [
     "ai_steps.md",
     "vigem/Basic.md"
