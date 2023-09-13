@@ -66,7 +66,6 @@ void run() {
   // send a handle to our driver
   const auto bus_return_value = vigem_connect(client);
   if (!VIGEM_SUCCESS(bus_return_value)) {
-		//print value in hex
     std::cout << "Failed to connect to driver! Error: " << std::hex
               << bus_return_value << std::endl;
     return;

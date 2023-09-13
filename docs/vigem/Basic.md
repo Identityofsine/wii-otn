@@ -55,11 +55,13 @@ With this handle, `retval`, we're prepared to spawn (connect) and feed (supply w
 ```cpp
 //
 // Allocate handle to identify new pad
+//type : PVIGEM_TARGET
 const auto pad = vigem_target_x360_alloc();
 
 // pad only exists in memory for now, we need to let our handle know about 'pad'
 
 // Add client to the bus, this equals a plug-in event
+//type : VIGEM_ERROR
 const auto pir = vigem_target_add(client, pad);
 
 //
@@ -70,6 +72,7 @@ if (!VIGEM_SUCCESS(pir))
     return -1;
 }
 ```
+View [[Errors#VIGEM_ERROR]]
 
 For this example, lets create a program that acts as a unnecessary middle man between a real X360 Controller.
 
