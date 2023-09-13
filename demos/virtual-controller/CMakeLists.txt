@@ -6,7 +6,7 @@ project(VirtualGameController)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Add your source files
-add_executable(VirtualControllerDemo main.cpp)
+add_executable(VirtualControllerDemo main.cpp virtualcontroller.h virtualcontroller.cpp)
 
 # Specify the path to the pre-built ViGEmClient.lib
 set(VIGEMCLIENT_DLL_PATH "C:/Users/leade/software/wii-otn/lib/ViGEmClient/ViGEmClient.lib")

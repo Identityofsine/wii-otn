@@ -83,3 +83,7 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(BindedKe
 	return controller_report;
 }
 
+VIGEM_ERROR WIIOTN_VC::VirtualController::submitInput(const XUSB_REPORT controller_report) {
+	return vigem_target_x360_update(m_client, m_target, controller_report);
+}
+
