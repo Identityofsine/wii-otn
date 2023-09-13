@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/vigem/Errors.md",
+                "file": "docs/vigem/Functions.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/vigem/Errors.md",
+                "file": "docs/vigem/Functions.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/vigem/Errors.md",
+                "file": "docs/vigem/Functions.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/vigem/Errors.md"
+                "file": "docs/vigem/Functions.md"
               }
             }
           },
@@ -172,13 +172,13 @@
   "active": "a1e98ec5625778cf",
   "lastOpenFiles": [
     "docs/vigem/Basic.md",
+    "docs/vigem/Errors.md",
     "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/unsuccessfulbuild",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.read.2.tlog",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/main.obj",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/unsuccessfulbuild",
     "demos/virtual-controller/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/unsuccessfulbuild",
     "demos/virtual-controller/build/compile_commands.json",
-    "docs/vigem/Errors.md",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.write.1.tlog",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.read.1.tlog",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.read.2.tlog",

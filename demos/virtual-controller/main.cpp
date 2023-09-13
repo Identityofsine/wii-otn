@@ -9,7 +9,6 @@
 void run() {
   // Initialize the client context
   const auto client = vigem_alloc();
-
   // check if client connected
   if (!client) {
     printf("Failed to allocate memory!\n");
@@ -20,7 +19,6 @@ void run() {
 
   // send a handle to our driver
   const auto return_value = vigem_connect(client);
-
   if (!VIGEM_SUCCESS(return_value)) {
     // print error code out in hex
 		std::cout << "Failed to connect to driver! Error: " << std::hex << return_value << std::endl;
@@ -33,13 +31,12 @@ void run() {
   // initialize controller
   //
   const auto pad = vigem_target_x360_alloc(); // allocate memory for controller
-
+	
   //
   // push pad to vigemBus
   //
-  const auto pad_return_value =
-      vigem_target_add(client, pad); // push controller to vigemBus)
-
+  const auto pad_return_value = vigem_target_add(client, pad); // push controller to vigemBus)
+	
   //
   // check if controller was pushed to vigemBus
   //
@@ -51,33 +48,26 @@ void run() {
     printf("Virtual pad added to client!\n");
   }
 
-
 	//
-	//add a sleep to demonstrate driver connection
+	//pause execution until user-input
 	//
-	Sleep(2000);
-
-
-
+	printf("Press any key to disconnect...\n");
+	getchar();
 	printf("Disconnecting from driver...\n");
 
 	//
 	//disconnect pads from computer, free resources (disconnect virtual device)
 	//
  	vigem_target_remove(client, pad);	
-
 	//
 	// free Memory
 	//
 	vigem_target_free(pad); 
-
 	//
 	//adding a sleep to demonstrate driver disconnection
 	//
 	Sleep(2000);
-
 	printf("Disconnecting from bus...\n");
-
   //
   // finish up and disconnect from driver
   //

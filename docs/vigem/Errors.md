@@ -1,4 +1,4 @@
-`VIGEM_ERROR` : Values that represent ViGEm errors
+`VIGEM_ERROR` : Values that represent `ViGEm` errors
 
 ```cpp
 		//
