@@ -148,19 +148,19 @@
   },
   "active": "b85abc2440670ce9",
   "lastOpenFiles": [
-    "demos/virtual-controller/build/Debug/MyExecutable.exe",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.ilk",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/unsuccessfulbuild",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/unsuccessfulbuild",
     "demos/virtual-controller/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/unsuccessfulbuild",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link.command.1.tlog",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link.write.1.tlog",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link.read.1.tlog",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link.read.2.tlog",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link-cvtres.write.1.tlog",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link-cvtres.read.1.tlog",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link-rc.write.1.tlog",
-    "demos/virtual-controller/build/MyExecutable.dir/Debug/MyExecutable.tlog/link-rc.read.1.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.recipe",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.write.1.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.command.1.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.read.1.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/ALL_BUILD.lastbuildstate",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualControllerDemo.exe.recipe",
+    "demos/virtual-controller/readme.md",
     "docs/ai_steps.md",
-    "docs/vigem/Basic.md",
-    "demos/virtual-controller/readme.md"
+    "docs/vigem/Basic.md"
   ]
 }
