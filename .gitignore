@@ -5,3 +5,11 @@
 .obsidian/
 .obsidian/*
 
+#cmake stuff + build stuff recursive as well
+./build
+./build/*
+build/*
+build/
+*/build
+*/build/*
+*/build/
