@@ -5,6 +5,18 @@
 
 #pragma comment(lib, "setupapi.lib")
 
+//set simple keyboard keys as easy to read enums
+
+enum BindedKeys {
+	DPAD_UP = VK_UP,
+	DPAD_DOWN = VK_DOWN,
+	DPAD_LEFT = VK_LEFT,
+	DPAD_RIGHT = VK_RIGHT,
+	START = VK_RETURN,
+	BACK = VK_BACK,
+	BREAK = VK_ESCAPE
+};
+
 void run() {
   // Initialize the client context
   const auto client = vigem_alloc();
@@ -49,12 +61,17 @@ void run() {
     printf("Virtual pad added to client!\n");
   }
 
-  //
-  // pause execution until user-input
-  //
-  printf("Press enter to disconnect...\n");
-  getchar();
-  printf("Disconnecting from driver...\n");
+
+	//map keyboard to Controller
+	bool break_key_pressed = false;
+	const auto break_key = VK_ESCAPE;
+	while(!break_key_pressed) {
+		//get keyboard input
+		
+		
+
+	}
+
 
   //
   // disconnect pads from computer, free resources (disconnect virtual device)
