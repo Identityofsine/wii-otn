@@ -171,6 +171,8 @@
   },
   "active": "a1e98ec5625778cf",
   "lastOpenFiles": [
+    "demos/virtual-controller/run.bat",
+    "demos/virtual-controller/build.bat",
     "docs/vigem/Basic.md",
     "docs/vigem/Errors.md",
     "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/unsuccessfulbuild",
@@ -182,7 +184,6 @@
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.write.1.tlog",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.read.1.tlog",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.read.2.tlog",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276-cvtres.write.1.tlog",
     "docs/vigem/Functions.md",
     "demos/virtual-controller/readme.md",
     "docs/ai_steps.md"
