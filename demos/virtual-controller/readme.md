@@ -1,4 +1,4 @@
-# AI 
+# AI + Me
 
 > Creating a middleman driver that takes WiiMote input and translates it into virtual controller input is a valuable mini project and can be a great stepping stone toward your larger goal of remote control over the internet. This intermediate project can help you gain valuable experience in working with input devices, driver development, and input emulation. Here's how you can approach this mini project:
 
@@ -12,6 +12,7 @@ Create a middleman driver that bridges communication between a WiiMote and a vir
 
 2. **Set Up a Virtual Controller**:
    - Determine the type of virtual controller you want to emulate (e.g., keyboard, game controller) and select a suitable input method or API for creating virtual input devices.
+> The API we are going to use is `vigemBUS`, some docs can be found here [[Basic]]
 
 3. **Driver Development**:
    - Develop a driver or middleware component that acts as a bridge between the WiiMote and the virtual controller. This driver should capture input from the WiiMote and translate it into input events for the virtual controller.

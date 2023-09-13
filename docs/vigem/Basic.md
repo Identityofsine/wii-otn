@@ -1,7 +1,9 @@
 
 >The `ViGEmClient` provides a small library exposing a simple API for creating and "feeding" (periodically updating it with new input data) virtual game controllers through [`ViGEmBus`](https://github.com/nefarius/ViGEmBus)
 
+[ViGEmBus](https://github.com/nefarius/ViGEmBus)
 
+[ViGEmClient](https://github.com/nefarius/ViGEmClient)
 
 ### Basic API Header Calls
 
