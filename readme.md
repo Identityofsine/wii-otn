@@ -1,5 +1,3 @@
-Certainly, here's a high-level design plan for your server-client software project. This plan will provide you with a foundation to start working on and expand as you delve deeper into each component of your project:
-
 **Design Plan: WiiMote Emulation and Dolphin Integration Software**
 
 **1. System Architecture:**
