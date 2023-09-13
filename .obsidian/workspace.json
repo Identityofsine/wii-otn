@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "a1e98ec5625778cf",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/vigem/Errors.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/vigem/Basic.md",
+                "file": "docs/vigem/Errors.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/vigem/Basic.md",
+                "file": "docs/vigem/Errors.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,17 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/vigem/Basic.md"
+                "file": "docs/vigem/Errors.md"
+              }
+            }
+          },
+          {
+            "id": "51d9500af611eb70",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency"
               }
             }
           }
@@ -146,21 +169,22 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "b85abc2440670ce9",
+  "active": "a1e98ec5625778cf",
   "lastOpenFiles": [
+    "docs/vigem/Basic.md",
     "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/unsuccessfulbuild",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.read.2.tlog",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/main.obj",
     "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/unsuccessfulbuild",
     "demos/virtual-controller/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/unsuccessfulbuild",
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.recipe",
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.write.1.tlog",
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.command.1.tlog",
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.read.1.tlog",
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/ALL_BUILD.lastbuildstate",
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog",
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualControllerDemo.exe.recipe",
+    "demos/virtual-controller/build/compile_commands.json",
+    "docs/vigem/Errors.md",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.write.1.tlog",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.read.1.tlog",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276.read.2.tlog",
+    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.21276-cvtres.write.1.tlog",
+    "docs/vigem/Functions.md",
     "demos/virtual-controller/readme.md",
-    "docs/ai_steps.md",
-    "docs/vigem/Basic.md"
+    "docs/ai_steps.md"
   ]
 }

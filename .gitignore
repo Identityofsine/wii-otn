@@ -13,3 +13,11 @@ build/
 */build
 */build/*
 */build/
+
+*/build-ninja
+*/build-ninja/*
+*/build-ninja/
+./build-ninja
+./build-ninja/*
+./build-ninja/
+

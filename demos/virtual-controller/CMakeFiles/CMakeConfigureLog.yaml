@@ -5,6 +5,7 @@ events:
     kind: "message-v1"
     backtrace:
       - "C:/Users/leade/scoop/apps/cmake/3.27.4/share/cmake-3.27/Modules/CMakeDetermineSystem.cmake:211 (message)"
-      - "CMakeLists.txt:2 (project)"
+      - "CMakeLists.txt:3 (project)"
     message: |
-      The system is: Windows - 10.0.22621 - AMD64
+      The system is: Windows - 10.0.0 - AMD64
+...

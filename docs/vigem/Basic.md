@@ -107,3 +107,6 @@ Once we are done with using `vigem`, we can then start ending our business with 
 vigem_disconnect(client);
 vigem_free(client);
 ```
+
+When running that short block of code (which you can find in demos/virtualcontroller), you can see that your PC connects to a controller, then quickly disconnects from it.
+
