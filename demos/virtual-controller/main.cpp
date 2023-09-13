@@ -14,8 +14,18 @@ enum BindedKeys {
 	DPAD_RIGHT = VK_RIGHT,
 	START = VK_RETURN,
 	BACK = VK_BACK,
-	BREAK = VK_ESCAPE
+	BREAK = VK_END 
 };
+
+const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key) {
+	//create a blank XUSB_REPORT to pass to the controller
+	XUSB_REPORT controller_report = {};
+
+	//set joysticks to nill
+	controller_report.sThumbLX = controller_report.sThumbLY = controller_report.sThumbRX = controller_report.sThumbRY = 0;
+	
+	return controller_report;
+}
 
 void run() {
   // Initialize the client context
@@ -31,7 +41,7 @@ void run() {
   // send a handle to our driver
   const auto bus_return_value = vigem_connect(client);
   if (!VIGEM_SUCCESS(bus_return_value)) {
-    // print error code out in hex
+		//print value in hex
     std::cout << "Failed to connect to driver! Error: " << std::hex
               << bus_return_value << std::endl;
     return;
@@ -47,31 +57,59 @@ void run() {
   //
   // push pad to vigemBus
   //
-  const auto pad_return_value =
-      vigem_target_add(client, pad); // push controller to vigemBus)
+  const auto pad_return_value = vigem_target_add(client, pad); // push controller to vigemBus)
 
   //
   // check if controller was pushed to vigemBus
   //
   if (!VIGEM_SUCCESS(pad_return_value)) {
-    printf("Failed to add virtual pad to client! Error: %d\n",
-           pad_return_value);
+    printf("Failed to add virtual pad to client! Error: %d\n", pad_return_value);
     return;
   } else {
     printf("Virtual pad added to client!\n");
   }
 
 
+	printf("Currently running a loop, press END to quit!\n");
 	//map keyboard to Controller
 	bool break_key_pressed = false;
-	const auto break_key = VK_ESCAPE;
 	while(!break_key_pressed) {
-		//get keyboard input
-		
-		
 
+		//exit program key // Escape
+		if(GetAsyncKeyState(BindedKeys::BREAK)) {
+			printf("Exiting program!\n");
+			break_key_pressed = true;
+			break;
+		}
+		
+		//start key // Enter
+		if(GetAsyncKeyState(BindedKeys::START)) {
+			const XUSB_REPORT controller_report = controllerReportFactory(BindedKeys::START);
+				
+			vigem_target_x360_update(client, pad, controller_report);
+		}
+		//back key // Backspace
+		if(GetAsyncKeyState(BindedKeys::BACK)) {
+			//TODO
+		}
+		//dpad up // Arrow VK_UP
+		if(GetAsyncKeyState(BindedKeys::DPAD_UP)) {
+			//TODO
+		}
+		//dpad down // Arrow VK_DOWN
+		if(GetAsyncKeyState(BindedKeys::DPAD_DOWN)) {
+			//TODO
+		}
+		//dpad left // Arrow VK_LEFT
+		if(GetAsyncKeyState(BindedKeys::DPAD_LEFT)) {
+			//TODO
+		}
+		//dpad right // Arrow VK_RIGHT
+		if(GetAsyncKeyState(BindedKeys::DPAD_RIGHT)) {
+			//TODO
+		}
+		
 	}
-
 
   //
   // disconnect pads from computer, free resources (disconnect virtual device)
