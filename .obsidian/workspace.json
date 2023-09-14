@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/vigem/Basic.md",
+                "file": "docs/vigem/Functions.md",
                 "mode": "source",
                 "source": false
               }
@@ -97,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/vigem/Basic.md",
+                "file": "docs/vigem/Functions.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/vigem/Basic.md",
+                "file": "docs/vigem/Functions.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -137,7 +137,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/vigem/Basic.md"
+                "file": "docs/vigem/Functions.md"
               }
             }
           },
@@ -170,19 +170,21 @@
   },
   "active": "b85abc2440670ce9",
   "lastOpenFiles": [
-    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/unsuccessfulbuild",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.read.3.tlog",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link-cvtres.write.1.tlog",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link-cvtres.read.1.tlog",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link-rc.write.1.tlog",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link-rc.read.1.tlog",
-    "demos/virtual-controller/build/Debug/VirtualControllerDemo.exe",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualControllerDemo.ilk",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/virtualcontroller.obj",
-    "demos/virtual-controller/build/x64/Debug/ZERO_CHECK/ZERO_CHECK.tlog/unsuccessfulbuild",
-    "demos/virtual-controller/build/VirtualControllerDemo.dir/Debug/VirtualC.BE942864.tlog/link.16980.write.1.tlog",
+    "demos/virtual-controller/compile_commands.json",
+    "demos/virtual-controller/build/compile_commands.json",
     "docs/vigem/Errors.md",
     "docs/vigem/Basic.md",
+    "docs/docs.md",
+    "readme.md",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.write.1.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.read.1.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/CustomBuild.command.1.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog/ALL_BUILD.lastbuildstate",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.tlog",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.recipe",
+    "demos/virtual-controller/build/x64/Debug/ALL_BUILD",
+    "demos/virtual-controller/build/Debug/VirtualControllerDemo.pdb",
+    "demos/virtual-controller/build/Debug/VirtualControllerDemo.exe",
     "docs/vigem/Functions.md",
     "demos/virtual-controller/readme.md",
     "docs/ai_steps.md"

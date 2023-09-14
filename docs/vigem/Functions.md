@@ -7,4 +7,8 @@ VIGEM_API VIGEM_ERROR vigem_connect(
 );
 ```
 
+`vigem_alloc` - Allocates an object representing a driver connection, this returns a `PVIGEM_CLIENT` object, this is used with `vigem_connect` to start communication with the `Vigem Driver`.
 
+```cpp
+const PVIGEM_CLIENT client = vigem_alloc();
+```
