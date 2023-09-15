@@ -7,7 +7,7 @@
 using namespace WIIOTN_VC;
 using namespace WIIOTN_KEYBOARD;
 
-int main() {
+int main(int argc, char* argv[]) {
   //
   // welcome message
   //
@@ -15,7 +15,7 @@ int main() {
 
 	VirtualController controller;
 	KeyboardListener listener;
-	listener.run(&controller);
+	listener.run(&controller, 0);
 
   return 0;
 }

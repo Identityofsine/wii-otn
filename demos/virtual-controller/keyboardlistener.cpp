@@ -1,6 +1,8 @@
 #include "keyboardlistener.h"
+#define MIN_INPUT_DELAY 10
 
 using namespace WIIOTN_VC;
+
 
 WIIOTN_KEYBOARD::KeyboardListener::KeyboardListener() {
 }
@@ -8,53 +10,66 @@ WIIOTN_KEYBOARD::KeyboardListener::KeyboardListener() {
 WIIOTN_KEYBOARD::KeyboardListener::~KeyboardListener() {	
 }
 
-void WIIOTN_KEYBOARD::KeyboardListener::run(VirtualController *controller) {
+void WIIOTN_KEYBOARD::KeyboardListener::run(VirtualController *controller, const int input_delay) {
 	this->running = true;
 	while(this->running) {
-		// get live-input (outside window)
-		if (GetAsyncKeyState(VK_UP)) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::DPAD_UP));
+		//grab pressedKeys
+ 		const std::vector<WIIOTN_VC::BindedKeys> key_states = this->getPressedKeys();
+		controller->submitInput(controller->controllerReportFactory(key_states));
+		// check if break key is pressed 
+		for (auto key_state : key_states) {
+			printf("Key: %d\n", key_state);
+			if(key_state == BindedKeys::BREAK) {
+				this->running = false;
+				break;
+			}
 		}
-		if (GetAsyncKeyState(VK_DOWN)) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::DPAD_DOWN));
-		}
-		if (GetAsyncKeyState(VK_LEFT)) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::DPAD_LEFT));
-		}
-		if (GetAsyncKeyState(VK_RIGHT)) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::DPAD_RIGHT));
-		}
-		if (GetAsyncKeyState(VK_RETURN)) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::START));
-		}
-		if (GetAsyncKeyState(VK_BACK)) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::BACK));
-		}
-
-		// check for A, B, X, Y
-		if (GetAsyncKeyState('A')) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::A));
-		}
-		if (GetAsyncKeyState('B')) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::B));
-		}
-		if (GetAsyncKeyState('X')) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::X));
-		}
-		if (GetAsyncKeyState('Y')) {
-			controller->submitInput(controller->controllerReportFactory(BindedKeys::Y));
-		}
-		if (GetAsyncKeyState(VK_END)) {
-			this->running = false;
-			break;
-		}
-
+		//delay input, so the controller doesn't go crazy and not waste cpu cycles
+		Sleep(MIN_INPUT_DELAY + input_delay);
 		/*
 		* No Input Clause
 		*/
-		Sleep(10);
 		controller->submitInput(controller->controllerReportFactory(BindedKeys::BREAK));
 	}
 }
 
+std::vector<WIIOTN_VC::BindedKeys> WIIOTN_KEYBOARD::KeyboardListener::getPressedKeys() {
+	std::vector<WIIOTN_VC::BindedKeys> pressed_keys;
+	if (GetAsyncKeyState(VK_UP)) {
+		pressed_keys.push_back(BindedKeys::DPAD_UP);
+	}
+	if (GetAsyncKeyState(VK_DOWN)) {
+		pressed_keys.push_back(BindedKeys::DPAD_DOWN);
+	}
+	if (GetAsyncKeyState(VK_LEFT)) {
+		pressed_keys.push_back(BindedKeys::DPAD_LEFT);
+	}
+	if (GetAsyncKeyState(VK_RIGHT)) {
+		pressed_keys.push_back(BindedKeys::DPAD_RIGHT);
+	}
+	if (GetAsyncKeyState(VK_RETURN)) {
+		pressed_keys.push_back(BindedKeys::START);
+	}
+	if (GetAsyncKeyState(VK_BACK)) {
+		pressed_keys.push_back(BindedKeys::BACK);
+	}
 
+	// check for A, B, X, Y
+	if (GetAsyncKeyState('A')) {
+		pressed_keys.push_back(BindedKeys::A);
+	}
+	if (GetAsyncKeyState('B')) {
+		pressed_keys.push_back(BindedKeys::B);
+	}
+	if (GetAsyncKeyState('X')) {
+		pressed_keys.push_back(BindedKeys::X);
+	}
+	if (GetAsyncKeyState('Y')) {
+		pressed_keys.push_back(BindedKeys::Y);
+	}
+	if(GetAsyncKeyState(VK_END)) {
+		pressed_keys.push_back(BindedKeys::BREAK);
+	}
+
+	return pressed_keys;
+}

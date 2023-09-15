@@ -35,6 +35,56 @@ WIIOTN_VC::VirtualController::~VirtualController() {
 	vigem_free(m_client);
 }
 
+const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vector<BindedKeys> pressed_keys) {
+
+	//create empty controller_report
+	XUSB_REPORT controller_report;
+	
+	//set all joystick values to 0
+	controller_report.sThumbLX = controller_report.sThumbLY = controller_report.sThumbRX = controller_report.sThumbRY = 0;
+	
+	//loop through all pressed_keys and flag controller_report accordingly
+	for (auto pressed_key : pressed_keys) {	
+		switch(pressed_key) {
+			case A:
+				controller_report.wButtons |= XUSB_GAMEPAD_A;
+				break;
+			case B:
+				controller_report.wButtons |= XUSB_GAMEPAD_B;
+				break;
+			case X:
+				controller_report.wButtons |= XUSB_GAMEPAD_X;
+				break;
+			case Y:
+				controller_report.wButtons |= XUSB_GAMEPAD_Y;
+				break;
+			case DPAD_UP:
+				controller_report.wButtons |= XUSB_GAMEPAD_DPAD_UP;
+				break;
+			case DPAD_DOWN:
+				controller_report.wButtons |= XUSB_GAMEPAD_DPAD_DOWN;
+				break;
+			case DPAD_LEFT:
+				controller_report.wButtons |= XUSB_GAMEPAD_DPAD_LEFT;
+				break;
+			case DPAD_RIGHT:
+				controller_report.wButtons |= XUSB_GAMEPAD_DPAD_RIGHT;
+				break;
+			case START:
+				controller_report.wButtons |= XUSB_GAMEPAD_START;
+				break;
+			case BACK:
+				controller_report.wButtons |= XUSB_GAMEPAD_BACK;
+				break;
+			default:
+				break;
+		}
+
+	}
+	return controller_report;
+}
+
+//overload for single inputs
 const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(BindedKeys pressed_key) {
 
 	//create empty controller_report
@@ -82,6 +132,8 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(BindedKe
 
 	return controller_report;
 }
+
+
 
 VIGEM_ERROR WIIOTN_VC::VirtualController::submitInput(const XUSB_REPORT controller_report) {
 	return vigem_target_x360_update(m_client, m_target, controller_report);

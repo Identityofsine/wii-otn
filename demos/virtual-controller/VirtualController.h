@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <vector>
 #include <ViGem/Client.h>
 
 namespace WIIOTN_VC {
@@ -28,7 +29,8 @@ namespace WIIOTN_VC {
 	public: 
 		VirtualController();	
 		~VirtualController();
-		const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key);
+		const XUSB_REPORT controllerReportFactory(std::vector<BindedKeys> pressed_key); //handle multiple
+		const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key); //handle single keypress
 		VIGEM_ERROR submitInput(const XUSB_REPORT controller_report);
 	};
 
