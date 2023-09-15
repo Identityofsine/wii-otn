@@ -42,6 +42,7 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vec
 	
 	//set all joystick values to 0
 	controller_report.sThumbLX = controller_report.sThumbLY = controller_report.sThumbRX = controller_report.sThumbRY = 0;
+	controller_report.wButtons = 0;
 	
 	//loop through all pressed_keys and flag controller_report accordingly
 	for (auto pressed_key : pressed_keys) {	
