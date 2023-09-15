@@ -29,11 +29,12 @@ void WIIOTN_KEYBOARD::KeyboardListener::run(VirtualController *controller, const
 		/*
 		* No Input Clause
 		*/
-		controller->submitInput(controller->controllerReportFactory(BindedKeys::BREAK));
+		//controller->submitInput(controller->controllerReportFactory(BindedKeys::BREAK));
 	}
 }
 
 std::vector<WIIOTN_VC::BindedKeys> WIIOTN_KEYBOARD::KeyboardListener::getPressedKeys() {
+
 	std::vector<WIIOTN_VC::BindedKeys> pressed_keys;
 	if (GetAsyncKeyState(VK_UP)) {
 		pressed_keys.push_back(BindedKeys::DPAD_UP);
