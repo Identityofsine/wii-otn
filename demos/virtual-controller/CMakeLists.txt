@@ -9,8 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(VirtualControllerDemo main.cpp virtualcontroller.h virtualcontroller.cpp keyboardlistener.h keyboardlistener.cpp)
 
 # Specify the path to the pre-built ViGEmClient.lib
-set(VIGEMCLIENT_DLL_PATH "C:/Users/leade/software/wii-otn/lib/ViGEmClient/ViGEmClient.lib")
-set(VIGEMCLIENT_INCLUDE_DIR "C:/Users/leade/software/wii-otn/lib/ViGEmClient/include")
+set(VIGEMCLIENT_DLL_PATH "${CMAKE_SOURCE_DIR}/../../lib/ViGEmClient/ViGEmClient")
+set(VIGEMCLIENT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/../../lib/ViGEmClient/include")
 set(_SETUP_API "setupapi.lib")
 
 # Link your executable to the pre-built ViGEmClient.lib
