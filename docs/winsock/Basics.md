@@ -63,4 +63,36 @@ Lastly, `socket` has a *protocol* option. This protocol seems not to be very use
 
 ### Binding the Socket
 
-Now that are server is created and is ready to send and receive packets, we need to bind it to an ip address.
+Now that are server is created and is ready to send and receive packets, we need to bind it to an IP Address.
+
+> This is obviously specific to the *Address Type* you are using (i.e : **AF_INET**)
+
+First we need to set up a `socket` structure 
+```cpp
+struct sockaddr_in severAddr; // a Socket Structure
+serverAddr.sin_family = AF_INET; //Note that this equal to our Address Type we initialized in our socket.
+serverAddr.sin_addr.s_addr = INADDR_ANY; // our address
+serverAddr.sin_port = htons(8337); // our port number
+```
+
+The `socket` structure is a `type` that contains simple properties that help the developer to input settings.
+
+To actually utilize these settings, we can use the `bind` function :
+
+```cpp
+
+const int bind_response = bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)); 
+
+
+//typically you can save space for complexity by passing bind(...) directly into the if statement 
+if(bind_response = SOCKET_ERROR) {
+	//Handle any errors
+}
+
+```
+
+`bind` simply does what it says. `bind` takes in our socket instance, a casted `sockaddr` (which comes from sockaddr_in) [^1], and the last argument, an int, is the size of `sockAddr`
+
+
+[^1]: In this code, `(struct sockaddr*)&serverAddr` tells the `bind` function that it should treat `serverAddr` as a generic socket address structure. The `sizeof(serverAddr)` argument specifies the size of the `serverAddr` structure, which is important for socket functions to correctly handle the memory layout.
+
