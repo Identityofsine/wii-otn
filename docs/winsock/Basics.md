@@ -96,3 +96,4 @@ if(bind_response = SOCKET_ERROR) {
 
 [^1]: In this code, `(struct sockaddr*)&serverAddr` tells the `bind` function that it should treat `serverAddr` as a generic socket address structure. The `sizeof(serverAddr)` argument specifies the size of the `serverAddr` structure, which is important for socket functions to correctly handle the memory layout.
 
+###
