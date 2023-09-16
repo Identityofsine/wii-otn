@@ -4,18 +4,31 @@
     "type": "split",
     "children": [
       {
-        "id": "74fe20d2e8b3ca69",
+        "id": "81c1d3e1f9283b3c",
         "type": "tabs",
         "children": [
           {
-            "id": "16a765f8dbc1d7a5",
+            "id": "6f23d656e6f40d49",
             "type": "leaf",
             "state": {
               "type": "empty",
               "state": {}
             }
+          },
+          {
+            "id": "83a77cbe5e2f6f99",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "winsock/Basics.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -82,6 +95,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "winsock/Basics.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -98,6 +112,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "winsock/Basics.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -119,7 +134,19 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "winsock/Basics.md"
+              }
+            }
+          },
+          {
+            "id": "0efb07f0fcc75e7e",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency"
+              }
             }
           }
         ]
@@ -139,8 +166,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "16a765f8dbc1d7a5",
+  "active": "83a77cbe5e2f6f99",
   "lastOpenFiles": [
+    "winsock/Basics.md",
+    "winsock",
     "ai_steps.md",
     "vigem/Basic.md"
   ]
