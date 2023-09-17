@@ -1,5 +1,5 @@
 #include "keyboardlistener.h"
-#define MIN_INPUT_DELAY 10
+#define MIN_INPUT_DELAY 20
 
 using namespace WIIOTN_VC;
 
@@ -29,7 +29,6 @@ void WIIOTN_KEYBOARD::KeyboardListener::run(VirtualController *controller, const
 		/*
 		* No Input Clause
 		*/
-		//controller->submitInput(controller->controllerReportFactory(BindedKeys::BREAK));
 	}
 }
 
