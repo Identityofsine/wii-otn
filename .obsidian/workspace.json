@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/vigem/Functions.md",
+                "file": "docs/winsock/Basics.md",
                 "mode": "source",
                 "source": false
               }
@@ -81,7 +81,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "013d554aeeddd0fe",
@@ -97,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/vigem/Functions.md",
+                "file": "docs/winsock/Basics.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/vigem/Functions.md",
+                "file": "docs/winsock/Basics.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -137,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/vigem/Functions.md"
+                "file": "docs/winsock/Basics.md"
               }
             }
           },
@@ -170,6 +171,7 @@
   },
   "active": "b85abc2440670ce9",
   "lastOpenFiles": [
+    "docs/vigem/Functions.md",
     "demos/virtual-controller/compile_commands.json",
     "demos/virtual-controller/build/compile_commands.json",
     "docs/vigem/Errors.md",
@@ -184,8 +186,6 @@
     "demos/virtual-controller/build/x64/Debug/ALL_BUILD/ALL_BUILD.recipe",
     "demos/virtual-controller/build/x64/Debug/ALL_BUILD",
     "demos/virtual-controller/build/Debug/VirtualControllerDemo.pdb",
-    "demos/virtual-controller/build/Debug/VirtualControllerDemo.exe",
-    "docs/vigem/Functions.md",
     "demos/virtual-controller/readme.md",
     "docs/ai_steps.md"
   ]

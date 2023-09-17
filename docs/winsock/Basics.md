@@ -96,4 +96,94 @@ if(bind_response = SOCKET_ERROR) {
 
 [^1]: In this code, `(struct sockaddr*)&serverAddr` tells the `bind` function that it should treat `serverAddr` as a generic socket address structure. The `sizeof(serverAddr)` argument specifies the size of the `serverAddr` structure, which is important for socket functions to correctly handle the memory layout.
 
-###
+### Listening and Accepting Connections
+
+To really start a server, you must have your `socket` be able to accept connections. In-order to know when a connection is coming in, you must **Listen** for them.
+
+To set up listening on a `WinSock`:
+```cpp
+const auto listen_response = listen(serverSocket, SOMAXCONN);
+
+if(listen_response == SOCKET_ERROR) {
+// ... handle errors here
+}
+```
+
+The `listen` function takes in our `socket` variable (`serverSocket`) and a pre-defined `SOMAXCONN`, `SOMAXCONN` is a constant that *represents the maximum number of pending connections that can be queued up for a listening socket.* 
+
+Realistically, any number can replace `SOCKET_ERROR`.
+
+Now that we have our ear to the internet, we can start accepting connections.
+
+```c++
+SOCKET clientSocket = accept(serverSocket, NULL, NULL);
+
+if(clientSocket == INVALID_SOCKET) {
+  //... handle errors here
+}
+```
+
+`accept` literally accepts a connection from a client and assigns it a `SOCKET` variable. 
+
+### Send and Receive Data
+
+Now that we have our client where want him, we can start the process of receiving and sending data.
+
+For Receiving:
+```cpp
+char buffer[1024]; //max buffer for socket
+
+int bytesReceived = recv(clientSocket, buffer, sizeof(buffer));
+
+if(bytesReceived == SOCKET_ERROR) {
+  //Handle Errors
+  //...
+}
+```
+
+We must define a `buffer` array to store the data we receive from the client.
+
+> The maximum amount of data are typically 1024 bytes, it's the sweet spot between too little and too much.
+
+`recv` takes all the data and stores it in `buffer`, it is possible though that the data received may come in *chunks* or different bigger packets that will force the `recv` function to rerun and potentially refill the `buffer` array. 
+
+Typically, you want to send the amount of data you are sending in the header of the packet so you can accurately adjust for packets.
+
+To start sending packets to the client :
+```c++
+char buffer[1024];
+
+//... fill buffer, you could do this with JSON
+
+int bytesSent = send(clientSocket, buffer, sizeof(buffer));
+
+if(bytesSent == SOCKET_ERROR) {
+  //... handle error
+}
+```
+
+`send` is very similar, if not the very same to `recv` (in terms of arguments.) It sends our client a `buffer` of `1024` char bytes.
+
+### Clean Up
+
+Once our program is finished (or we no longer need a socket server), we can start cleaning up
+
+
+First close our client's connection:
+
+```c++
+closesocket(clientSocket);
+```
+
+Now let's close up shop (close our serverSocket):
+
+```cpp
+closesocket(serverSocket);
+WSACleanup();
+```
+
+> `WSACleanup` function terminates the use of the `WinSock2` DLL, `Ws2_32.dll`.
+> `WSACleanup` can also return various error codes [^2]
+
+[^2]: Source: [WSACleanup function](https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsacleanup)
+
