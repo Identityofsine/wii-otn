@@ -1,6 +1,8 @@
 #include "virtualcontroller.h"
 #include <iostream>
 
+#define SLEEP_TIME 400
+
 int main() {
   // return value
 	//
@@ -26,6 +28,8 @@ int main() {
 				printf("Failed to connect controller\n");
 			}
 		}
+
+		Sleep(SLEEP_TIME);
 	}
 	
 
