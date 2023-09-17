@@ -156,4 +156,25 @@ VIGEM_ERROR WIIOTN_VC::VirtualController::submitInput(const int controller_id, c
 	return vigem_target_x360_update(m_client, controller_handle, controller_report);
 }
 
+bool WIIOTN_VC::VirtualController::connectController() {
+	//create new controller
+	const auto new_controller = vigem_target_x360_alloc();
+	if(!new_controller)
+		return false;
 
+	const int new_controller_id = m_targets.size();
+	
+	//create new controller handle
+	const ControllerHandle new_controller_handle = { new_controller_id, new_controller };
+	
+	//add to controller array
+	m_targets.push_back(new_controller_handle);
+	
+	//add to vigem client
+	const auto vigem_target_status = vigem_target_add(m_client, new_controller);
+	if(!VIGEM_SUCCESS(vigem_target_status))
+		return false;
+	
+	return true;
+
+}

@@ -37,7 +37,6 @@ namespace WIIOTN_VC {
 		const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key); //handle single keypress
 		VIGEM_ERROR submitInput(const int controller_id, const XUSB_REPORT controller_report);
 		bool connectController();
-		bool connectController(PVIGEM_TARGET a_target);
 		
 
 	};
