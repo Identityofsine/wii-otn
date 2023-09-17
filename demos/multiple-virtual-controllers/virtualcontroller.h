@@ -19,19 +19,27 @@ namespace WIIOTN_VC {
 	};
 
 
+	struct ControllerHandle {
+		int id;
+		PVIGEM_TARGET target;
+	};
 
 	class VirtualController {
 
 	private:
 		PVIGEM_CLIENT m_client; // bus_handle 
-		PVIGEM_TARGET m_target; // controller_handle
+		std::vector<ControllerHandle> m_targets; // controller_handle
 	
 	public: 
 		VirtualController();	
 		~VirtualController();
 		const XUSB_REPORT controllerReportFactory(std::vector<BindedKeys> pressed_key); //handle multiple
 		const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key); //handle single keypress
-		VIGEM_ERROR submitInput(const XUSB_REPORT controller_report);
+		VIGEM_ERROR submitInput(const int controller_id, const XUSB_REPORT controller_report);
+		bool connectController();
+		bool connectController(PVIGEM_TARGET a_target);
+		
+
 	};
 
 }

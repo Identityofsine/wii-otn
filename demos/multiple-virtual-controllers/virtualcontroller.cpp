@@ -15,10 +15,16 @@ WIIOTN_VC::VirtualController::VirtualController() {
 	const auto vigem_client_status = vigem_connect(m_client);
 	if(!VIGEM_SUCCESS(vigem_client_status))
 		throw std::runtime_error("Failed to connect to driver!");
-	m_target = vigem_target_x360_alloc();
-	if(!m_target)
+	const auto first_pad = vigem_target_x360_alloc();
+	if(!first_pad)
 		throw std::runtime_error("Failed to allocate memory for controller!");
-	const auto vigem_target_status = vigem_target_add(m_client, m_target);
+
+
+	const ControllerHandle first_controller_handle = { 0, first_pad };
+	//add to controller array
+	m_targets.push_back(first_controller_handle);
+
+	const auto vigem_target_status = vigem_target_add(m_client, first_pad);
 	if(!VIGEM_SUCCESS(vigem_target_status))
 		throw std::runtime_error("Failed to add virtual pad to client!");
 }
@@ -29,8 +35,13 @@ WIIOTN_VC::VirtualController::VirtualController() {
 *
 */
 WIIOTN_VC::VirtualController::~VirtualController() {
-	vigem_target_remove(m_client, m_target);
-	vigem_target_free(m_target);
+
+	//run loop to remove all targets ( controller handles )
+	for(auto controller_handle : m_targets) {
+		vigem_target_remove(m_client, controller_handle.target);
+		vigem_target_free(controller_handle.target);
+	}
+
 	vigem_disconnect(m_client);
 	vigem_free(m_client);
 }
@@ -136,7 +147,13 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(BindedKe
 
 
 
-VIGEM_ERROR WIIOTN_VC::VirtualController::submitInput(const XUSB_REPORT controller_report) {
-	return vigem_target_x360_update(m_client, m_target, controller_report);
+VIGEM_ERROR WIIOTN_VC::VirtualController::submitInput(const int controller_id, const XUSB_REPORT controller_report) {
+	const auto controller_handle = m_targets[controller_id].target;
+	//check if controller_handle is valid
+	if(!controller_handle)
+		throw std::runtime_error("Invalid controller_handle!");
+
+	return vigem_target_x360_update(m_client, controller_handle, controller_report);
 }
+
 
