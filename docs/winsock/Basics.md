@@ -38,7 +38,7 @@ if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 
 Considering `WSAStartup` didn't return `0` during its initialization, we can create a `socket` object
 
-```c++
+```cpp
 SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 if (serverSocket == INVALID_SOCKET) {
     // Handle error

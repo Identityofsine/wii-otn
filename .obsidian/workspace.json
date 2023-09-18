@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "docs/winsock/Basics.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -41,8 +41,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -180,7 +179,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d7fb5dd0fb1bad32",
+  "active": "b85abc2440670ce9",
   "lastOpenFiles": [
     "docs/vigem/Functions.md",
     "demos/virtual-controller/compile_commands.json",
