@@ -26,3 +26,8 @@ build/
 ./compile_commands.json/*
 compile_commands.json/*
 
+./node_modules
+./node_modules/*
+node_modules/*
+node_modules/
+

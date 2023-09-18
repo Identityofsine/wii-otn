@@ -115,7 +115,7 @@ Realistically, any number can replace `SOCKET_ERROR`.
 
 Now that we have our ear to the internet, we can start accepting connections.
 
-```c++
+```cpp
 SOCKET clientSocket = accept(serverSocket, NULL, NULL);
 
 if(clientSocket == INVALID_SOCKET) {
@@ -150,7 +150,7 @@ We must define a `buffer` array to store the data we receive from the client.
 Typically, you want to send the amount of data you are sending in the header of the packet so you can accurately adjust for packets.
 
 To start sending packets to the client :
-```c++
+```cpp
 char buffer[1024];
 
 //... fill buffer, you could do this with JSON
@@ -171,7 +171,7 @@ Once our program is finished (or we no longer need a socket server), we can star
 
 First close our client's connection:
 
-```c++
+```cpp
 closesocket(clientSocket);
 ```
 
