@@ -20,6 +20,16 @@
             }
           },
           {
+            "id": "d7fb5dd0fb1bad32",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.4.13"
+              }
+            }
+          },
+          {
             "id": "a1e98ec5625778cf",
             "type": "leaf",
             "state": {
@@ -31,7 +41,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -169,7 +180,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "b85abc2440670ce9",
+  "active": "d7fb5dd0fb1bad32",
   "lastOpenFiles": [
     "docs/vigem/Functions.md",
     "demos/virtual-controller/compile_commands.json",
