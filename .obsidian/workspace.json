@@ -8,34 +8,12 @@
         "type": "tabs",
         "children": [
           {
-            "id": "b85abc2440670ce9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/winsock/Basics.md",
-                "mode": "preview",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "d7fb5dd0fb1bad32",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.4.13"
-              }
-            }
-          },
-          {
             "id": "a1e98ec5625778cf",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/vigem/Errors.md",
+                "file": "docs/vigem/Basic.md",
                 "mode": "source",
                 "source": false
               }
@@ -91,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "013d554aeeddd0fe",
@@ -108,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/winsock/Basics.md",
+                "file": "docs/vigem/Basic.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -125,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/winsock/Basics.md",
+                "file": "docs/vigem/Basic.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -148,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/winsock/Basics.md"
+                "file": "docs/vigem/Basic.md"
               }
             }
           },
@@ -179,19 +156,27 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "b85abc2440670ce9",
+  "active": "a1e98ec5625778cf",
   "lastOpenFiles": [
-    "demos/socket-server/client-demo/node_modules/ts-node/transpilers/swc.js",
-    "demos/socket-server/client-demo/node_modules/ts-node/transpilers/swc-experimental.js",
-    "demos/socket-server/client-demo/node_modules/ts-node/transpilers",
-    "demos/socket-server/client-demo/node_modules/ts-node/register/type-check.js",
-    "demos/socket-server/client-demo/node_modules/ts-node/register/transpile-only.js",
-    "demos/socket-server/client-demo/node_modules/ts-node/register/index.js",
-    "demos/socket-server/client-demo/node_modules/ts-node/register/files.js",
-    "demos/socket-server/client-demo/node_modules/ts-node/register",
-    "demos/socket-server/client-demo/node_modules/ts-node/node16/tsconfig.json",
-    "demos/socket-server/client-demo/node_modules/ts-node/node16",
-    "demos/socket-server/client-demo/node_modules/ts-node/node14/tsconfig.json",
+    "demos/socket-server/client-demo/socket.ts",
+    "demos/socket-server/client-demo/interface.ts",
+    "demos/socket-server/client-demo/node_modules/fsevents",
+    "demos/socket-server/client-demo/node_modules/@types/keypress/package.json",
+    "demos/socket-server/client-demo/node_modules/@types/keypress/index.d.ts",
+    "demos/socket-server/client-demo/node_modules/@types/keypress/README.md",
+    "demos/socket-server/client-demo/node_modules/@types/keypress/LICENSE",
+    "demos/socket-server/client-demo/node_modules/@types/keypress",
+    "demos/socket-server/client-demo/node_modules/@types/keypress.js/package.json",
+    "demos/socket-server/client-demo/node_modules/@types/keypress.js/index.d.ts",
+    "demos/socket-server/client-demo/node_modules/@types/keypress.js/README.md",
+    "demos/socket-server/client-demo/node_modules/@types/keypress.js/LICENSE",
+    "demos/socket-server/client-demo/node_modules/@types/keypress.js",
+    "demos/socket-server/client-demo/node_modules/keypress/README.md",
+    "docs/vigem/Errors.md",
+    "demos/virtual-controller/readme.md",
+    "docs/vigem/Basic.md",
+    "examples/node/app.js.md",
+    "docs/winsock/Basics.md",
     "demos/socket-server/client-demo/node_modules/ts-node/dist-raw/README.md",
     "demos/socket-server/client-demo/node_modules/ts-node/dist-raw/NODE-LICENSE.md",
     "demos/socket-server/client-demo/node_modules/acorn/README.md",
@@ -208,14 +193,6 @@
     "demos/socket-server/client-demo/node_modules/is-binary-path/readme.md",
     "demos/socket-server/client-demo/node_modules/glob-parent/README.md",
     "demos/socket-server/client-demo/node_modules/glob-parent/CHANGELOG.md",
-    "demos/socket-server/client-demo/node_modules/fill-range/README.md",
-    "demos/socket-server/client-demo/node_modules/binary-extensions/readme.md",
-    "demos/socket-server/client-demo/node_modules/anymatch/README.md",
-    "demos/socket-server/client-demo/node_modules/debug/README.md",
-    "demos/socket-server/client-demo/node_modules/braces/README.md",
-    "demos/socket-server/client-demo/node_modules/braces/CHANGELOG.md",
-    "demos/socket-server/client-demo/node_modules/picomatch/README.md",
-    "demos/socket-server/client-demo/node_modules/picomatch/CHANGELOG.md",
-    "demos/socket-server/client-demo/node_modules/balanced-match/LICENSE.md"
+    "demos/socket-server/client-demo/node_modules/fill-range/README.md"
   ]
 }
