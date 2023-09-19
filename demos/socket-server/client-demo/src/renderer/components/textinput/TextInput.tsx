@@ -1,8 +1,6 @@
 import React from 'react'
 import '../../styles/textinput.scss';
 import { GenericIHDOM } from '../genericdom';
-import { IconProps } from '../icon/IHIcon.type';
-import IHIcon from '../icon/IHIcon';
 
 
 export interface TextInputRules {
@@ -21,7 +19,6 @@ type TextInputProps = {
 	placeholder?: string,
 	defaultValue?: string | number | any,
 	read_only?: boolean,
-	icon?: IconProps,
 	rules?: TextInputRules,
 } & GenericIHDOM
 

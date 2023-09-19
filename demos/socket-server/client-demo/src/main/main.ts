@@ -14,6 +14,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import WIISocket from '../obj/socket';
+import { SockAddrIn } from '../renderer/App';
 
 class AppUpdater {
   constructor() {
@@ -23,12 +25,19 @@ class AppUpdater {
   }
 }
 
+let socket : WIISocket | undefined = undefined;
+
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+  event.reply('ipc-example', msgTemplate('sex'));
+});
+
+
+ipcMain.on('udp-connect-request', async (event, arg : SockAddrIn) => {
+	socket = new WIISocket(arg.ip_address, arg.port);
+	event.reply('udp-connect-reply', 'pong');
 });
 
 if (process.env.NODE_ENV === 'production') {

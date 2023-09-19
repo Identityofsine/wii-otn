@@ -1,9 +1,21 @@
 .connect-page{
+	color:black;
+
 	margin-top: .5rem;
-	.label {
-		font-size: 1rem;
+	.h2-label {
+		color:white !important;
+		font-size: 1.5rem;
 	}
+
+	.input-field {
+		width: 4rem;
+	}
+
 	.input-gap{
 		gap:.215rem;
+	}
+
+	.margin-top {
+	 	margin-top:.3rem;
 	}
 }
