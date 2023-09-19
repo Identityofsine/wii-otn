@@ -84,14 +84,31 @@ void WIIOTN::Socket::start() {
 				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
 					printf("User Already Connected\n");
 					is_new = false;
+					json message = {
+						{"message", "User Already Connected"},
+						{"id", client.id},
+						{"already_connected", true},
+						{"success", true}
+					};
+					sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
 					break;
 				}
 			}
 		}
 
 		//add into vector
-		if(clients_size == 0 || is_new)
+		if(clients_size == 0 || is_new) {
 			m_connected_clients.push_back(client);
+			printf("\nNew client connected\n");
+			//send message to client that their connection was successful
+			json message = {
+				{"message", "Connection Successful"},
+				{"id", client.id},
+				{"already_connected", true},
+				{"success", true}
+			};
+			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
+		}
 		else {
 			for(const auto &client : m_connected_clients) {
 				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
