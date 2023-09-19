@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { useEffect } from 'react';
 import { SockAddrIn } from '../App';
 import Button from '../components/button/Button';
 import TextInput from '../components/textinput/TextInput';
@@ -12,8 +13,15 @@ type ConnectProps = {
 
 function Connect(props : ConnectProps) {
 
+	useEffect(() => {
+		window.electron.ipcRenderer.on('udp-connect-reply', (event : {success:boolean}) => {
+			console.log("SUCCESS:", event.success);
+		});
+	}, [])
+
 	const submit_ipaddress = () => {
 		window.electron.ipcRenderer.sendMessage('udp-connect-request', props.SocketInfo);
+
 	}
 
 	return (

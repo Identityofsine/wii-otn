@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Socket, createSocket } from 'dgram';
 import WIIOTNMessage from './interface';
 
@@ -15,14 +16,14 @@ export default class WIISocket implements SocketInterface {
     this.ip = ip;
     this.port = port;
   }
-
-  sendMessage(message: WIIOTNMessage) {
-    this.socket.send(JSON.stringify(message), this.port, this.ip, (err) => {
-      if (err) {
-        console.log(err);
+	
+  sendMessage(message: WIIOTNMessage, onError?: (err: Error) => void) {
+		this.socket.send(JSON.stringify(message), this.port, this.ip, (err) => {
+			if (err) {
+				if(onError) onError(err);
       }
     });
-  }
+	}
 
   /**
    * events.EventEmitter

@@ -76,12 +76,13 @@ void WIIOTN::Socket::start() {
 		client.is_connected = true;
 
 
-		bool is_new = buffer_json.contains("new");
-		
-		if(is_new) {
-			is_new = buffer_json["new"].get<bool>();
+		bool has_new_key = buffer_json.contains("new");
+		bool is_new = false;	
+		if(has_new_key) {
+			has_new_key = buffer_json["new"].get<bool>();
 			for(const auto &client : m_connected_clients) {
 				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
+					printf("User Already Connected\n");
 					is_new = false;
 					break;
 				}
@@ -95,9 +96,14 @@ void WIIOTN::Socket::start() {
 			for(const auto &client : m_connected_clients) {
 				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
 					printf("Client already connected\n");
-					const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
-					const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
-					m_virtual_controller.submitInput(controller_report);
+					if (buffer_json.contains("buttons_pressed")) {
+					  const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
+					  const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
+					  m_virtual_controller.submitInput(controller_report);
+					}
+					else {
+					  m_virtual_controller.submitInput(m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK));
+					}
 
 					break;
 				}

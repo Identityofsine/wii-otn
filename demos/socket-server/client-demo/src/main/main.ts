@@ -36,8 +36,11 @@ ipcMain.on('ipc-example', async (event, arg) => {
 
 
 ipcMain.on('udp-connect-request', async (event, arg : SockAddrIn) => {
+	console.log("UDP connect request received: ", arg);
 	socket = new WIISocket(arg.ip_address, arg.port);
-	event.reply('udp-connect-reply', 'pong');
+	socket.sendMessage({name:'connect', new:true}, (err) => {
+		event.reply('udp-connect-reply', {"success":false});
+	});
 });
 
 if (process.env.NODE_ENV === 'production') {
