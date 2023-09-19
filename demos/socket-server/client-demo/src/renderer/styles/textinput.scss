@@ -1,0 +1,30 @@
+.text-input {
+	padding: .08rem 0;
+	padding-left: .05rem;
+	font-size: 0.25rem;
+	border: 2px solid black;
+	transition: border 500ms ease-in-out, border-radius 500ms ease-in-out, outline 200ms ease-in-out;
+	border-radius: 0;
+
+	&:-webkit-autofill{
+		-webkit-box-shadow: 0 0 0 30px white inset !important;
+		-webkit-text-fill-color: black !important;
+		background-color: #fff;
+	}
+
+	&::placeholder {
+		opacity: .35;
+		color:black;
+	}
+	&:focus{
+		border-radius: 0;
+		outline: 1px solid black;
+	}
+	&:active{
+		border-radius: 0;
+		outline: 1px solid black;
+	}
+	&.read-only {
+		color:#00000080;
+	}
+}

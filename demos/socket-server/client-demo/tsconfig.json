@@ -1,16 +1,18 @@
-{ 
+{
   "compilerOptions": {
-    "target": "es5",
+    "incremental": true,
+    "target": "es2022",
     "module": "commonjs",
-    "moduleResolution": "node",
+    "lib": ["dom", "es2022"],
+    "jsx": "react-jsx",
+    "strict": true,
     "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "removeComments": false,
-    "noImplicitAny": false,
-		"ignoreDeprecations": "5.0",
-		"outDir": "dist",
-    "suppressImplicitAnyIndexErrors": true 
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "outDir": ".erb/dll"
   },
-  "exclude": [ "node_modules" ] 
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }

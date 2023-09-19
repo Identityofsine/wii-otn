@@ -1,0 +1,318 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import './scss_lib/breakpoint.scss';
+
+:root {
+	font-size: 128px;
+	@include media('<=XXLGdesktop') {
+		font-size: 200px;
+	}
+	@include media('<=XLGdesktop') {
+		font-size: 165px;
+	}
+	@include media('<=LGdesktop') {
+		font-size: 128px;
+	}
+	@include media('<=MDdesktop') {
+		font-size: 100px;
+	}
+	@include media('<=desktop') {
+		font-size: 95px;
+	}
+	@include media('<=LGlaptop') {
+		font-size: 87px;
+	}
+	@include media('<=LGphone') {
+		font-size: 64px;
+	}
+	overflow-x: hidden;
+	overflow-y: var(--overflow-y);
+	height: 250px;
+	--redaccent : #FE2121;
+	color:#ffffff;
+}
+
+#root {
+	position:relative;
+}
+
+body {
+	margin: 0;
+	padding-bottom: 0;
+	background-color: #141414;
+}
+
+.gilroy {
+	font-family: 'Gilroy', sans-serif;
+}
+
+.neue {
+	font-family: 'Neue Montreal', sans-serif;
+}
+
+.inter {
+	//use inter font
+	font-family: 'Inter', sans-serif;
+}
+
+.times-new-roman {
+	font-family: 'Times New Roman', sans-serif;
+}
+
+.white {
+	color: #ffffff;
+}
+
+.red { 
+	color: var(--redaccent);
+}
+
+.widthless {
+	width: 0;
+}
+
+.z-index-top {
+	z-index: 9999;
+}
+
+.cover-img {
+	object-fit: cover;
+}
+.contain-img {
+	object-fit: contain;
+}
+
+.grid {
+	display: grid;
+}
+
+.flex {
+	display: flex;
+}
+
+.wrap {
+	flex-wrap: wrap;
+}
+
+.column {
+	flex-direction: column;
+}
+.align-center{
+	align-items: center;
+}
+.align-bottom {
+	align-items: flex-end;
+}
+
+.space-between {
+	justify-content: space-between;
+}
+
+.justify-center {
+	justify-content: center;
+}
+
+.justify-end {
+	justify-content: flex-end;
+}
+
+.justify-self-end {
+	justify-self: flex-end;
+}
+
+.center-flex {
+	align-items: center;
+	justify-content: center;
+}
+
+.relative {
+	position: relative;
+}
+
+.absolute {
+	position: absolute;
+}
+
+.fixed {
+	position: fixed;
+}
+
+.center-absolute {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.center-absolute-x {
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.full-width { 
+	width: 100vw;
+	box-sizing: border-box;
+}
+
+.full-screen {
+	width: 100vw;
+	height: 100vh;
+	box-sizing: border-box;
+}
+
+.fill-container {
+	width: 100%;
+}
+
+.fill-height {
+	height: 100%;
+}
+
+.fit-width {
+	width: fit-content;
+}
+
+.fit-height {
+	height: fit-content;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.exact-line-height { 
+	line-height: 100%;
+	&.gilroy {
+		line-height: 90%;
+	}
+}
+
+
+.border-box {
+	box-sizing: border-box;
+}
+
+.border-top {
+	border-top: 0.0175rem solid #000000;
+}
+
+.border-bottom {
+	border-bottom: 0.0175rem solid #000000;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.select-none {
+	user-select: none;
+}
+
+.white-space {
+	white-space: pre-wrap;
+}
+
+.disable-margin {
+	margin: 0;
+}
+
+.margin-bottom-auto {
+	margin-bottom: auto;
+}
+
+.margin-top-auto {
+	margin-top: auto;
+}
+
+margin-left-auto {
+	margin-left: auto;
+}
+
+//padding-versions
+.padding-bottom-auto{
+	padding-bottom: auto;
+}
+
+.padding-top-auto{
+	padding-top: auto;
+}
+
+
+.force-3d {
+	transform: translate3d(0, 0, 0); /* Ensures hardware acceleration for smoother animation */
+}
+
+.center-text{
+	text-align: center;
+}
+
+.center-margin{
+	margin: 0 auto;
+}
+
+.left-margin {
+	margin-left: auto;
+}
+
+.overflow-hidden {
+	overflow: hidden;
+}
+
+.full-height {
+	height: 100vh;
+}
+
+.no-line-break {
+	white-space: nowrap;
+}
+
+.top-0 {
+	top:0;
+}
+
+.left-0 {
+	left: 0;
+}
+
+.left-50 {
+	left: 50%;
+}
+
+.right-5 {
+	right: 5%;
+}
+
+.right-25 {
+	right: 25%;
+}
+
+.right-50 {
+	right: 50%;
+}
+
+.right-0 {
+	right: 0;
+}
+
+.bottom-0 {
+	bottom: 0;
+}
+
+.one-letter-a-line-text {
+	width: 15%;
+}
+
+.mobile-enable { 
+	display: none;
+}
+
+.disable {
+	display: none;
+}
+
+/* 
+	This section is for disabling margin on h2 and p
+*/
+h2, p {
+	margin: 0;
+}
+
