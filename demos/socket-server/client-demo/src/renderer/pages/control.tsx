@@ -6,14 +6,18 @@ import { WIIOTNController, empty_wii_controller, key_map } from "../../obj/inter
 function Control() {
 
 	const [key_state_react, setKeyStateReact] = useState<KeyboardEvent>();
-	const key_state = createState<number>(0);
+	const key_state = createState<Array<number>>([0]);
 	const wii_controller = createState<WIIOTNController>(empty_wii_controller);
 
 	useEffect(() => {
 
-		const key_state_listener = (key: number) => {
-			const mutated_key = key_map[key] || 0;
+		const key_state_listener = (key: Array<number>) => {
+			let mutated_key: number = 0;
+			key.forEach((key) => { mutated_key |= key_map[key] });
+
+			if (wii_controller.getState().buttons_pressed == mutated_key) return;
 			wii_controller.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
+			console.log(wii_controller.getState());
 			window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify(wii_controller.getState()));
 		}
 
@@ -22,11 +26,12 @@ function Control() {
 		//add key listeners
 		const keydown = (e: KeyboardEvent) => {
 			setKeyStateReact(e);
-			key_state.setState(old_state => e.keyCode | old_state);
+			key_state.setState(old_state => [...old_state, e.keyCode]);
+			//set 
 		}
 		const keyup = (e: KeyboardEvent) => {
 			setKeyStateReact(e);
-			key_state.setState(0);
+			key_state.setState(old_state => old_state.filter((key) => key != e.keyCode));
 		}
 		window.addEventListener('keydown', keydown);
 		window.addEventListener('keyup', keyup);
