@@ -1,38 +1,43 @@
 import * as dgram from "dgram";
 import WIIOTNMessage from "./interface";
 
-const server_address: string = "127.0.0.1";
-const server_port: string = "1337";
-
-//basic message, acting as a wii mote
-
-
-//create a socket
-const client = dgram.createSocket("udp4");
-
-//listen for messages
-client.on("message", (msg, rinfo) => {
-	console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
-});
-
-//send the basic_message
-client.send(JSON.stringify({ new: true }), parseInt(server_port), server_address, (err) => {
-	if (err) {
-		console.error(err);
-	}
-});
-
 
 export interface SocketInterface {
 	sendMessage: (message: WIIOTNMessage) => void;
 }
 
 export default class Socket implements SocketInterface {
-	sendMessage(message: WIIOTNMessage): void {
-		client.send(JSON.stringify(message), parseInt(server_port), server_address, (err) => {
+
+	private socket: dgram.Socket;
+	private ip: string;
+	private port: number;
+
+	constructor(ip: string, port: number) {
+		//construct socket
+		this.socket = dgram.createSocket("udp4");
+		this.ip = ip;
+		this.port = port;
+
+	}
+
+	sendMessage(message: WIIOTNMessage) {
+		this.socket.send(JSON.stringify(message), this.port, this.ip, (err) => {
 			if (err) {
-				console.error(err);
+				console.log(err);
 			}
 		});
 	}
+
+	/**
+	* events.EventEmitter
+	* 1. close
+	* 2. connect
+	* 3. error
+	* 4. listening
+	* 5. message
+	*/
+	addListener(event: 'close' | 'connect' | 'error' | 'listening' | 'message', listener: (message: any) => void) {
+		this.socket.on(event, listener);
+	}
+
 }
