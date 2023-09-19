@@ -25,6 +25,8 @@ keyboard_listener.addListener('keypress', (key: number) => {
 
 	const buttons_pressed = key_map[key] | (wii_message_state.getState() as WIIOTNController)!.buttons_pressed;
 
+	if (buttons_pressed === (wii_message_state.getState() as WIIOTNController)!.buttons_pressed) return;
+
 	wii_message_state.setState((old_state) => { return { ...old_state, buttons_pressed: buttons_pressed, new: false } });
 
 });

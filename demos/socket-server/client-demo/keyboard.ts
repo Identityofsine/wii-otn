@@ -34,7 +34,7 @@ export namespace KeyboardListener {
 					this.current_key.setState(0);
 					if (this.listeners.keyup)
 						this.listeners.keyup.forEach(listener => listener());
-				}, 200);
+				}, this.interval_id ? 200 : 2000);
 			});
 		}
 
