@@ -18,10 +18,15 @@ function createState<T>(default_value: T | undefined = undefined) {
 		listeners.push(listener);
 	};
 
+	const removeListener = (listener: (arg: any) => void) => {
+		listeners = listeners.filter(l => l !== listener);
+	};
+
 	return {
 		getState,
 		setState,
-		addListener
+		addListener,
+		removeListener
 	};
 
 }

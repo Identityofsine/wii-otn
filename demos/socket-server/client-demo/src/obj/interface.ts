@@ -43,14 +43,14 @@ export const empty_wii_controller: WIIOTNController = {
 //map of buttons_pressed
 //
 export const key_map: { [key: number]: number } = {
-	97: 1,
-	98: 2,
-	120: 4,
-	121: 8,
-	111: 16,
-	107: 64,
-	108: 32,
-	59: 128,
-	13: 9,
-	127: 10,
+	65: 1,
+	66: 2,
+	88: 4,
+	89: 8,
+	38: 16,
+	40: 64,
+	37: 32,
+	39: 128,
+	8: 256,
+	13: 512,
 };

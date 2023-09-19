@@ -60,6 +60,12 @@ ipcMain.on('udp-connect-request', async (event, arg: SockAddrIn) => {
 	});
 });
 
+ipcMain.on('udp-message', async (event, arg) => {
+	if (socket) {
+		socket.sendMessage(JSON.parse(arg));
+	}
+});
+
 if (process.env.NODE_ENV === 'production') {
 	const sourceMapSupport = require('source-map-support');
 	sourceMapSupport.install();

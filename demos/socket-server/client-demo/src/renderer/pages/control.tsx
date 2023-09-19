@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react";
 import "../styles/pages/control.scss";
 import createState from "../../obj/state";
+import { WIIOTNController, empty_wii_controller, key_map } from "../../obj/interface";
 
 function Control() {
 
 	const [key_state_react, setKeyStateReact] = useState<KeyboardEvent>();
 	const key_state = createState<number>(0);
-
+	const wii_controller = createState<WIIOTNController>(empty_wii_controller);
 
 	useEffect(() => {
 
-		key_state.addListener((key) => {
-			console.log("CUSTOM_STATE:", key);
-		});
+		const key_state_listener = (key: number) => {
+			const mutated_key = key_map[key] || 0;
+			wii_controller.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
+			window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify(wii_controller.getState()));
+		}
+
+		key_state.addListener(key_state_listener);
 
 		//add key listeners
 		const keydown = (e: KeyboardEvent) => {
 			setKeyStateReact(e);
-			key_state.setState(e.keyCode);
+			key_state.setState(old_state => e.keyCode | old_state);
 		}
 		const keyup = (e: KeyboardEvent) => {
 			setKeyStateReact(e);
@@ -29,6 +34,7 @@ function Control() {
 		return () => {
 			window.removeEventListener('keydown', keydown);
 			window.removeEventListener('keyup', keyup);
+			key_state.removeListener(key_state_listener);
 		}
 	}, [])
 
