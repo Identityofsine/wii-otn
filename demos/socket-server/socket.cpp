@@ -77,7 +77,10 @@ void WIIOTN::Socket::start() {
 
 
 		bool is_new = buffer_json.contains("new");
-
+		
+		if(is_new) {
+			is_new = buffer_json["new"].get<bool>();
+		}
 		//add into vector
 		if(clients_size == 0 || is_new)
 			m_connected_clients.push_back(client);
