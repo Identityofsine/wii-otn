@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.ts"
+    "start": "nodemon index.ts",
+		"build": ".\\node_modules\\.bin\\tsc",
+    "dev": "electron .\\dist\\index.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,7 +15,9 @@
     "nodemon": "^3.0.1"
   },
   "devDependencies": {
+    "@types/electron": "^1.6.10",
     "@types/node": "^20.6.2",
-    "electron": "^26.2.1"
+    "electron": "^26.2.1",
+    "typescript": "^5.2.2"
   }
 }
