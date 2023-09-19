@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, webContents } from 'electron';
+import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -34,11 +34,8 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 
 		const msg_obj = JSON.parse(msg.toString());
 
-		console.log(msg_obj);
-
-		event.reply('udp-connect-reply', { "success": msg_obj.success })
-
 		if (msg_obj.type && msg_obj.type === 'connection') {
+			event.reply('udp-connect-reply', { "success": msg_obj.success })
 		}
 
 		//generic sender

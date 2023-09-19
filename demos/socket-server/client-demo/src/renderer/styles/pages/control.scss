@@ -1,0 +1,17 @@
+.control-page {
+	.control-page-box {
+		padding:1rem;
+		width: 60%;
+		color:black;
+		background: #fff;
+		.label{
+			display:flex;
+			font-weight: 600;
+			font-size: .8rem;
+		}
+	}	
+	.sub-label{
+			font-size: .5rem;
+			margin-left: 0rem;
+		}
+}

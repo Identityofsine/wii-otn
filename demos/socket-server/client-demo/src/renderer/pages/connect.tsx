@@ -4,6 +4,7 @@ import { SockAddrIn } from '../App';
 import Button from '../components/button/Button';
 import TextInput from '../components/textinput/TextInput';
 import '../styles/pages/connect.scss';
+import { useNavigate } from 'react-router-dom';
 
 
 type ConnectProps = {
@@ -13,9 +14,12 @@ type ConnectProps = {
 
 function Connect(props: ConnectProps) {
 
+	const navigate = useNavigate();
+
 	useEffect(() => {
-		window.electron.ipcRenderer.on('udp-connect-reply', (event: { success: boolean }) => {
-			console.log("SUCCESS:", event.success);
+		window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
+			if (event.success && event.success == true)
+				navigate('/control');
 		});
 	}, [])
 
