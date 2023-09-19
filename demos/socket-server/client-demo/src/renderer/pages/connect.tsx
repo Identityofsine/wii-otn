@@ -11,10 +11,10 @@ type ConnectProps = {
 	SetSocketInfo: (sock_addr: SockAddrIn) => void;
 }
 
-function Connect(props : ConnectProps) {
+function Connect(props: ConnectProps) {
 
 	useEffect(() => {
-		window.electron.ipcRenderer.on('udp-connect-reply', (event : {success:boolean}) => {
+		window.electron.ipcRenderer.on('udp-connect-reply', (event: { success: boolean }) => {
 			console.log("SUCCESS:", event.success);
 		});
 	}, [])
@@ -29,10 +29,10 @@ function Connect(props : ConnectProps) {
 			<h2 className="h2-label no-margin" >Connect</h2>
 			<div className="input-field center-margin">
 				<div className="flex column input-gap margin-top">
-					<TextInput placeholder="IP Address" input_type="text" defaultValue={props.SocketInfo.ip_address} onChange={(e) => props.SetSocketInfo({...props.SocketInfo, ip_address:e})}/>
-					<TextInput placeholder="Port" input_type="number" rules={{ max_length: 5, max_value: 25555 }} defaultValue={props.SocketInfo.port} onChange={(e ) => props.SetSocketInfo({...props.SocketInfo, port:e as unknown as number})}/>
+					<TextInput placeholder="IP Address" input_type="text" defaultValue={props.SocketInfo.ip_address} onChange={(e) => props.SetSocketInfo({ ...props.SocketInfo, ip_address: e })} />
+					<TextInput placeholder="Port" input_type="number" rules={{ max_length: 5, max_value: 25555 }} defaultValue={props.SocketInfo.port} onChange={(e) => props.SetSocketInfo({ ...props.SocketInfo, port: e as unknown as number })} />
 				</div>
-				<Button text="Connect" className="margin-top" onClick={submit_ipaddress}/>
+				<Button text="Connect" className="margin-top" onClick={submit_ipaddress} />
 			</div>
 		</div>
 	)

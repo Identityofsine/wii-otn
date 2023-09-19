@@ -85,6 +85,7 @@ void WIIOTN::Socket::start() {
 					printf("User Already Connected\n");
 					is_new = false;
 					json message = {
+						{"type", "connection"},
 						{"message", "User Already Connected"},
 						{"id", client.id},
 						{"already_connected", true},
@@ -102,6 +103,7 @@ void WIIOTN::Socket::start() {
 			printf("\nNew client connected\n");
 			//send message to client that their connection was successful
 			json message = {
+				{"type", "connection"},
 				{"message", "Connection Successful"},
 				{"id", client.id},
 				{"already_connected", true},
