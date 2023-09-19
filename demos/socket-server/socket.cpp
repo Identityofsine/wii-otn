@@ -75,16 +75,11 @@ void WIIOTN::Socket::start() {
 		client.address = sender_address;
 		client.is_connected = true;
 
-		//check if buffer_json has "new" key, safely
-		//
-		if(buffer_json.find("new") != buffer_json.end()) {
-			if(buffer_json["new"].get<bool>() == true) {
-				printf("New client connected\n");
-			}
-		}
+
+		bool is_new = buffer_json.contains("new");
 
 		//add into vector
-		if(clients_size == 0)
+		if(clients_size == 0 || is_new)
 			m_connected_clients.push_back(client);
 		else {
 			for(const auto &client : m_connected_clients) {
@@ -93,8 +88,7 @@ void WIIOTN::Socket::start() {
 					const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
 					const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
 					m_virtual_controller.submitInput(controller_report);
-					Sleep(500);	
-					m_virtual_controller.submitInput(m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK));
+
 					break;
 				}
 				else
@@ -144,7 +138,8 @@ const std::vector<WIIOTN_VC::BindedKeys> WIIOTN::handle_sinput(const int input_f
 	if (input_flags & 0b10000000)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::DPAD_RIGHT);
 
-	printf("Keys pressed: %d\n", (int)keys_pressed.size());
+	for (const auto &key : keys_pressed)
+		printf("Key pressed: %d\n", key);
 
 	return keys_pressed;
 }

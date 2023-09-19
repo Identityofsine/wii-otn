@@ -1,6 +1,7 @@
 import WIIOTNMessage from "./interface";
+import Socket from "./socket";
 
-export default function runKeyListener() {
+const runKeyListener = () => {
 	var stdin = process.stdin;
 
 	// without this, we would only get streams once enter is pressed
@@ -59,13 +60,13 @@ export default function runKeyListener() {
 					return 4;
 				case 'y':
 					return 8;
-				case 'ArrowUp':
+				case 'o':
 					return 16;
-				case 'ArrowDown':
+				case 'l':
 					return 32;
-				case 'ArrowLeft':
+				case 'k':
 					return 64;
-				case 'ArrowRight':
+				case ';':
 					return 128;
 				case 'Enter':
 					return 9;
@@ -77,9 +78,18 @@ export default function runKeyListener() {
 		}
 
 		// write the key to stdout all normal like
-		process.stdout.write(key);
 		const binary_number = mapKeyToBit(key.toString());
 		template_message.buttons_pressed = binary_number;
+		console.log(template_message.buttons_pressed);
+		new Socket().sendMessage(template_message);
+		//delay and send blank
+		setTimeout(() => {
+			template_message.buttons_pressed = 0;
+			new Socket().sendMessage(template_message);
+		}, 250);
 	});
 }
 
+export default runKeyListener;
+
+runKeyListener();
