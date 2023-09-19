@@ -80,7 +80,14 @@ void WIIOTN::Socket::start() {
 		
 		if(is_new) {
 			is_new = buffer_json["new"].get<bool>();
+			for(const auto &client : m_connected_clients) {
+				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
+					is_new = false;
+					break;
+				}
+			}
 		}
+
 		//add into vector
 		if(clients_size == 0 || is_new)
 			m_connected_clients.push_back(client);
