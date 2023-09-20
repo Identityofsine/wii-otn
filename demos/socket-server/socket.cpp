@@ -1,5 +1,4 @@
 #include "socket.h"
-#include <nlohmann/json.hpp>
 #include <stdio.h>
 
 WIIOTN::Socket::Socket(const int port, const char* ip, const int protocol) : m_port(port), m_ip(ip), m_protocol(protocol) {
@@ -65,22 +64,23 @@ void WIIOTN::Socket::start() {
 		}
 		//printf("Message:%s", buffer_json.dump().c_str());
 
-		//push into vector
+		/*
 		WIIOTN::ConnectedClient client = {};
 		client.id = clients_size; 
 		client.socket = m_socket;
 		client.address = sender_address;
 		client.is_connected = true;
+		*/
+		const auto client = this->clientFactory(sender_address, clients_size);
 
-
+		/*
 		bool has_new_key = buffer_json.contains("new");
 		bool is_new = false;
 		if(has_new_key) is_new = buffer_json["new"].get<bool>();
+		*/
+		bool is_new = isNew(client, buffer_json);	
 		int client_id = client.id;
 		if(buffer_json.contains("id")) client_id = buffer_json["id"].get<int>();
-
-		//debug data
-		printf("json: %s\n, id:%s", buffer_json.dump().c_str(), std::to_string(client_id).c_str());
 
 		/*
 		if(has_new_key) {
@@ -105,10 +105,13 @@ void WIIOTN::Socket::start() {
 
 		//add into vector
 		if(clients_size == 0 || is_new) {
-			m_connected_clients.push_back(client);
-			m_virtual_controller.connectController();
+			//m_connected_clients.push_back(client);
+			//m_virtual_controller.connectController();
+			this->addClient(client);
 			printf("\nNew client connected, id: %d\n", client.id);
+
 			//send message to client that their connection was successful
+			/*
 			json message = {
 				{"type", "connection"},
 				{"message", "Connection Successful"},
@@ -116,6 +119,9 @@ void WIIOTN::Socket::start() {
 				{"already_connected", true},
 				{"success", true}
 			};
+			*/
+			json message = connectionFactory(client.id, is_new, true);
+
 			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
 		}
 		else {
@@ -184,4 +190,77 @@ const std::vector<WIIOTN_VC::BindedKeys> WIIOTN::handle_sinput(const int input_f
 		printf("Key pressed: %d\n", key);
 
 	return keys_pressed;
+}
+
+WIIOTN::ConnectedClient WIIOTN::Socket::clientFactory(const sockaddr_in address, const int id) {
+	WIIOTN::ConnectedClient client = {};
+	client.id = id;
+	client.socket = m_socket;
+	client.address = address;
+	client.is_connected = true;
+	return client;
+}
+
+void WIIOTN::Socket::addClient(WIIOTN::ConnectedClient client) {
+	m_connected_clients.push_back(client);
+	m_virtual_controller.connectController();
+}
+
+WIIOTN::ConnectedClient WIIOTN::Socket::removeClient(WIIOTN::ConnectedClient client) {
+	for(auto i_client = m_connected_clients.begin(); i_client != m_connected_clients.end(); i_client++) {
+		if(i_client->id == client.id) {
+			m_connected_clients.erase(i_client);
+			break;
+		}
+	}
+	return client;
+}
+
+WIIOTN::ConnectedClient WIIOTN::Socket::removeClient(const int client_id) {
+	for(auto i_client = m_connected_clients.begin(); i_client != m_connected_clients.end(); i_client++) {
+		if(i_client->id == client_id) {
+			m_connected_clients.erase(i_client);
+			break;
+		}
+	}
+	return clientFactory(sockaddr_in(), -1);
+}
+
+int WIIOTN::Socket::sendClient(const WIIOTN::ConnectedClient client, const json message) {
+	return sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&client.address, sizeof(client.address));
+}
+
+int WIIOTN::Socket::pingClient(WIIOTN::ConnectedClient* client) {
+	if(client->ping_count >= 5) {
+		printf("Client %d disconnected\n", client->id);
+		client->is_connected = false;
+		client->ping_count = 0;
+		return -1;
+	}
+	json message = {
+		{"type", "ping"},
+		{"message", "ping"},
+		{"id", client->id},
+		{"success", true}
+	};
+	client->ping_count += 1;
+	return sendClient(*client, message);
+}
+
+bool WIIOTN::Socket::handlePing(WIIOTN::ConnectedClient* client, const json buffer_json) {
+	bool has_ping_key = buffer_json.contains("ping");
+	bool is_ping = false;
+	if(has_ping_key) is_ping = buffer_json["ping"].get<bool>();
+	if(is_ping) {
+		client->ping_count = 0;
+		return true;
+	}
+	return false;
+};
+
+bool isNew(const WIIOTN::ConnectedClient client, const json buffer_json) {
+	bool has_new_key = buffer_json.contains("new");
+	bool is_new = false;
+	if(has_new_key) is_new = buffer_json["new"].get<bool>();
+	return is_new;
 }
