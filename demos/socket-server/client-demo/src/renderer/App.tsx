@@ -30,7 +30,14 @@ export default function App() {
 
 	useEffect(() => {
 		//IPC REPLY HANDLERS
-		window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => { });
+		window.electron.ipcRenderer.on('debug-message', (event: any) => {
+			console.log(event)
+		});
+		window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
+			console.log("[DEBUG -- udp-connect-reply] Event OBJ: ", event);
+			setIsConnected(event?.success);
+			setSockAddr({ ...sock_addr, id: event.id });
+		});
 		window.electron.ipcRenderer.on('udp-disconnect-reply', (event: any) => {
 			setIsConnected(false);
 			setSockAddr({ ...sock_addr, id: 0 });

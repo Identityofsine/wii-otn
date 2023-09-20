@@ -36,10 +36,11 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 
 		const msg_obj = JSON.parse(msg.toString());
 
-		if (!msg_obj.type) return;
+		event.reply('debug-message', `[DEBUG-SOCKET] : MESSAGE RECEIVED: ${msg.toString()}`);
 
 		if (msg_obj.type === 'connection') {
 			event.reply('udp-connect-reply', { "success": msg_obj.success, "id": msg_obj.id })
+			console.log("DEBUG-RESPONSE: ", msg_obj);
 			socket_id = msg_obj.id;
 		}
 
@@ -142,6 +143,7 @@ const createWindow = async () => {
 	});
 
 	mainWindow.loadURL(resolveHtmlPath('index.html'));
+	mainWindow.webContents.openDevTools();
 
 	mainWindow.on('ready-to-show', () => {
 		if (!mainWindow) {

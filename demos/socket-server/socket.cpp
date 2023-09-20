@@ -64,7 +64,6 @@ void WIIOTN::Socket::start() {
 
 		/* Check if connection type is disconnect */
 		if(buffer_json.contains("type") && buffer_json["type"].get<std::string>() == "disconnect") {
-
 			//first check if id is present in clients
 			bool is_present = false;
 			for(ConnectedClient *client : m_connected_clients) {
