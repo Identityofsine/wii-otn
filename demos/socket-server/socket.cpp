@@ -79,15 +79,15 @@ void WIIOTN::Socket::start() {
 		bool has_new_key = buffer_json.contains("new");
 		bool is_new = false;	
 		if(has_new_key) {
-			has_new_key = buffer_json["new"].get<bool>();
-			for(const auto &client : m_connected_clients) {
+			is_new = buffer_json["new"].get<bool>();
+			for(const auto &i_client : m_connected_clients) {
 				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
 					printf("User Already Connected\n");
 					is_new = false;
 					json message = {
 						{"type", "connection"},
 						{"message", "User Already Connected"},
-						{"id", client.id},
+						{"id", i_client.id},
 						{"already_connected", true},
 						{"success", true}
 					};
