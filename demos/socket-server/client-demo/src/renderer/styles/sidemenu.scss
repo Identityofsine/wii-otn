@@ -1,0 +1,30 @@
+.sidemenu {
+	padding-top: .5rem;
+	.label {
+		font-size:.5rem;
+	}
+	.stats {
+		height:80%;
+		padding: .2rem .5rem;
+		background-color: #0c0c0c;
+		margin-top: .2rem;
+		&.stats-gap {
+			gap:.1rem
+		}
+		.title {
+			font-size: .3rem;
+			margin-bottom:.025rem;
+			font-weight: 600;
+		}
+		.stat {
+			.label {
+				font-size: .15rem;
+			}
+			.value {
+				font-size: .15rem;
+				font-weight: bold;
+				padding-left: .1rem;
+			}
+		}
+	}
+}

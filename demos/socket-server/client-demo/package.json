@@ -22,7 +22,7 @@
   "license": "MIT",
   "author": {
     "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
+    "email": "WiiOTNClientboilerplate@gmail.com",
     "url": "https://electron-react-boilerplate.js.org"
   },
   "contributors": [
@@ -173,8 +173,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "WIIOTNClient",
+    "appId": "org.fofx.WIIOTNClient",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [

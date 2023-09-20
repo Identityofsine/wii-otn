@@ -27,6 +27,8 @@ class AppUpdater {
 
 let socket: WIISocket | undefined = undefined;
 
+let socket_id: number = -1;
+
 let mainWindow: BrowserWindow | null = null;
 
 function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMainEvent) {
@@ -38,6 +40,7 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 
 		if (msg_obj.type === 'connection') {
 			event.reply('udp-connect-reply', { "success": msg_obj.success, "id": msg_obj.id })
+			socket_id = msg_obj.id;
 		}
 
 		if (msg_obj.type === 'controller') {
@@ -50,6 +53,7 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 
 		if (msg_obj.type === 'disconnect') {
 			event.reply('udp-disconnect-reply', { "success": msg_obj.success, "id": msg_obj.id });
+			socket_id = msg_obj.id;
 		}
 
 		//generic sender
@@ -152,6 +156,10 @@ const createWindow = async () => {
 
 	mainWindow.on('closed', () => {
 		mainWindow = null;
+		//disconnect from socket
+		if (socket) {
+			socket.sendMessage({ type: 'disconnect', id: socket_id, name: '', new: false });
+		}
 	});
 
 	const menuBuilder = new MenuBuilder(mainWindow);

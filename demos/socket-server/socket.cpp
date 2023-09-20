@@ -64,16 +64,18 @@ void WIIOTN::Socket::start() {
 
 		/* Check if connection type is disconnect */
 		if(buffer_json.contains("type") && buffer_json["type"].get<std::string>() == "disconnect") {
+
+			//first check if id is present in clients
+			bool is_present = false;
+			for(ConnectedClient *client : m_connected_clients) {
+				if(client->id == buffer_json["id"].get<int>()) {
+					is_present = true;
+					break;
+				}
+			}
+			if(!is_present) continue;
 			printf("Client disconnected, id: %d\n", buffer_json["id"].get<int>());
 			this->removeClient(buffer_json["id"].get<int>());
-			//send user they got disconnected 
-			/*
-			 * {
-			 * 		"type": "disconnect",
-			 * 		"id": 0,
-			 * 		"success": "true"
-			 * }
-			 */
 			json message = {
 				{"type", "disconnect"},
 				{"id", buffer_json["id"].get<int>()},
