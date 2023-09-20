@@ -45,6 +45,10 @@ void WIIOTN::Socket::start() {
 		int sender_address_size = sizeof(sender_address);
 		const int clients_size = (int)m_connected_clients.size();
 
+		if(clients_size > 0) {
+			this->pingClients();
+		}
+
 		bytes_received = recvfrom(m_socket, buffer, buffer_length, 0, (struct sockaddr*)&sender_address, &sender_address_size);
 		if(bytes_received == SOCKET_ERROR) {
 			printf("recvfrom failed --- error: %d\n", WSAGetLastError());
@@ -78,31 +82,37 @@ void WIIOTN::Socket::start() {
 			for(ConnectedClient &client : m_connected_clients) {
 				if(client.id == client_id) {
 					printf("\nClient already connected\n");
-					this->handleInput(client, buffer_json);
+					this->handleInput(&client, buffer_json);
 					break;
 				}
-				const int ping_response = this->pingClient(&client);
-				if(ping_response == -1) {
-					this->removeClient(client);
-					printf("\nClient disconnected, id: %d\n", client.id);
-					break;
-				}	
 				printf("ID : %d, IP : %s\n", client.id, inet_ntoa(client.address.sin_addr));
 			}
 		}
 	}
 }
 
-bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient client, const json buffer_json) {
-	this->handlePing(&client);
+
+void WIIOTN::Socket::pingClients() {
+	for(ConnectedClient &client : m_connected_clients) {
+		if(client.is_connected) {
+			if(this->pingClient(&client) == SOCKET_ERROR) {
+				printf("Client disconnected, id: %d\n", client.id);
+				this->removeClient(client.id);
+			}
+		}
+	}
+}
+
+bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient* client, const json buffer_json) {
+	this->handlePing(client);
 	if(buffer_json.contains("buttons_pressed")) {
 		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
 		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
-		m_virtual_controller.submitInput(client.id, controller_report);
-		printf("ID : %d, used controller\n", client.id);
+		m_virtual_controller.submitInput(client->id, controller_report);
+		printf("ID : %d, used controller\n", client->id);
 	}
 	else {
-		m_virtual_controller.submitInput(client.id, m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK));
+		m_virtual_controller.submitInput(client->id, m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK));
 		return false;
 	}
 	return true;
@@ -195,6 +205,8 @@ int WIIOTN::Socket::sendClient(const WIIOTN::ConnectedClient client, const json 
 }
 
 int WIIOTN::Socket::pingClient(WIIOTN::ConnectedClient* client) {
+	//debug
+	printf("Client %d ping count: %d\n", client->id, client->ping_count);
 	if(client->ping_count >= 5) {
 		printf("Client %d disconnected\n", client->id);
 		client->is_connected = false;

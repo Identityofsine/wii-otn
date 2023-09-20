@@ -32,7 +32,8 @@ namespace WIIOTN {
 			int pingClient(WIIOTN::ConnectedClient* client);
 			bool handlePing(WIIOTN::ConnectedClient* client, const json buffer_json);
 			bool handlePing(WIIOTN::ConnectedClient* client);
-			bool handleInput(WIIOTN::ConnectedClient client, const json buffer_json);
+			bool handleInput(WIIOTN::ConnectedClient* client, const json buffer_json);
+			void pingClients();
 
 		public:
 			Socket(const int port, const char* ip, const int protocol);
