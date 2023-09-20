@@ -75,13 +75,18 @@ void WIIOTN::Socket::start() {
 			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
 		}
 		else {
-			for(const auto &client : m_connected_clients) {
+			for(ConnectedClient &client : m_connected_clients) {
 				if(client.id == client_id) {
 					printf("\nClient already connected\n");
 					this->handleInput(client, buffer_json);
-
 					break;
 				}
+				const int ping_response = this->pingClient(&client);
+				if(ping_response == -1) {
+					this->removeClient(client);
+					printf("\nClient disconnected, id: %d\n", client.id);
+					break;
+				}	
 				printf("ID : %d, IP : %s\n", client.id, inet_ntoa(client.address.sin_addr));
 			}
 		}
@@ -89,6 +94,7 @@ void WIIOTN::Socket::start() {
 }
 
 bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient client, const json buffer_json) {
+	this->handlePing(&client);
 	if(buffer_json.contains("buttons_pressed")) {
 		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
 		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
@@ -176,6 +182,8 @@ WIIOTN::ConnectedClient WIIOTN::Socket::removeClient(const int client_id) {
 	for(auto i_client = m_connected_clients.begin(); i_client != m_connected_clients.end(); i_client++) {
 		if(i_client->id == client_id) {
 			m_connected_clients.erase(i_client);
+			//remove controller
+			m_virtual_controller.disconnectController(client_id);
 			break;
 		}
 	}

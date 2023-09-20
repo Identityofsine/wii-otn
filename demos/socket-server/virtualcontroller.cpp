@@ -167,3 +167,23 @@ bool WIIOTN_VC::VirtualController::connectController() {
 	return true;
 
 }
+
+bool WIIOTN_VC::VirtualController::disconnectController(const int controller_id) {
+	//check if controller_id is valid
+	if(controller_id >= m_targets.size())
+		return false;
+
+	//remove controller from vigem client
+	const auto controller_handle = m_targets[controller_id].target;
+	const auto vigem_target_status = vigem_target_remove(m_client, controller_handle);
+	if(!VIGEM_SUCCESS(vigem_target_status))
+		return false;
+
+	//free controller_handle
+	vigem_target_free(controller_handle);
+
+	//remove controller_handle from m_targets
+	m_targets.erase(m_targets.begin() + controller_id);
+
+	return true;
+}
