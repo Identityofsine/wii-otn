@@ -3,11 +3,15 @@ import "../styles/pages/control.scss";
 import createState from "../../obj/state";
 import { WIIOTNController, empty_wii_controller, key_map } from "../../obj/interface";
 
-function Control() {
+type ControlProps = {
+	socket_id: number
+}
+
+function Control(props: ControlProps) {
 
 	const [key_state_react, setKeyStateReact] = useState<KeyboardEvent>();
 	const key_state = createState<Array<number>>([0]);
-	const wii_controller = createState<WIIOTNController>(empty_wii_controller);
+	const wii_controller = createState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id });
 
 	useEffect(() => {
 

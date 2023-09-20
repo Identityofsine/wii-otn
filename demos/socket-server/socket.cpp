@@ -53,7 +53,6 @@ void WIIOTN::Socket::start() {
 			printf("recvfrom failed --- error: %d\n", WSAGetLastError());
 			break;
 		}
-		printf("Receiving data...\n");
 		buffer[bytes_received] = '\0';
 	
 		//parse json
@@ -64,9 +63,7 @@ void WIIOTN::Socket::start() {
 			printf("Error parsing json\n");
 			break;
 		}
-
-		//print buffer_json
-		printf("Message:%s", buffer_json.dump().c_str());
+		//printf("Message:%s", buffer_json.dump().c_str());
 
 		//push into vector
 		WIIOTN::ConnectedClient client = {};
@@ -77,12 +74,20 @@ void WIIOTN::Socket::start() {
 
 
 		bool has_new_key = buffer_json.contains("new");
-		bool is_new = false;	
+		bool is_new = false;
+		if(has_new_key) is_new = buffer_json["new"].get<bool>();
+		int client_id = client.id;
+		if(buffer_json.contains("id")) client_id = buffer_json["id"].get<int>();
+
+		//debug data
+		printf("json: %s\n, id:%s", buffer_json.dump().c_str(), std::to_string(client_id).c_str());
+
+		/*
 		if(has_new_key) {
 			is_new = buffer_json["new"].get<bool>();
 			for(const auto &i_client : m_connected_clients) {
 				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
-					printf("User Already Connected\n");
+					printf("User Already Connected, address : %s");
 					is_new = false;
 					json message = {
 						{"type", "connection"},
@@ -96,11 +101,13 @@ void WIIOTN::Socket::start() {
 				}
 			}
 		}
+		*/
 
 		//add into vector
 		if(clients_size == 0 || is_new) {
 			m_connected_clients.push_back(client);
-			printf("\nNew client connected\n");
+			m_virtual_controller.connectController();
+			printf("\nNew client connected, id: %d\n", client.id);
 			//send message to client that their connection was successful
 			json message = {
 				{"type", "connection"},
@@ -113,21 +120,21 @@ void WIIOTN::Socket::start() {
 		}
 		else {
 			for(const auto &client : m_connected_clients) {
-				if(client.address.sin_addr.s_addr == sender_address.sin_addr.s_addr) {
-					printf("Client already connected\n");
+				if(client.id == client_id) {
+					printf("\nClient already connected\n");
 					if (buffer_json.contains("buttons_pressed")) {
 					  const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
 					  const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
-					  m_virtual_controller.submitInput(controller_report);
+					  m_virtual_controller.submitInput(client.id, controller_report);
+						printf("ID : %d, used controller\n", client.id);
 					}
 					else {
-					  m_virtual_controller.submitInput(m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK));
+					  m_virtual_controller.submitInput(client.id, m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK));
 					}
 
 					break;
 				}
-				else
-					m_connected_clients.push_back(client);
+				printf("ID : %d, IP : %s\n", client.id, inet_ntoa(client.address.sin_addr));
 			}
 		}
 	}

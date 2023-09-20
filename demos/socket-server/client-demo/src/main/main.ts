@@ -35,7 +35,7 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 		const msg_obj = JSON.parse(msg.toString());
 
 		if (msg_obj.type && msg_obj.type === 'connection') {
-			event.reply('udp-connect-reply', { "success": msg_obj.success })
+			event.reply('udp-connect-reply', { "success": msg_obj.success, "id": msg_obj.id })
 		}
 
 		//generic sender

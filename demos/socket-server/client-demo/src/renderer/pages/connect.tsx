@@ -18,8 +18,10 @@ function Connect(props: ConnectProps) {
 
 	useEffect(() => {
 		window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
-			if (event.success && event.success == true)
+			if (event.success && event.success == true) {
 				navigate('/control');
+				props.SetSocketInfo({ ...props.SocketInfo, id: event.id })
+			}
 		});
 	}, [])
 

@@ -11,6 +11,7 @@ export interface WIIOTNPing {
 
 
 export interface WIIOTNController extends WIIOTNMessage {
+	id: number,
 	buttons_pressed: number, //should be binary encoded 01101110, each bit represents a buttons_pressed
 	accelerometer_x: number,
 	accelerometer_y: number,
@@ -25,6 +26,7 @@ export interface WIIOTNController extends WIIOTNMessage {
 }
 
 export const empty_wii_controller: WIIOTNController = {
+	id: 0,
 	name: '',
 	new: false,
 	buttons_pressed: 0,
