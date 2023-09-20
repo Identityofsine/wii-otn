@@ -61,28 +61,35 @@ void WIIOTN::Socket::start() {
 			printf("Error parsing json\n");
 			break;
 		}
-		const auto client = this->clientFactory(sender_address, clients_size);
+		WIIOTN::ConnectedClient client;
+
+		printf("\nRECV_JSON:%s\n", buffer_json.dump().c_str());
 
 		bool is_new = isNew(buffer_json);	
-		int client_id = client.id;
-		if(buffer_json.contains("id")) client_id = buffer_json["id"].get<int>();
+		int client_id = clients_size;
+		if(buffer_json.contains("id")) {
+		  client_id = buffer_json["id"].get<int>();
+		  client = this->clientFactory(sender_address, client_id);
+		} 
+		else 
+		  auto client = this->clientFactory(sender_address, clients_size);
 
 		if(clients_size == 0 || is_new) {
 			//m_connected_clients.push_back(client);
 			//m_virtual_controller.connectController();
-			this->addClient(client);
+			this->addClient(&client);
 			printf("\nNew client connected, id: %d\n", client.id);
 			json message = connectionFactory(client.id, is_new, true);
 			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
 		}
 		else {
-			for(ConnectedClient &client : m_connected_clients) {
-				if(client.id == client_id) {
-					printf("\nClient already connected\n");
-					this->handleInput(&client, buffer_json);
+			for(ConnectedClient *client : m_connected_clients) {
+				if(client->id == client_id) {
+					printf("\nClient already connected, id: %d\n", client->id);
+					this->handleInput(client, buffer_json);
 					break;
 				}
-				printf("ID : %d, IP : %s\n", client.id, inet_ntoa(client.address.sin_addr));
+				printf("ID : %d, IP : %s\n", client->id, inet_ntoa(client->address.sin_addr));
 			}
 		}
 	}
@@ -90,11 +97,11 @@ void WIIOTN::Socket::start() {
 
 
 void WIIOTN::Socket::pingClients() {
-	for(ConnectedClient &client : m_connected_clients) {
-		if(client.is_connected) {
-			if(this->pingClient(&client) == SOCKET_ERROR) {
-				printf("Client disconnected, id: %d\n", client.id);
-				this->removeClient(client.id);
+	for(ConnectedClient *client : m_connected_clients) {
+		if(client->is_connected) {
+			if(this->pingClient(client) == SOCKET_ERROR) {
+				printf("Client disconnected, id: %d\n", client->id);
+				this->removeClient(client->id);
 			}
 		}
 	}
@@ -175,32 +182,37 @@ WIIOTN::ConnectedClient WIIOTN::Socket::clientFactory(const sockaddr_in address,
 	return client;
 }
 
-void WIIOTN::Socket::addClient(WIIOTN::ConnectedClient client) {
+void WIIOTN::Socket::addClient(WIIOTN::ConnectedClient* client) {
+	client->id = (int)m_connected_clients.size();
 	m_connected_clients.push_back(client);
 	m_virtual_controller.connectController();
 }
 
-WIIOTN::ConnectedClient WIIOTN::Socket::removeClient(WIIOTN::ConnectedClient client) {
+WIIOTN::ConnectedClient* WIIOTN::Socket::removeClient(WIIOTN::ConnectedClient client) {
+	WIIOTN::ConnectedClient* removed_client = nullptr;
 	for(auto i_client = m_connected_clients.begin(); i_client != m_connected_clients.end(); i_client++) {
-		if(i_client->id == client.id) {
+		removed_client = m_connected_clients[i_client - m_connected_clients.begin()];
+		if(removed_client->id == client.id) {
 			m_connected_clients.erase(i_client);
 			break;
 		}
 	}
-	return client;
+	return removed_client;
 }
 
-WIIOTN::ConnectedClient WIIOTN::Socket::removeClient(const int client_id) {
+WIIOTN::ConnectedClient* WIIOTN::Socket::removeClient(const int client_id) {
+	WIIOTN::ConnectedClient* removed_client = nullptr;
 	for(auto i_client = m_connected_clients.begin(); i_client != m_connected_clients.end(); i_client++) {
-		if(i_client->id == client_id) {
-			m_connected_clients[i_client - m_connected_clients.begin()].is_connected = false;
+		removed_client = m_connected_clients[i_client - m_connected_clients.begin()];
+		if(removed_client->id == client_id) {
+			m_connected_clients[i_client - m_connected_clients.begin()]->is_connected = false;
 			m_connected_clients.erase(i_client);
 			//remove controller
 			m_virtual_controller.disconnectController(client_id);
 			break;
 		}
 	}
-	return clientFactory(sockaddr_in(), -1);
+	return removed_client;
 }
 
 int WIIOTN::Socket::sendClient(const WIIOTN::ConnectedClient client, const json message) {

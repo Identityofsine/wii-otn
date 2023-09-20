@@ -23,11 +23,11 @@ namespace WIIOTN {
 			SOCKADDR_IN m_addr_settings;
 			const int m_protocol;
 			WIIOTN_VC::VirtualController m_virtual_controller;
-			std::vector<ConnectedClient> m_connected_clients;	
+			std::vector<ConnectedClient*> m_connected_clients;	
 			WIIOTN::ConnectedClient clientFactory(sockaddr_in sender_address, int client_size);	
-			void addClient(WIIOTN::ConnectedClient client); 
-			ConnectedClient removeClient(WIIOTN::ConnectedClient client);
-			ConnectedClient removeClient(const int client_id);
+			void addClient(WIIOTN::ConnectedClient* client); 
+			ConnectedClient* removeClient(WIIOTN::ConnectedClient client);
+			ConnectedClient* removeClient(const int client_id);
 			int sendClient(WIIOTN::ConnectedClient client, const json message); 
 			int pingClient(WIIOTN::ConnectedClient* client);
 			bool handlePing(WIIOTN::ConnectedClient* client, const json buffer_json);
