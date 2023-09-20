@@ -45,9 +45,6 @@ void WIIOTN::Socket::start() {
 		int sender_address_size = sizeof(sender_address);
 		const int clients_size = (int)m_connected_clients.size();
 
-		if(clients_size > 0) {
-			this->pingClients();
-		}
 
 		bytes_received = recvfrom(m_socket, buffer, buffer_length, 0, (struct sockaddr*)&sender_address, &sender_address_size);
 		if(bytes_received == SOCKET_ERROR) {
@@ -108,7 +105,12 @@ bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient* client, const json buf
 	if(buffer_json.contains("buttons_pressed")) {
 		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
 		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
-		m_virtual_controller.submitInput(client->id, controller_report);
+		try{
+			m_virtual_controller.submitInput(client->id, controller_report);
+		} catch (const std::runtime_error& e) {
+			printf("Error submitting input: %s\n", e.what());
+			return false;
+		}
 		printf("ID : %d, used controller\n", client->id);
 	}
 	else {
@@ -191,6 +193,7 @@ WIIOTN::ConnectedClient WIIOTN::Socket::removeClient(WIIOTN::ConnectedClient cli
 WIIOTN::ConnectedClient WIIOTN::Socket::removeClient(const int client_id) {
 	for(auto i_client = m_connected_clients.begin(); i_client != m_connected_clients.end(); i_client++) {
 		if(i_client->id == client_id) {
+			m_connected_clients[i_client - m_connected_clients.begin()].is_connected = false;
 			m_connected_clients.erase(i_client);
 			//remove controller
 			m_virtual_controller.disconnectController(client_id);

@@ -137,6 +137,10 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(BindedKe
 
 
 VIGEM_ERROR WIIOTN_VC::VirtualController::submitInput(const int controller_id, const XUSB_REPORT controller_report) {
+
+	if(controller_id >= m_targets.size())
+		throw std::runtime_error("Invalid controller_id!");
+
 	const auto controller_handle = m_targets[controller_id].target;
 	//check if controller_handle is valid
 	if(!controller_handle)
@@ -183,7 +187,11 @@ bool WIIOTN_VC::VirtualController::disconnectController(const int controller_id)
 	vigem_target_free(controller_handle);
 
 	//remove controller_handle from m_targets
-	m_targets.erase(m_targets.begin() + controller_id);
-
+	for(auto it = m_targets.begin(); it != m_targets.end(); it++) {
+		if(it->id == controller_id) {
+			m_targets.erase(it);
+			break;
+		}
+	}
 	return true;
 }
