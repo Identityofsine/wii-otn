@@ -49,7 +49,7 @@ function Control(props: ControlProps) {
 
 
 	return (
-		<div className="control-page inter full-width full-height flex center-flex column">
+		<div className="control-page inter fill-container fill-height flex center-flex column">
 			<div className="control-page-box center-text">
 				<span className="label select-none">Focus On This Window to Control Instance</span>
 			</div>

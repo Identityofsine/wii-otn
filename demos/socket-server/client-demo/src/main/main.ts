@@ -34,8 +34,22 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 
 		const msg_obj = JSON.parse(msg.toString());
 
-		if (msg_obj.type && msg_obj.type === 'connection') {
+		if (!msg_obj.type) return;
+
+		if (msg_obj.type === 'connection') {
 			event.reply('udp-connect-reply', { "success": msg_obj.success, "id": msg_obj.id })
+		}
+
+		if (msg_obj.type === 'controller') {
+			event.reply('udp-message', {});
+		}
+
+		if (msg_obj.type === 'ping') {
+			event.reply('udp-message', {});
+		}
+
+		if (msg_obj.type === 'disconnect') {
+			event.reply('udp-disconnect-reply', { "success": msg_obj.success, "id": msg_obj.id });
 		}
 
 		//generic sender
@@ -65,6 +79,13 @@ ipcMain.on('udp-message', async (event, arg) => {
 		socket.sendMessage(JSON.parse(arg));
 	}
 });
+
+ipcMain.on('udp-disconnect-request', async (event, arg) => {
+	if (socket) {
+		socket.sendMessage(JSON.parse(arg));
+	}
+});
+
 
 if (process.env.NODE_ENV === 'production') {
 	const sourceMapSupport = require('source-map-support');

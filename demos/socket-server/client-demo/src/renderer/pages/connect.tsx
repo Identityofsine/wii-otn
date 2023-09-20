@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
-import { useEffect } from 'react';
-import { SockAddrIn } from '../App';
+import { useContext, useEffect } from 'react';
+import { ConnectionContext, SockAddrIn } from '../App';
 import Button from '../components/button/Button';
 import TextInput from '../components/textinput/TextInput';
 import '../styles/pages/connect.scss';
 import { useNavigate } from 'react-router-dom';
+import { sendConnectClause } from '../socket_functions';
 
 
 type ConnectProps = {
@@ -15,10 +16,12 @@ type ConnectProps = {
 function Connect(props: ConnectProps) {
 
 	const navigate = useNavigate();
+	const connection_context = useContext(ConnectionContext);
 
 	useEffect(() => {
 		window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
 			if (event.success && event.success == true) {
+				connection_context.setState(true);
 				navigate('/control');
 				props.SetSocketInfo({ ...props.SocketInfo, id: event.id })
 			}
@@ -26,8 +29,7 @@ function Connect(props: ConnectProps) {
 	}, [])
 
 	const submit_ipaddress = () => {
-		window.electron.ipcRenderer.sendMessage('udp-connect-request', props.SocketInfo);
-
+		sendConnectClause(props.SocketInfo);
 	}
 
 	return (

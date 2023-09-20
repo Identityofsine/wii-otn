@@ -1,0 +1,18 @@
+.page-container {
+ .top {
+		height: 90%;
+		.sidebar{
+			flex:.4;
+			border-right: 4px solid white;
+		}
+		.content{
+			padding: 0 1rem;
+			flex:1;
+		}
+	}	
+	.bottom {
+		flex:1;
+		border-top: 4px solid white;
+
+	}
+}

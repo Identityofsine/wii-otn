@@ -61,6 +61,28 @@ void WIIOTN::Socket::start() {
 			printf("Error parsing json\n");
 			break;
 		}
+
+		/* Check if connection type is disconnect */
+		if(buffer_json.contains("type") && buffer_json["type"].get<std::string>() == "disconnect") {
+			printf("Client disconnected, id: %d\n", buffer_json["id"].get<int>());
+			this->removeClient(buffer_json["id"].get<int>());
+			//send user they got disconnected 
+			/*
+			 * {
+			 * 		"type": "disconnect",
+			 * 		"id": 0,
+			 * 		"success": "true"
+			 * }
+			 */
+			json message = {
+				{"type", "disconnect"},
+				{"id", buffer_json["id"].get<int>()},
+				{"success", true}
+			};
+			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
+			continue;
+		}
+
 		WIIOTN::ConnectedClient client;
 
 		printf("\nRECV_JSON:%s\n", buffer_json.dump().c_str());
@@ -72,7 +94,7 @@ void WIIOTN::Socket::start() {
 		  client = this->clientFactory(sender_address, client_id);
 		} 
 		else 
-		  auto client = this->clientFactory(sender_address, clients_size);
+		  client = this->clientFactory(sender_address, clients_size);
 
 		if(clients_size == 0 || is_new) {
 			//m_connected_clients.push_back(client);

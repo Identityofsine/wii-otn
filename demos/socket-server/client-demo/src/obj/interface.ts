@@ -1,16 +1,21 @@
 
 export default interface WIIOTNMessage {
+	type: 'connection' | 'controller' | 'ping' | 'disconnect',
 	name: string,
 	new: boolean,
+	id: number,
 }
 
 export interface WIIOTNPing {
+	type: 'ping',
 	name: string,
 	ping: boolean,
+	id: number,
 }
 
 
 export interface WIIOTNController extends WIIOTNMessage {
+	type: 'controller',
 	id: number,
 	buttons_pressed: number, //should be binary encoded 01101110, each bit represents a buttons_pressed
 	accelerometer_x: number,
@@ -26,6 +31,7 @@ export interface WIIOTNController extends WIIOTNMessage {
 }
 
 export const empty_wii_controller: WIIOTNController = {
+	type: 'controller',
 	id: 0,
 	name: '',
 	new: false,
