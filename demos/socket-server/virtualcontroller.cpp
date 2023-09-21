@@ -81,6 +81,21 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vec
 			case BACK:
 				controller_report.wButtons |= XUSB_GAMEPAD_BACK;
 				break;
+			case LB:
+				controller_report.wButtons |= XUSB_GAMEPAD_LEFT_SHOULDER;
+				break;
+			case RB:
+				controller_report.wButtons |= XUSB_GAMEPAD_RIGHT_SHOULDER;
+				break;
+			case LTD:
+				controller_report.wButtons |= XUSB_GAMEPAD_LEFT_THUMB;
+				break;
+			case RTD:
+				controller_report.wButtons |= XUSB_GAMEPAD_RIGHT_THUMB;
+				break;
+			case HOME:
+				controller_report.wButtons |= XUSB_GAMEPAD_GUIDE;
+				break;
 			default:
 				break;
 		}

@@ -166,29 +166,51 @@ const std::vector<WIIOTN_VC::BindedKeys> WIIOTN::handle_sinput(const int input_f
 	* 00001010 - MINUS
 	*/
 	std::vector<WIIOTN_VC::BindedKeys> keys_pressed;
-	if (input_flags & 0b00000001)
+	if (input_flags & 0x0001)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::A);
 
-	if (input_flags & 0b00000010)
+	if (input_flags & 0x0002)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::B);
 
-	if (input_flags & 0b00000100)
+	if (input_flags & 0x0004)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::X);
 
-	if (input_flags & 0b00001000)
+	if (input_flags & 0x0008)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::Y);
 
-	if (input_flags & 0b00010000)
+	if (input_flags & 0x0010)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::DPAD_UP);
 
-	if (input_flags & 0b00100000)
+	if (input_flags & 0x0020)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::DPAD_DOWN);
 
-	if (input_flags & 0b01000000)
+	if (input_flags & 0x0040)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::DPAD_LEFT);
 
-	if (input_flags & 0b10000000)
+	if (input_flags & 0x0080)
     keys_pressed.push_back(WIIOTN_VC::BindedKeys::DPAD_RIGHT);
+
+	if (input_flags & 0x0100)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::START);
+
+	if (input_flags & 0x0200)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::BACK);
+
+	if (input_flags & 0x0400)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::LB);
+
+	if (input_flags & 0x0800)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::RB);
+
+	if (input_flags & 0x1000)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::LTD);
+
+	if (input_flags & 0x2000)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::RTD);
+
+	if (input_flags & 0x4000)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::HOME);
+		
 
 	for (const auto &key : keys_pressed)
 		printf("Key pressed: %d\n", key);

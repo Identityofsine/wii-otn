@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { ConnectionContext, SocketContext } from '../../App';
 import '../../styles/sidemenu.scss';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 function SideMenu() {
@@ -9,9 +9,10 @@ function SideMenu() {
 	const socket_context = useContext(SocketContext);
 	const [left_page, setLeftPage] = useState<{ left_page: boolean, last_page: string }>({ left_page: false, last_page: "" });
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const switchPage = (page: string) => {
-		const current_page = window.location.pathname;
+		const current_page = location.pathname === "/" ? "/index.html" : location.pathname;
 		setLeftPage((_old_state) => { return { left_page: true, last_page: current_page } });
 		navigate(page);
 	};

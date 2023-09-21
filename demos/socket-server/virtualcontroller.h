@@ -9,13 +9,18 @@ namespace WIIOTN_VC {
 		B,
 		X,
 		Y,
-		DPAD_UP = VK_UP,
-		DPAD_DOWN = VK_DOWN,
-		DPAD_LEFT = VK_LEFT,
-		DPAD_RIGHT = VK_RIGHT,
-		START = VK_RETURN,
-		BACK = VK_BACK,
-		BREAK = VK_END 
+		DPAD_UP,
+		DPAD_DOWN,
+		DPAD_LEFT, 
+		DPAD_RIGHT,
+		START,
+		BACK,
+		LB,
+		RB,
+		LTD,
+		RTD,
+		HOME,
+		BREAK, 
 	};
 
 
