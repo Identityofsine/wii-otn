@@ -38,10 +38,12 @@ function useSettings() {
 
 	return {
 		get: (key: keyof WIIOTNSettings) => {
+			console.log('[DEBUG]: GETTING SETTINGS: ', settings[key]);
 			return settings[key];
 		},
 		set: (key: keyof WIIOTNSettings, value: WIIOTNSettings[keyof WIIOTNSettings]) => {
 			settings[key] = value;
+			console.log('[DEBUG]: SETTING SETTINGS: ', settings[key]);
 			store_api.set("settings", settings);
 		}
 	}

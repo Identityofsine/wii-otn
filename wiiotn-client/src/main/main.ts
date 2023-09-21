@@ -100,6 +100,15 @@ ipcMain.on('fetch-settings', async (event, arg) => {
 	}
 });
 
+ipcMain.on('store-settings', async (event, arg) => {
+	const arg_mutated = JSON.parse(arg);
+	console.log('[DEBUG] : STORE SETTINGS: ', arg_mutated);
+	if (arg_mutated.type === 'controller') {
+		settings.set('controller_settings', arg_mutated.settings);
+		event.reply('store-settings-reply', { type: arg_mutated.type, success: true });
+	}
+});
+
 
 if (process.env.NODE_ENV === 'production') {
 	const sourceMapSupport = require('source-map-support');

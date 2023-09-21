@@ -3,7 +3,15 @@
 		width: 50%;
 		.option-label{
 			text-transform: capitalize;
-			
+		}
+		.black{
+			color: black;
+		}
+		.button-font {
+			font-size: 2rem !important;
+		}
+		.button {
+			width: 80%;
 		}
 	}
 	.right {
@@ -20,22 +28,6 @@
 			}
 			.key-input {
 				padding: 0 .2rem;
-				&:input{
-					border: 2px solid black;
-					border-radius: 0;
-					&:focus{
-						border-radius: 0;
-						outline: 1px solid black;
-					}
-					&:active{
-						border-radius: 0;
-						outline: 1px solid black;
-					}
-					//disable selecting of text
-					&::selection {
-						background: transparent;
-					}
-				}
 				.key-label {
 					font-size: .25rem;
 				}
@@ -43,8 +35,25 @@
 					width: .8rem;	
 					font-size: .6rem;
 					text-align: center;
+					border: 2px solid black;
+					border-radius: 0;
 					padding: .025rem;
-				}
+					$color : transparent;
+					&:focus{
+						border-radius: 0;
+						outline: 3px solid white;
+						user-select: none;
+						&::selection {
+							background: $color;
+						}
+					}
+					&:active{
+						border-radius: 0;
+						outline: 3px solid white;
+						&::selection {
+							background: $color;
+						}
+					}								}
 			}
 		}
 	}

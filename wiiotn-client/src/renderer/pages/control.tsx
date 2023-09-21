@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/pages/control.scss";
 import createState from "../../obj/state";
-import { WIIOTNController, empty_wii_controller, key_map } from "../../obj/interface";
+import { WIIOTNController, empty_wii_controller, key_map, mapSettingsToController } from "../../obj/interface";
 
 type ControlProps = {
 	socket_id: number

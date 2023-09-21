@@ -75,3 +75,15 @@ export const key_map: { [key: number]: number } = {
 	8: 256,
 	13: 512,
 };
+
+
+//basically recreate key_map 
+export const mapSettingsToController = (settings: WIIOTNController): { [key: number]: number } => {
+	const map: { [key: number]: number } = {};
+	for (const key in settings) {
+		if (key in key_map) {
+			map[key_map[key]] = settings[key];
+		}
+	}
+	return map;
+}

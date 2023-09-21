@@ -5,6 +5,9 @@ import Connect from './pages/connect';
 import Control from './pages/control';
 import PageContainer from './components/page-container/pagecontainer';
 import Configure from './pages/configure';
+import { ControllerSettings, WIIOTNSettings } from '../storage';
+import { WIIOTNController } from '../obj/interface';
+import { static_settings } from '../storage/exports';
 
 export type SockAddrIn = {
 	ip_address: string;
@@ -19,6 +22,7 @@ export interface StateModifier<T> {
 
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
+export const SettingsContext = createContext<StateModifier<ControllerSettings>>({ state: static_settings['controller_settings'] as ControllerSettings, setState: () => { } });
 
 export default function App() {
 
@@ -28,6 +32,8 @@ export default function App() {
 		id: 0,
 	});
 	const [is_connected, setIsConnected] = useState<boolean>(false);
+
+	const [user_settings, setUserSettings] = useState<ControllerSettings>(static_settings['controller_settings'] as ControllerSettings);
 
 	useEffect(() => {
 		//IPC REPLY HANDLERS
@@ -43,28 +49,39 @@ export default function App() {
 			setIsConnected(false);
 			setSockAddr({ ...sock_addr, id: 0 });
 		});
+		//request settings
+		window.electron.ipcRenderer.sendMessage('fetch-settings', 'controller');
+		const settings_listener = window.electron.ipcRenderer.on('fetch-settings-reply', (event: any) => {
+			const settings_response: { type: 'controller', settings: any } = event as any;
+			if (settings_response.type === 'controller') {
+				setUserSettings(settings_response!.settings as ControllerSettings);
+			}
+		});
 
 		return () => {
 			//REMOVE IPC LISTENERS
 			debug_listener();
 			connect_listener();
 			disconnect_listener();
+			settings_listener();
 		}
 	}, [])
 
 	return (
 		<Router>
-			<SocketContext.Provider value={{ state: sock_addr, setState: setSockAddr }}>
-				<ConnectionContext.Provider value={{ state: is_connected, setState: setIsConnected }}>
-					<PageContainer>
-						<Routes>
-							<Route path="/" element={<Connect SocketInfo={sock_addr} SetSocketInfo={setSockAddr} />} />
-							<Route path="/control" element={<Control socket_id={sock_addr.id} />} />
-							<Route path="/configure" element={<Configure />} />
-						</Routes>
-					</PageContainer>
-				</ConnectionContext.Provider>
-			</SocketContext.Provider>
+			<SettingsContext.Provider value={{ state: user_settings, setState: setUserSettings }}>
+				<SocketContext.Provider value={{ state: sock_addr, setState: setSockAddr }}>
+					<ConnectionContext.Provider value={{ state: is_connected, setState: setIsConnected }}>
+						<PageContainer>
+							<Routes>
+								<Route path="/" element={<Connect SocketInfo={sock_addr} SetSocketInfo={setSockAddr} />} />
+								<Route path="/control" element={<Control socket_id={sock_addr.id} />} />
+								<Route path="/configure" element={<Configure />} />
+							</Routes>
+						</PageContainer>
+					</ConnectionContext.Provider>
+				</SocketContext.Provider>
+			</SettingsContext.Provider>
 		</Router>
 	);
 }

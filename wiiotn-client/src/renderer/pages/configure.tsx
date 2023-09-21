@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import '../styles/pages/configure.scss'
 import { ControllerSettings, WIIOTNSettingsKey } from "../../storage";
 import { button_map } from "../../storage/exports";
+import Button from "../components/button/Button";
+import { SettingsContext } from "../App";
 
 
 interface KeyInputProp<T extends ControllerSettings> {
@@ -22,13 +24,13 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 		props.onKeyUpdate(props.key_identifier, key.code);
 	}, [key])
 
-
+	//treat key_code as uppercase
 	const change_current_key = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.value.length > 1) {
-			const key_code = event.target.value.charCodeAt(event.target.value.length - 1);
-			return setKey({ key: event.target.value.at(event.target.value.length - 1) as string, code: key_code });
+			const key_code = event.target.value.toUpperCase().charCodeAt(event.target.value.length - 1);
+			return setKey({ key: (event.target.value.at(event.target.value.length - 1) as string).toUpperCase(), code: key_code });
 		} else {
-			return setKey({ key: event.target.value, code: event.target.value.charCodeAt(0) });
+			return setKey({ key: event.target.value.toUpperCase(), code: event.target.value.toUpperCase().charCodeAt(0) });
 		}
 	}
 
@@ -63,8 +65,6 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 			<input
 				className="key-input-field inter select-none"
 				type="text"
-				draggable={false}
-				readOnly={true}
 				value={key.key}
 				onChange={change_current_key}
 				onSelect={select_all_text}
@@ -79,6 +79,7 @@ function Configure() {
 
 	const [settings, setSettings] = useState<ControllerSettings>();
 	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>({});
+	const global_settings = useContext(SettingsContext);
 
 	useEffect(() => {
 		//call settings from ipc
@@ -87,6 +88,11 @@ function Configure() {
 			const settings_response: { type: 'controller', settings: any } = event as any;
 			if (settings_response.type === 'controller')
 				setSettings(settings_response!.settings as ControllerSettings);
+		});
+		window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
+			if (event.success) {
+				global_settings.setState({ ...global_settings.state, key_map: key_map });
+			}
 		});
 		return () => {
 			//remove listener
@@ -98,6 +104,14 @@ function Configure() {
 		if (settings)
 			setKeyMap(settings.key_map);
 	}, [settings])
+
+
+	const save_settings = () => {
+		if (settings) {
+			const new_settings = { ...settings, key_map: key_map };
+			window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
+		}
+	}
 
 
 	const update_key_map = (key: keyof ControllerSettings['key_map'], value: number) => {
@@ -122,8 +136,12 @@ function Configure() {
 		<div className="configure-page flex space-between fill-width relative">
 			{settings ?
 				<>
-					<div className="left">
+					<div className="left flex column align-center">
 						<span className="option-label">{settings?.controller}</span>
+						<div className="flex column margin-top-auto align-center relative fill-container">
+							<span className="inter status">Key Map</span>
+							<Button className="black button" text="SAVE" onClick={() => save_settings()} />
+						</div>
 					</div>
 					<div className="right input-field">
 						<h2 className="inter title center-text">Configure</h2>
