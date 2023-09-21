@@ -38,8 +38,7 @@ function KeyboardSettings(props: KeyboardSettingsProps) {
 
 	return (
 		<>
-			<h2 className="inter title center-text">Configure</h2>
-			<div className="flex column input-field-gap">
+			<div className="flex column input-field-gap input-field-margin">
 				<div className="input-group fill-width">
 					{grab_key_map(0, 18).map((key: string, _index: number) => (
 						<KeyInput
@@ -83,8 +82,8 @@ function Configure() {
 	}, [])
 
 	useEffect(() => {
-		if (settings)
-			setStatus('Settings Unsaved!');
+		if (settings && settings === global_settings.state)
+			setStatus('')
 	}, [settings])
 
 

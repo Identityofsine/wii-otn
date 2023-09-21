@@ -1,5 +1,6 @@
 .configure-page {
 	.top {
+		padding-top: .2rem;
 		.option-label{
 			text-transform: capitalize;
 		}
@@ -29,6 +30,9 @@
 			}
 			.input-field-gap{
 				gap:.5rem;
+			}
+			.input-field-margin {
+				margin-top:1rem;
 			}
 			.input-group{
 				display: flex;
