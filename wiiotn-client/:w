@@ -39,7 +39,7 @@
 				padding: 0 .2rem;
 				position: relative;
 				gap:.1rem;
-				row-gap:.1rem;
+				row-gap:5rem;
 				.key-label {
 					font-size: .25rem;
 					text-align: center;

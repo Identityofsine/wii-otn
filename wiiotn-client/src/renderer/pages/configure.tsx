@@ -40,29 +40,8 @@ function KeyboardSettings(props: KeyboardSettingsProps) {
 		<>
 			<h2 className="inter title center-text">Configure</h2>
 			<div className="flex column input-field-gap">
-				<div className="input-group ">
-					{grab_key_map(0, 6).map((key: string, _index: number) => (
-						<KeyInput
-							key={key}
-							key_identifier={key as unknown as WIIOTNSettingsKey}
-							default_value={grab_default_key(key as unknown as number)}
-							onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
-						/>
-					))}
-
-				</div>
-				<div className="input-group">
-					{grab_key_map(6, 12).map((key: string, _index: number) => (
-						<KeyInput
-							key={key}
-							key_identifier={key as unknown as WIIOTNSettingsKey}
-							default_value={grab_default_key(key as unknown as number)}
-							onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
-						/>
-					))}
-				</div>
-				<div className="input-group">
-					{grab_key_map(12, 18).map((key: string, _index: number) => (
+				<div className="input-group fill-width">
+					{grab_key_map(0, 18).map((key: string, _index: number) => (
 						<KeyInput
 							key={key}
 							key_identifier={key as unknown as WIIOTNSettingsKey}
@@ -121,8 +100,8 @@ function Configure() {
 		<div className="configure-page flex column space-between fill-width relative">
 			{settings ?
 				<>
-					<div className="top flex column align-center">
-						<span className="option-label absolute">{settings?.controller}</span>
+					<div className="top flex space-between align-center fill-width">
+						<span className="option-label ">{settings?.controller}</span>
 						<div className="flex column margin-top-auto align-center relative fill-container">
 							<span className="inter status">{status}</span>
 							<Button className="black button" text="SAVE" onClick={() => save_settings()} />

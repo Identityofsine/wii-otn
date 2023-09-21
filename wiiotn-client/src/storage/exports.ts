@@ -35,9 +35,9 @@ export const button_map: { [key in WIIOTNSettingsKey | number]: string } = {
 	0x0080: "RIGHT",
 	0x0100: "START",
 	0x0200: "SELECT",
-	0x0400: "LSHOULDER",
-	0x0800: "RSHOULDER",
-	0x1000: "LSTICKDOWN",
-	0x2000: "RSTICKDOWN",
+	0x0400: "L SHOULDER",
+	0x0800: "R SHOULDER",
+	0x1000: "L STICKDOWN",
+	0x2000: "R STICKDOWN",
 	0x4000: "HOME"
 }
