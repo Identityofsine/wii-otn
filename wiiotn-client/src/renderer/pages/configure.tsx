@@ -32,13 +32,44 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 		}
 	}
 
+	const select_all_text = (event: React.FocusEvent<HTMLInputElement>) => {
+		event.target.select();
+	}
+
+	const handle_arrow_key_press = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		const key = event.key;
+		if (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' || key === 'ArrowDown') {
+			event.preventDefault();
+			const unicode_arrow_map: { [key: string]: string } = {
+				'ArrowUp': '↑',
+				'ArrowRight': '→',
+				'ArrowDown': '↓',
+				'ArrowLeft': '←'
+			}
+			if (unicode_arrow_map[key])
+				setKey({ key: unicode_arrow_map[key], code: event.keyCode });
+			return;
+		}
+		else {
+			return;
+		}
+	}
+
+
+
 	return (
-		<div className="key-input flex">
-			<span className="key-label">{props.key_identifier ? button_map[props.key_identifier as number] : 'N/A'}</span>
+		<div className="key-input flex column justify-center align-center">
+			<span className="key-label inter">{props.key_identifier ? button_map[props.key_identifier as number] : 'N/A'}</span>
 			<input
+				className="key-input-field inter select-none"
 				type="text"
+				draggable={false}
+				readOnly={true}
 				value={key.key}
-				onChange={change_current_key} />
+				onChange={change_current_key}
+				onSelect={select_all_text}
+				onKeyDown={handle_arrow_key_press}
+			/>
 		</div>
 	)
 }
@@ -80,29 +111,53 @@ function Configure() {
 		return 0;
 	};
 
+	const grab_key_map = (start: number, end: number) => {
+		if (key_map)
+			return Object.keys(key_map).slice(start, end)
+		else
+			return [];
+	}
+
 	return (
-		<div className="configure-page flex space-between align-center fill-width relative">
+		<div className="configure-page flex space-between fill-width relative">
 			{settings ?
 				<>
 					<div className="left">
 						<span className="option-label">{settings?.controller}</span>
 					</div>
 					<div className="right input-field">
-						<h2 className="inter title">Configure</h2>
+						<h2 className="inter title center-text">Configure</h2>
 						<div className="flex input-field-gap">
 							<div className="input-group">
-								{Object.keys(key_map).map((key: string, _index) => (
+								{grab_key_map(0, 6).map((key: string, _index: number) => (
 									<KeyInput
 										key={key}
 										key_identifier={key as unknown as WIIOTNSettingsKey}
 										default_value={grab_default_key(key as unknown as number)}
-										onKeyUpdate={(e, v) => console.log("e:%s, v:%s", e, v)}
+										onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
+									/>
+								))}
+
+							</div>
+							<div className="input-group">
+								{grab_key_map(6, 12).map((key: string, _index: number) => (
+									<KeyInput
+										key={key}
+										key_identifier={key as unknown as WIIOTNSettingsKey}
+										default_value={grab_default_key(key as unknown as number)}
+										onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
 									/>
 								))}
 							</div>
 							<div className="input-group">
-							</div>
-							<div className="input-group">
+								{grab_key_map(12, 18).map((key: string, _index: number) => (
+									<KeyInput
+										key={key}
+										key_identifier={key as unknown as WIIOTNSettingsKey}
+										default_value={grab_default_key(key as unknown as number)}
+										onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
+									/>
+								))}
 							</div>
 						</div>
 					</div>

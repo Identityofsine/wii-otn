@@ -10,11 +10,40 @@
 		width: 50%;
 		&.input-field {
 			.title {
-				font-size: .5rem;
+				font-size: .8rem;
+				margin-bottom: .2rem;
+			}
+			.input-group{
+				display: flex;
+				flex-direction: column;
+				gap:.1rem;
 			}
 			.key-input {
+				padding: 0 .2rem;
+				&:input{
+					border: 2px solid black;
+					border-radius: 0;
+					&:focus{
+						border-radius: 0;
+						outline: 1px solid black;
+					}
+					&:active{
+						border-radius: 0;
+						outline: 1px solid black;
+					}
+					//disable selecting of text
+					&::selection {
+						background: transparent;
+					}
+				}
 				.key-label {
-					font-size: .2rem;
+					font-size: .25rem;
+				}
+				.key-input-field {
+					width: .8rem;	
+					font-size: .6rem;
+					text-align: center;
+					padding: .025rem;
 				}
 			}
 		}
