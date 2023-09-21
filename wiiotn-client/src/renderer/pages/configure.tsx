@@ -6,14 +6,79 @@ import { SettingsContext } from "../App";
 import KeyInput from "../components/keyinput/keyinput";
 
 
-function KeyboardSettings() {
+interface KeyboardSettingsProps {
+	settings: ControllerSettings;
+	onSettingsUpdate: (settings: ControllerSettings) => void;
+}
 
+function KeyboardSettings(props: KeyboardSettingsProps) {
+	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>(props.settings.key_map ?? {});
+
+	useEffect(() => {
+		props.onSettingsUpdate({ ...props.settings, key_map: key_map });
+	}, [key_map])
+
+	const update_key_map = (key: keyof ControllerSettings['key_map'], value: number) => {
+		if (key_map)
+			setKeyMap({ ...key_map, [key]: value });
+	};
+
+	const grab_default_key = (key: number): number => {
+		if (key_map)
+			return key_map[key] ?? 0;
+		return 0;
+	};
+
+	const grab_key_map = (start: number, end: number) => {
+		if (key_map)
+			return Object.keys(key_map).slice(start, end)
+		else
+			return [];
+	}
+
+	return (
+		<>
+			<h2 className="inter title center-text">Configure</h2>
+			<div className="flex column input-field-gap">
+				<div className="input-group ">
+					{grab_key_map(0, 6).map((key: string, _index: number) => (
+						<KeyInput
+							key={key}
+							key_identifier={key as unknown as WIIOTNSettingsKey}
+							default_value={grab_default_key(key as unknown as number)}
+							onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
+						/>
+					))}
+
+				</div>
+				<div className="input-group">
+					{grab_key_map(6, 12).map((key: string, _index: number) => (
+						<KeyInput
+							key={key}
+							key_identifier={key as unknown as WIIOTNSettingsKey}
+							default_value={grab_default_key(key as unknown as number)}
+							onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
+						/>
+					))}
+				</div>
+				<div className="input-group">
+					{grab_key_map(12, 18).map((key: string, _index: number) => (
+						<KeyInput
+							key={key}
+							key_identifier={key as unknown as WIIOTNSettingsKey}
+							default_value={grab_default_key(key as unknown as number)}
+							onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
+						/>
+					))}
+				</div>
+			</div>
+		</>
+	)
 }
 
 function Configure() {
 
 	const [settings, setSettings] = useState<ControllerSettings>();
-	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>({});
 	const [status, setStatus] = useState<string>('');
 	const global_settings = useContext(SettingsContext);
 
@@ -40,87 +105,31 @@ function Configure() {
 
 	useEffect(() => {
 		if (settings)
-			setKeyMap(settings.key_map);
+			setStatus('Settings Unsaved!');
 	}, [settings])
-
-	useEffect(() => {
-		if (settings)
-			setStatus('Unsaved Changes');
-	}, [key_map])
 
 
 	const save_settings = () => {
 		if (settings) {
-			const new_settings = { ...settings, key_map: key_map };
+			const new_settings = { ...settings };
 			window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
 			global_settings.setState({ ...global_settings.state, ...new_settings });
 		}
 	}
 
-	const update_key_map = (key: keyof ControllerSettings['key_map'], value: number) => {
-		if (key_map)
-			setKeyMap({ ...key_map, [key]: value });
-	};
-
-	const grab_default_key = (key: number): number => {
-		if (key_map)
-			return key_map[key] ?? 0;
-		return 0;
-	};
-
-	const grab_key_map = (start: number, end: number) => {
-		if (key_map)
-			return Object.keys(key_map).slice(start, end)
-		else
-			return [];
-	}
-
 	return (
-		<div className="configure-page flex space-between fill-width relative">
+		<div className="configure-page flex column space-between fill-width relative">
 			{settings ?
 				<>
-					<div className="left flex column align-center">
-						<span className="option-label">{settings?.controller}</span>
+					<div className="top flex column align-center">
+						<span className="option-label absolute">{settings?.controller}</span>
 						<div className="flex column margin-top-auto align-center relative fill-container">
 							<span className="inter status">{status}</span>
 							<Button className="black button" text="SAVE" onClick={() => save_settings()} />
 						</div>
 					</div>
-					<div className="right input-field">
-						<h2 className="inter title center-text">Configure</h2>
-						<div className="flex input-field-gap">
-							<div className="input-group">
-								{grab_key_map(0, 6).map((key: string, _index: number) => (
-									<KeyInput
-										key={key}
-										key_identifier={key as unknown as WIIOTNSettingsKey}
-										default_value={grab_default_key(key as unknown as number)}
-										onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
-									/>
-								))}
-
-							</div>
-							<div className="input-group">
-								{grab_key_map(6, 12).map((key: string, _index: number) => (
-									<KeyInput
-										key={key}
-										key_identifier={key as unknown as WIIOTNSettingsKey}
-										default_value={grab_default_key(key as unknown as number)}
-										onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
-									/>
-								))}
-							</div>
-							<div className="input-group">
-								{grab_key_map(12, 18).map((key: string, _index: number) => (
-									<KeyInput
-										key={key}
-										key_identifier={key as unknown as WIIOTNSettingsKey}
-										default_value={grab_default_key(key as unknown as number)}
-										onKeyUpdate={(key_id, value) => update_key_map(key_id, value)}
-									/>
-								))}
-							</div>
-						</div>
+					<div className="bottom input-field">
+						<KeyboardSettings settings={settings} onSettingsUpdate={(settings) => setSettings(settings)} />
 					</div>
 				</>
 				: <h2 className="inter center-margin">Loading...</h2>}

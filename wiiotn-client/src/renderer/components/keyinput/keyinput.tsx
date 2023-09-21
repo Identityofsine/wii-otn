@@ -8,13 +8,33 @@ interface KeyInputProp<T extends ControllerSettings> {
 	default_value?: number;
 }
 
+const mutate_key_code = (key_code: number) => {
+	let key_char = String.fromCharCode(key_code) ?? 0;
+	if (key_code === 0) key_char = 'N/A';
+	if (key_code === 32) key_char = '␣';
+	if (key_code === 13) key_char = 'Enter';
+	if (key_code === 8) key_char = 'Backspace';
+	if (key_code === 9) key_char = 'Tab';
+	if (key_code === 27) key_char = 'Esc';
+	//arrow keys
+	if (key_code === 37) key_char = '←';
+	if (key_code === 38) key_char = '↑';
+	if (key_code === 39) key_char = '→';
+	if (key_code === 40) key_char = '↓';
+	return key_char ?? 0;
+}
+
 function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 	const [key, setKey] = useState<{ key: string, code: number }>({ key: '', code: 0 });
 
 	useEffect(() => {
-		if (props.default_value)
-			setKey({ key: String.fromCharCode(props.default_value), code: props.default_value })
+		if (props.default_value) {
+			let key_char = mutate_key_code(props.default_value);
+			setKey({ key: key_char, code: props.default_value })
+		}
 	}, [])
+
+
 
 	useEffect(() => {
 		props.onKeyUpdate(props.key_identifier, key.code);
@@ -24,9 +44,12 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 	const change_current_key = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.value.length > 1) {
 			const key_code = event.target.value.toUpperCase().charCodeAt(event.target.value.length - 1);
-			return setKey({ key: (event.target.value.at(event.target.value.length - 1) as string).toUpperCase(), code: key_code });
+			const key = mutate_key_code(key_code);
+			return setKey({ key: key, code: key_code });
 		} else {
-			return setKey({ key: event.target.value.toUpperCase(), code: event.target.value.toUpperCase().charCodeAt(0) });
+			const key_code = event.target.value.toUpperCase().charCodeAt(0);
+			const key = mutate_key_code(key_code);
+			return setKey({ key: key, code: event.target.value.toUpperCase().charCodeAt(0) });
 		}
 	}
 

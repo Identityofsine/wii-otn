@@ -1,5 +1,5 @@
 .configure-page {
-	.left {
+	.top {
 		width: 50%;
 		.option-label{
 			text-transform: capitalize;
@@ -19,22 +19,30 @@
 			margin-bottom: .2rem;
 		}
 	}
-	.right {
+	.bottom {
+		height: 7rem;
 		width: 50%;
 		&.input-field {
+			
 			.title {
 				font-size: .8rem;
 				margin-bottom: .2rem;
 			}
+			.input-field-gap{
+				gap:.5rem;
+			}
 			.input-group{
 				display: flex;
-				flex-direction: column;
 				gap:.1rem;
 			}
 			.key-input {
 				padding: 0 .2rem;
+				position: relative;
 				.key-label {
 					font-size: .25rem;
+					width: 50%;
+					text-align: center;
+					
 				}
 				.key-input-field {
 					width: .8rem;	
