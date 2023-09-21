@@ -28,8 +28,8 @@
   "contributors": [
     {
       "name": "IdentityofSine",
-			"email": "identityofsine@gmail.com",
-			"url": "https://github.com/IdentityofSine"
+      "email": "identityofsine@gmail.com",
+      "url": "https://github.com/IdentityofSine"
     }
   ],
   "main": "./src/main/main.ts",
@@ -99,6 +99,7 @@
     "dgram": "^1.0.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
+    "electron-store": "^8.1.0",
     "electron-updater": "^6.1.4",
     "ngx-electron": "^2.2.0",
     "react": "^18.2.0",

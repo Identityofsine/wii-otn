@@ -16,6 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import WIISocket from '../obj/socket';
 import { SockAddrIn } from '../renderer/App';
+import { useSettings } from '../storage';
 
 class AppUpdater {
 	constructor() {
@@ -28,6 +29,8 @@ class AppUpdater {
 let socket: WIISocket | undefined = undefined;
 
 let socket_id: number = -1;
+
+let settings = useSettings();
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -91,6 +94,12 @@ ipcMain.on('udp-disconnect-request', async (event, arg) => {
 	}
 });
 
+ipcMain.on('fetch-settings', async (event, arg) => {
+	if (arg === 'controller') {
+		event.reply('fetch-settings-reply', { type: arg, settings: settings.get('controller_settings') })
+	}
+});
+
 
 if (process.env.NODE_ENV === 'production') {
 	const sourceMapSupport = require('source-map-support');
@@ -132,7 +141,7 @@ const createWindow = async () => {
 
 	mainWindow = new BrowserWindow({
 		show: false,
-		width: 1024,
+		width: 1440,
 		height: 728,
 		icon: getAssetPath('icon.png'),
 		webPreferences: {

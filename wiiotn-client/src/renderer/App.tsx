@@ -4,6 +4,7 @@ import './app.scss';
 import Connect from './pages/connect';
 import Control from './pages/control';
 import PageContainer from './components/page-container/pagecontainer';
+import Configure from './pages/configure';
 
 export type SockAddrIn = {
 	ip_address: string;
@@ -30,18 +31,25 @@ export default function App() {
 
 	useEffect(() => {
 		//IPC REPLY HANDLERS
-		window.electron.ipcRenderer.on('debug-message', (event: any) => {
+		const debug_listener = window.electron.ipcRenderer.on('debug-message', (event: any) => {
 			console.log(event)
 		});
-		window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
+		const connect_listener = window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
 			console.log("[DEBUG -- udp-connect-reply] Event OBJ: ", event);
 			setIsConnected(event?.success);
 			setSockAddr({ ...sock_addr, id: event.id });
 		});
-		window.electron.ipcRenderer.on('udp-disconnect-reply', (event: any) => {
+		const disconnect_listener = window.electron.ipcRenderer.on('udp-disconnect-reply', (event: any) => {
 			setIsConnected(false);
 			setSockAddr({ ...sock_addr, id: 0 });
 		});
+
+		return () => {
+			//REMOVE IPC LISTENERS
+			debug_listener();
+			connect_listener();
+			disconnect_listener();
+		}
 	}, [])
 
 	return (
@@ -52,6 +60,7 @@ export default function App() {
 						<Routes>
 							<Route path="/" element={<Connect SocketInfo={sock_addr} SetSocketInfo={setSockAddr} />} />
 							<Route path="/control" element={<Control socket_id={sock_addr.id} />} />
+							<Route path="/configure" element={<Configure />} />
 						</Routes>
 					</PageContainer>
 				</ConnectionContext.Provider>

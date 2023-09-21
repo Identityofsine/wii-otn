@@ -1,0 +1,17 @@
+.configure-page {
+	.left {
+		width: 50%;
+		.option-label{
+			text-transform: capitalize;
+			
+		}
+	}
+	.right {
+		width: 50%;
+		&.input-field {
+			.title {
+				font-size: .5rem;
+			}
+		}
+	}
+}
