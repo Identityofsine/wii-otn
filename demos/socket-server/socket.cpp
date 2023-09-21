@@ -101,7 +101,7 @@ void WIIOTN::Socket::start() {
 			//m_connected_clients.push_back(client);
 			//m_virtual_controller.connectController();
 			this->addClient(&client);
-			printf("\nNew client connected, id: %d\n", client.id);
+			printf("\nNew client connected, id: %d, ip:%s\n", client.id, inet_ntoa(client.address.sin_addr));
 			json message = connectionFactory(client.id, is_new, true);
 			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
 		}
