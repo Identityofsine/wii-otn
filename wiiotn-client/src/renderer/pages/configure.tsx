@@ -90,15 +90,16 @@ function Configure() {
 			if (settings_response.type === 'controller')
 				setSettings(settings_response!.settings as ControllerSettings);
 		});
-		window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
+		const save_listener = window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
 			if (event.success) {
-				global_settings.setState({ ...global_settings.state, key_map: key_map });
+
 				setStatus('Settings Saved!')
 			}
 		});
 		return () => {
 			//remove listener
 			controller_listener();
+			save_listener();
 		}
 	}, [])
 
@@ -107,11 +108,17 @@ function Configure() {
 			setKeyMap(settings.key_map);
 	}, [settings])
 
+	useEffect(() => {
+		if (settings)
+			setStatus('Unsaved Changes');
+	}, [key_map])
+
 
 	const save_settings = () => {
 		if (settings) {
 			const new_settings = { ...settings, key_map: key_map };
 			window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
+			global_settings.setState({ ...global_settings.state, ...new_settings });
 		}
 	}
 
@@ -140,7 +147,7 @@ function Configure() {
 					<div className="left flex column align-center">
 						<span className="option-label">{settings?.controller}</span>
 						<div className="flex column margin-top-auto align-center relative fill-container">
-							<span className="inter status">Key Map</span>
+							<span className="inter status">{status}</span>
 							<Button className="black button" text="SAVE" onClick={() => save_settings()} />
 						</div>
 					</div>

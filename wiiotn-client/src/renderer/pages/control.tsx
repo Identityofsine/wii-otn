@@ -20,7 +20,6 @@ function Control(props: ControlProps) {
 		const key_state_listener = (key: Array<number>) => {
 			let mutated_key: number = 0;
 			const transfered_key_map = mapSettingsToController(controller_settings.state);
-			console.log(transfered_key_map);
 			key.forEach((key) => { mutated_key |= transfered_key_map[key] });
 
 			if (wii_controller.getState().buttons_pressed == mutated_key) return;

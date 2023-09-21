@@ -22,7 +22,7 @@ export interface StateModifier<T> {
 
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
-export const SettingsContext = createContext<StateModifier<ControllerSettings>>({ state: static_settings['controller_settings'] as ControllerSettings, setState: () => { } });
+export const SettingsContext = createContext<StateModifier<ControllerSettings>>({ state: {}, setState: () => { } });
 
 export default function App() {
 
@@ -33,7 +33,7 @@ export default function App() {
 	});
 	const [is_connected, setIsConnected] = useState<boolean>(false);
 
-	const [user_settings, setUserSettings] = useState<ControllerSettings>(static_settings['controller_settings'] as ControllerSettings);
+	const [user_settings, setUserSettings] = useState<ControllerSettings>({});
 
 	useEffect(() => {
 		//IPC REPLY HANDLERS
@@ -67,6 +67,10 @@ export default function App() {
 			settings_listener();
 		}
 	}, [])
+
+	useEffect(() => {
+		console.log('[DEBUG] user_settings updated : ', user_settings);
+	}, [user_settings])
 
 	return (
 		<Router>

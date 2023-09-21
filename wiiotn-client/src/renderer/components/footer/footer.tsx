@@ -21,6 +21,9 @@ function Footer() {
 	return (
 		<div className="footer flex fill-container fill-height align-center border-box">
 			<Button text={!is_connected_context.state ? "Connect" : "Disconnect"} className="button" onClick={() => button_action()} />
+			{is_connected_context.state ?
+				<Button text="Control" className="button" onClick={() => navigate('/control')} />
+				: <></>}
 		</div>
 	)
 
