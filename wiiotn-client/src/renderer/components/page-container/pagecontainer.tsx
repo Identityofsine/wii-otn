@@ -8,6 +8,7 @@ type PageContainerProps = {
 }
 
 function PageContainer(props: PageContainerProps) {
+
 	return (
 
 		<div className="page-container full-screen relative flex column">

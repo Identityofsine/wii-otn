@@ -13,40 +13,53 @@ export interface WIIOTNPing {
 	id: number,
 }
 
+/*
+ *{
+	"id": number,
+	"name": string,
+	"type": "controller",
+	"controller": "keyboard" | "xbox",
+	"lThumbX": number,
+	"lThumbY": number,
+	"rThumbX": number,
+	"rThumbY": number,
+	"buttons_pressed": number,
+	"lTrigger": number,
+	"rTrigger": number
+}
+ *
+ *
+ */
 
 export interface WIIOTNController extends WIIOTNMessage {
-	type: 'controller',
 	id: number,
-	buttons_pressed: number, //should be binary encoded 01101110, each bit represents a buttons_pressed
-	accelerometer_x: number,
-	accelerometer_y: number,
-	accelerometer_z: number,
-	accelerometer_pitch: number,
-	accelerometer_roll: number,
-	accelerometer_yaw: number,
-	ir_sensor_1_x: number,
-	ir_sensor_1_y: number,
-	ir_sensor_2_x: number,
-	ir_sensor_2_y: number,
+	name: string,
+	type: 'controller',
+	controller: 'wii' | 'xbox' | 'keyboard',
+	rThumbX: number,
+	rThumbY: number,
+	lThumbX: number,
+	lThumbY: number,
+	lTrigger: number,
+	rTrigger: number,
+	buttons_pressed: number, //should be binary encoded 01101110, each bit represents a buttons_pressed	
+	new: boolean,
 }
 
 export const empty_wii_controller: WIIOTNController = {
 	type: 'controller',
+	controller: 'keyboard',
 	id: 0,
 	name: '',
 	new: false,
 	buttons_pressed: 0,
-	accelerometer_x: 0,
-	accelerometer_y: 0,
-	accelerometer_z: 0,
-	accelerometer_pitch: 0,
-	accelerometer_roll: 0,
-	accelerometer_yaw: 0,
-	ir_sensor_1_x: 0,
-	ir_sensor_1_y: 0,
-	ir_sensor_2_x: 0,
-	ir_sensor_2_y: 0,
-}
+	lThumbX: 0,
+	lThumbY: 0,
+	rThumbX: 0,
+	rThumbY: 0,
+	lTrigger: 0,
+	rTrigger: 0,
+};
 
 //map of buttons_pressed
 //
