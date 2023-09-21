@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import '../styles/pages/configure.scss'
-import { ControllerSettings, static_settings } from "../../storage";
+import { ControllerSettings, WIIOTNSettingsKey } from "../../storage";
+import { button_map } from "../../storage/exports";
 
 
 interface KeyInputProp<T extends ControllerSettings> {
 	key_identifier: keyof T['key_map'];
-	onKeyUpdate: (key: T['key_map'], value: number) => void;
+	onKeyUpdate: (key: keyof T['key_map'], value: number) => void;
+	default_value?: number;
 }
 
 function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 	const [key, setKey] = useState<{ key: string, code: number }>({ key: '', code: 0 });
+
+	useEffect(() => {
+		if (props.default_value)
+			setKey({ key: String.fromCharCode(props.default_value), code: props.default_value })
+	}, [])
 
 	useEffect(() => {
 		props.onKeyUpdate(props.key_identifier, key.code);
@@ -26,7 +33,8 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 	}
 
 	return (
-		<div className="key-input">
+		<div className="key-input flex">
+			<span className="key-label">{props.key_identifier ? button_map[props.key_identifier as number] : 'N/A'}</span>
 			<input
 				type="text"
 				value={key.key}
@@ -39,7 +47,7 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 function Configure() {
 
 	const [settings, setSettings] = useState<ControllerSettings>();
-	const [key_map, setKeyMap] = useState<ControllerSettings['key_map'] | {}>({});
+	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>({});
 
 	useEffect(() => {
 		//call settings from ipc
@@ -56,13 +64,20 @@ function Configure() {
 	}, [])
 
 	useEffect(() => {
-		console.log(settings);
+		if (settings)
+			setKeyMap(settings.key_map);
 	}, [settings])
 
 
 	const update_key_map = (key: keyof ControllerSettings['key_map'], value: number) => {
 		if (key_map)
 			setKeyMap({ ...key_map, [key]: value });
+	};
+
+	const grab_default_key = (key: number): number => {
+		if (key_map)
+			return key_map[key] ?? 0;
+		return 0;
 	};
 
 	return (
@@ -76,7 +91,14 @@ function Configure() {
 						<h2 className="inter title">Configure</h2>
 						<div className="flex input-field-gap">
 							<div className="input-group">
-								<KeyInput key_identifier={2} onKeyUpdate={(e, v) => console.log("e: %s, v:%s", e, v)} />
+								{Object.keys(key_map).map((key: string, _index) => (
+									<KeyInput
+										key={key}
+										key_identifier={key as unknown as WIIOTNSettingsKey}
+										default_value={grab_default_key(key as unknown as number)}
+										onKeyUpdate={(e, v) => console.log("e:%s, v:%s", e, v)}
+									/>
+								))}
 							</div>
 							<div className="input-group">
 							</div>
