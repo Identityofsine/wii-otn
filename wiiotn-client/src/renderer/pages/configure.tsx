@@ -79,6 +79,7 @@ function Configure() {
 
 	const [settings, setSettings] = useState<ControllerSettings>();
 	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>({});
+	const [status, setStatus] = useState<string>('');
 	const global_settings = useContext(SettingsContext);
 
 	useEffect(() => {
@@ -92,6 +93,7 @@ function Configure() {
 		window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
 			if (event.success) {
 				global_settings.setState({ ...global_settings.state, key_map: key_map });
+				setStatus('Settings Saved!')
 			}
 		});
 		return () => {
@@ -112,7 +114,6 @@ function Configure() {
 			window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
 		}
 	}
-
 
 	const update_key_map = (key: keyof ControllerSettings['key_map'], value: number) => {
 		if (key_map)

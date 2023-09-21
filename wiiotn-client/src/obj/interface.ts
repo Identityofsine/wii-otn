@@ -1,3 +1,4 @@
+import { ControllerSettings } from "../storage";
 
 export default interface WIIOTNMessage {
 	type: 'connection' | 'controller' | 'ping' | 'disconnect',
@@ -78,12 +79,14 @@ export const key_map: { [key: number]: number } = {
 
 
 //basically recreate key_map 
-export const mapSettingsToController = (settings: WIIOTNController): { [key: number]: number } => {
-	const map: { [key: number]: number } = {};
-	for (const key in settings) {
-		if (key in key_map) {
-			map[key_map[key]] = settings[key];
-		}
-	}
-	return map;
+export const mapSettingsToController = (settings: ControllerSettings): { [key: number]: number } => {
+	//swap keys and values
+	const key_map = Object.entries(settings.key_map).reduce((acc, [key, value]) => {
+		acc[value] = key as unknown as number;
+		return acc;
+	}, {} as { [key: number]: number });
+
+
+
+	return key_map;
 }

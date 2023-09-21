@@ -55,6 +55,7 @@ export default function App() {
 			const settings_response: { type: 'controller', settings: any } = event as any;
 			if (settings_response.type === 'controller') {
 				setUserSettings(settings_response!.settings as ControllerSettings);
+				console.log("[DEBUG -- fetch-settings-reply] Settings: ", settings_response!.settings as ControllerSettings);
 			}
 		});
 
