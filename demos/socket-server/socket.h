@@ -1,12 +1,28 @@
 #include "virtualcontroller.h"
 #include <nlohmann/json.hpp>
 #include <vector>
+#include <string>
 #pragma comment(lib,"ws2_32.lib")
 
 
+using json = nlohmann::json;
+
+namespace SocketUtils {
+
+	enum class RequestType {
+		TYPE_MISSING = -1,
+		TYPE_UNKNOWN,
+		CONNECT,
+		DISCONNECT,
+		INPUT,
+		PING
+	};
+
+	RequestType assignRequest(json request_json);
+}
+
 namespace WIIOTN {
 
-	using json = nlohmann::json;
 	struct ConnectedClient {
 		SOCKET socket;
 		SOCKADDR_IN address;
@@ -28,12 +44,15 @@ namespace WIIOTN {
 			void addClient(WIIOTN::ConnectedClient* client); 
 			ConnectedClient* removeClient(WIIOTN::ConnectedClient client);
 			ConnectedClient* removeClient(const int client_id);
+			bool isClientConnected(const int client_id);
 			int sendClient(WIIOTN::ConnectedClient client, const json message); 
 			int pingClient(WIIOTN::ConnectedClient* client);
 			bool handlePing(WIIOTN::ConnectedClient* client, const json buffer_json);
 			bool handlePing(WIIOTN::ConnectedClient* client);
 			bool handleInput(WIIOTN::ConnectedClient* client, const json buffer_json);
 			void pingClients();
+			
+			
 
 		public:
 			Socket(const int port, const char* ip, const int protocol);

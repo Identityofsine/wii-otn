@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <chrono>
 
+using RequestType = SocketUtils::RequestType;
+using namespace SocketUtils;
+
 WIIOTN::Socket::Socket(const int port, const char* ip, const int protocol) : m_port(port), m_ip(ip), m_protocol(protocol) {
 	WSADATA wsaData;
 	// Initialize WinSock2
@@ -64,21 +67,16 @@ void WIIOTN::Socket::start() {
 		}
 
 		/* Check if connection type is disconnect */
-		if(buffer_json.contains("type") && buffer_json["type"].get<std::string>() == "disconnect") {
+		if(assignRequest(buffer_json) == RequestType::DISCONNECT) {
 			//first check if id is present in clients
-			bool is_present = false;
-			for(ConnectedClient *client : m_connected_clients) {
-				if(client->id == buffer_json["id"].get<int>()) {
-					is_present = true;
-					break;
-				}
-			}
+			const int client_id = buffer_json["id"].get<int>();
+			bool is_present = this->isClientConnected(client_id);	
 			if(!is_present) continue;
 			printf("Client disconnected, id: %d\n", buffer_json["id"].get<int>());
-			this->removeClient(buffer_json["id"].get<int>());
+			this->removeClient(client_id);
 			json message = {
 				{"type", "disconnect"},
-				{"id", buffer_json["id"].get<int>()},
+				{"id", client_id},
 				{"success", true}
 			};
 			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
@@ -274,6 +272,15 @@ WIIOTN::ConnectedClient* WIIOTN::Socket::removeClient(const int client_id) {
 	return removed_client;
 }
 
+bool WIIOTN::Socket::isClientConnected(const int client_id) {
+	for(auto i_client = m_connected_clients.begin(); i_client != m_connected_clients.end(); i_client++) {
+		if(m_connected_clients[i_client - m_connected_clients.begin()]->id == client_id) {
+			return m_connected_clients[i_client - m_connected_clients.begin()]->is_connected;
+		}
+	}
+	return false;
+}
+
 int WIIOTN::Socket::sendClient(const WIIOTN::ConnectedClient client, const json message) {
 	return sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&client.address, sizeof(client.address));
 }
@@ -336,4 +343,18 @@ json WIIOTN::connectionFactory(const int client_id, const bool is_new, const boo
 		{"success", success}
 	};
 	return message;
+}
+
+namespace SocketUtils {
+
+	RequestType assignRequest(const json buffer_json) {
+		if(buffer_json.contains("type")) {
+			std::string type = buffer_json["type"].get<std::string>();
+			if(type == "input") return RequestType::INPUT;
+			if(type == "connection") return RequestType::CONNECT;
+			if(type == "ping") return RequestType::PING;
+		}
+		return RequestType::TYPE_UNKNOWN;
+	} 
+	
 }
