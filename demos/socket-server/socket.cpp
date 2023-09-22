@@ -350,6 +350,7 @@ namespace SocketUtils {
 	RequestType assignRequest(const json buffer_json) {
 		if(buffer_json.contains("type")) {
 			std::string type = buffer_json["type"].get<std::string>();
+			if(type == "disconnect") return RequestType::DISCONNECT;
 			if(type == "input") return RequestType::INPUT;
 			if(type == "connection") return RequestType::CONNECT;
 			if(type == "ping") return RequestType::PING;
