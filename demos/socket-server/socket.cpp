@@ -1,6 +1,7 @@
 #include "socket.h"
 #include <nlohmann/json.hpp>
 #include <stdio.h>
+#include <chrono>
 
 WIIOTN::Socket::Socket(const int port, const char* ip, const int protocol) : m_port(port), m_ip(ip), m_protocol(protocol) {
 	WSADATA wsaData;
@@ -86,7 +87,20 @@ void WIIOTN::Socket::start() {
 
 		WIIOTN::ConnectedClient client;
 
-		printf("\nRECV_JSON:%s\n", buffer_json.dump().c_str());
+		//get current time
+		auto currentTime = std::chrono::system_clock::now();
+    auto durationSinceEpoch = currentTime.time_since_epoch();
+    auto seconds = std::chrono::duration_cast<std::chrono::milliseconds>(durationSinceEpoch);
+
+		//calculate input lag
+
+		long long input_lag = 0;
+
+		if(buffer_json.contains("time")) {
+			input_lag = seconds.count() - buffer_json["time"].get<long long>();
+		}
+
+		printf("\nRECV_JSON:%s, TIME:%lld\nINPUT_LAG:%lldms\n", buffer_json.dump().c_str(), seconds.count(), input_lag);
 
 		bool is_new = isNew(buffer_json);	
 		int client_id = clients_size;

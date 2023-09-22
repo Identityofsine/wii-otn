@@ -25,7 +25,7 @@ function Control(props: ControlProps) {
 			if (wii_controller.getState().buttons_pressed == mutated_key) return;
 			wii_controller.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
 			console.log(wii_controller.getState());
-			window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify(wii_controller.getState()));
+			window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.getState(), time: Date.now() }));
 		}
 
 		key_state.addListener(key_state_listener);
