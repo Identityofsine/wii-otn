@@ -31,20 +31,32 @@ function createState<T>(default_value: T | undefined = undefined) {
 
 }
 
-export function useConservativeState<T>(default_value: T | undefined) {
+interface IUseStateOptions<T> {
+	ignore?: (keyof T)[];
+}
+
+export function useConservativeState<T>(default_value: T | undefined, options?: IUseStateOptions<T>) {
 	const current_state = createState(default_value);
 
-	const setState = (new_value: T) => {
+	const setState = (new_value: T | ((old_state: T) => T)) => {
 		/* compare current_state and previous_state and create a new object that only contains changed data*/
+
 		type TJSON = { [key: string]: any };
-		let new_state: T | TJSON = { ...current_state.getState() };
+		let new_state: T | TJSON;
+
+		if (typeof new_value === 'function')
+			new_state = (new_value as (old_state: T) => T)(current_state.getState());
+		else
+			new_state = new_value as T;
+
 
 		Object.keys(new_state as TJSON).forEach(key => {
+			if (options?.ignore?.includes(key as keyof T)) return;
 			if ((new_state as TJSON)[key] === (current_state.getState() as TJSON)[key])
 				delete (new_state as TJSON)[key];
 		});
 
-		current_state.setState({ ...new_value });
+		current_state.setState({ ...new_state });
 	}
 
 	return {

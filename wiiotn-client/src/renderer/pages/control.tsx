@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "../styles/pages/control.scss";
-import createState from "../../obj/state";
+import createState, { useConservativeState } from "../../obj/state";
 import { WIIOTNController, empty_wii_controller, key_map, mapSettingsToController } from "../../obj/interface";
 import { SettingsContext } from "../App";
 
@@ -12,7 +12,7 @@ function Control(props: ControlProps) {
 
 	const [key_state_react, setKeyStateReact] = useState<KeyboardEvent>();
 	const key_state = createState<Array<number>>([0]);
-	const wii_controller = createState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id });
+	const wii_controller = (useConservativeState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id }, { ignore: ['id'] }));
 	const controller_settings = useContext(SettingsContext);
 
 	useEffect(() => {
