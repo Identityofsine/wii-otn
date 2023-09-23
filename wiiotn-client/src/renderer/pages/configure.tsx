@@ -13,11 +13,15 @@ interface KeyboardSettingsProps {
 	onSettingsUpdate: (settings: ControllerSettings) => void;
 }
 
-function KeyboardSettings(props: KeyboardSettingsProps) {
+function KeyboardSettingsPage(props: KeyboardSettingsProps) {
 	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>(props.settings?.key_map ?? default_keyboard_layout);
 
 	useEffect(() => {
-		props.onSettingsUpdate({ ...props.settings, key_map: key_map });
+		console.log("[DEBUG] KeyboardSettings: ", props.settings)
+	}, [])
+
+	useEffect(() => {
+		props.onSettingsUpdate({ controller: 'keyboard', key_map: key_map });
 	}, [key_map])
 
 	const update_key_map = (key: keyof ControllerSettings['key_map'], value: number) => {
@@ -56,7 +60,7 @@ function KeyboardSettings(props: KeyboardSettingsProps) {
 	)
 }
 
-function XboxSettings(props: KeyboardSettingsProps) {
+function XboxSettingsPage(props: KeyboardSettingsProps) {
 
 	const [game_pad_connected, setGamePadConnected] = useState<boolean>(false);
 	const navigator = window.navigator as any;
@@ -135,6 +139,7 @@ function XboxSettings(props: KeyboardSettingsProps) {
 function Configure() {
 
 	const [controller, setController] = useState<'keyboard' | 'xbox'>('keyboard');
+	const [active_controller, setActiveController] = useState<'keyboard' | 'xbox'>('keyboard');
 	const [keyboard_settings, setKeyboardSettings] = useState<ControllerSettings>();
 	const [xbox_settings, setXboxSettings] = useState<ControllerSettings>();
 	const [status, setStatus] = useState<string>('');
@@ -146,7 +151,8 @@ function Configure() {
 		const controller_listener = window.electron.ipcRenderer.on('fetch-settings-reply', (event) => {
 			const settings_response: { type: 'controller', settings: WIIOTNSettings } = event as any;
 			if (settings_response.type === 'controller') {
-				setKeyboardSettings(settings_response.settings?.XboxSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
+				console.log('[DEBUG] Settings: ', settings_response.settings);
+				setKeyboardSettings(settings_response.settings?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
 				setXboxSettings(settings_response.settings?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout } as XboxSettings);
 				setController(settings_response.settings?.selected_controller ?? 'controller');
 			}
@@ -166,7 +172,7 @@ function Configure() {
 
 	const save_settings = () => {
 		const new_settings: WIIOTNSettings = {
-			selected_controller: controller,
+			selected_controller: active_controller,
 			KeyboardSettings: keyboard_settings as KeyboardSettings,
 			XboxSettings: xbox_settings as XboxSettings,
 		}
@@ -178,7 +184,11 @@ function Configure() {
 			{true ?
 				<>
 					<div className="top flex space-between align-end fill-width">
-						<Dropdown<typeof controller> className="black" options={[{ value: 'keyboard', label: 'Keyboard' }, { value: 'xbox', label: 'Xbox' }]} defaultValue={{ value: 'keyboard', label: 'Keyboard' }} onChange={(value: Option<typeof controller>) => setController(value.value)} />
+						<div className="flex column">
+							<Dropdown<typeof controller> className="black" options={[{ value: 'keyboard', label: 'Keyboard' }, { value: 'xbox', label: 'Xbox' }]} defaultValue={{ value: controller, label: controller }} onChange={(value: Option<typeof controller>) => setController(value.value)} />
+							{/* checkbox : set active?*/}
+							<input type="checkbox" id="active" name="active" checked={controller === active_controller} onChange={(_event) => { active_controller === controller }} />
+						</div>
 						<div className="flex column align-center fit-height relative fill-container">
 							<span className="inter status">{status}</span>
 							<Button className="black button" text="SAVE" onClick={() => save_settings()} />
@@ -186,9 +196,9 @@ function Configure() {
 					</div>
 					<div className="bottom input-field">
 						{controller === 'keyboard' ?
-							<KeyboardSettings settings={keyboard_settings as ControllerSettings} onSettingsUpdate={(settings) => setKeyboardSettings(settings)} />
+							<KeyboardSettingsPage settings={keyboard_settings as ControllerSettings} onSettingsUpdate={(settings) => setKeyboardSettings(settings)} />
 							:
-							<XboxSettings settings={xbox_settings as ControllerSettings} onSettingsUpdate={(settings) => setXboxSettings(settings)} />
+							<XboxSettingsPage settings={xbox_settings as ControllerSettings} onSettingsUpdate={(settings) => setXboxSettings(settings)} />
 						}
 					</div>
 				</>

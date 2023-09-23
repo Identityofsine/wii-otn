@@ -11,13 +11,13 @@ interface GamePadProps {
 
 export interface UseGamePadReturn {
 	gamepad: Gamepad | null;
-	addEventListener: (event: string, callback: (event: number) => void) => void;
+	addEventListener: (event: string, callback: (event: number[]) => void) => void;
 	removeEventListener: (event: string) => void;
 }
 
 export class GlobalVariable {
 	private static _instance: GlobalVariable = new GlobalVariable();
-	private events = new Map<string, (event: number) => void>();
+	private events = new Map<string, (event: number[]) => void>();
 
 	private constructor() {
 		if (GlobalVariable._instance) {
@@ -30,13 +30,13 @@ export class GlobalVariable {
 		return GlobalVariable._instance;
 	}
 
-	public emitAll(value: number) {
+	public emitAll(value: number[]) {
 		this.events.forEach((callback, event) => {
 			callback(value);
 		});
 	}
 
-	public addEventListener(event: string, callback: (event: number) => void) {
+	public addEventListener(event: string, callback: (event: number[]) => void) {
 		this.events.set(event, callback);
 	}
 
@@ -68,10 +68,12 @@ export default function useGamePad(gamepad_index: number = 0): UseGamePadReturn 
 		let gamepad: Gamepad | null = navigator.getGamepads()[gamepad_index];
 		while (gamepad?.connected ?? false) {
 			gamepad = navigator.getGamepads()[gamepad_index];
+			let buttons_pressed: number[] = [];
 			gamepad?.buttons.forEach((button, index) => {
 				if (button.pressed) {
-					GlobalVariable.getInstance().emitAll(index);
-					console.log("[DEBUG] Button Pressed: ", index);
+					buttons_pressed.push(index);
+					GlobalVariable.getInstance().emitAll(buttons_pressed);
+					console.log("[DEBUG] Button Pressed: ", buttons_pressed);
 				}
 			});
 			await new Promise((resolve) => setTimeout(resolve, 25));
@@ -81,7 +83,7 @@ export default function useGamePad(gamepad_index: number = 0): UseGamePadReturn 
 	loop_function();
 
 
-	const addEventListener = (event: string, callback: (event: number) => void) => {
+	const addEventListener = (event: string, callback: (event: number[]) => void) => {
 		GlobalVariable.getInstance().addEventListener(event, callback);
 	}
 

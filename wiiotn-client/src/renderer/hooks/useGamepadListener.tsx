@@ -10,7 +10,7 @@ export default function useGamePadHook() {
 
 	useEffect(() => {
 		const gamePadListener = (e: GamepadEvent) => {
-			if (e.gamepad) {
+			if (e.gamepad && !gamepad_entity.current) {
 				setGamePad(e.gamepad);
 				gamepad_entity.current = useGamePad(e.gamepad.index);
 			}

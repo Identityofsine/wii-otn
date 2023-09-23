@@ -2,7 +2,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 import "../styles/pages/control.scss";
 import createState, { useConservativeState } from "../../obj/state";
 import { WIIOTNController, empty_wii_controller, key_map, mapSettingsToController } from "../../obj/interface";
-import { SettingsContext } from "../App";
+import { SettingsContext, XboxControllerContext } from "../App";
+import { ControllerSettings, WIIOTNSettings } from "../../storage";
 
 type ControlProps = {
 	socket_id: number
@@ -13,42 +14,61 @@ function Control(props: ControlProps) {
 	const [key_state_react, setKeyStateReact] = useState<KeyboardEvent>();
 	const key_state = createState<Array<number>>([0]);
 	const wii_controller = useRef(useConservativeState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id }, { ignore: ['id'] }));
-	const controller_settings = useContext(SettingsContext);
+	const controller_settings = useContext(SettingsContext).state as WIIOTNSettings;
+	const controller = useContext(XboxControllerContext);
 
 	useEffect(() => {
+		if (controller_settings.selected_controller === 'keyboard') {
+			const key_state_listener = (key: Array<number>) => {
+				let mutated_key: number = 0;
+				const transfered_key_map = mapSettingsToController(controller_settings.KeyboardSettings);
+				key.forEach((key) => { mutated_key |= transfered_key_map[key] });
 
-		const key_state_listener = (key: Array<number>) => {
-			let mutated_key: number = 0;
-			const transfered_key_map = mapSettingsToController(controller_settings.state);
-			key.forEach((key) => { mutated_key |= transfered_key_map[key] });
+				if (wii_controller.current.getState().buttons_pressed == mutated_key) return;
+				wii_controller.current.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
+				console.log(wii_controller.current.getState());
+				window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.current.getState(), time: Date.now() }));
+			}
 
-			if (wii_controller.current.getState().buttons_pressed == mutated_key) return;
-			wii_controller.current.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
-			console.log(wii_controller.current.getState());
-			window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.current.getState(), time: Date.now() }));
-		}
+			key_state.addListener(key_state_listener);
 
-		key_state.addListener(key_state_listener);
+			//add key listeners
+			const keydown = (e: KeyboardEvent) => {
+				setKeyStateReact(e);
+				key_state.setState(old_state => [...old_state, e.keyCode]);
+				//set 
+			}
+			const keyup = (e: KeyboardEvent) => {
+				setKeyStateReact(e);
+				key_state.setState(old_state => old_state.filter((key) => key != e.keyCode));
+			}
+			window.addEventListener('keydown', keydown);
+			window.addEventListener('keyup', keyup);
 
-		//add key listeners
-		const keydown = (e: KeyboardEvent) => {
-			setKeyStateReact(e);
-			key_state.setState(old_state => [...old_state, e.keyCode]);
-			//set 
-		}
-		const keyup = (e: KeyboardEvent) => {
-			setKeyStateReact(e);
-			key_state.setState(old_state => old_state.filter((key) => key != e.keyCode));
-		}
-		window.addEventListener('keydown', keydown);
-		window.addEventListener('keyup', keyup);
+			return () => {
+				window.removeEventListener('keydown', keydown);
+				window.removeEventListener('keyup', keyup);
+				key_state.removeListener(key_state_listener);
+			}
+		} else if (controller_settings.selected_controller === 'xbox') {
 
-		return () => {
-			window.removeEventListener('keydown', keydown);
-			window.removeEventListener('keyup', keyup);
-			key_state.removeListener(key_state_listener);
+			controller.addEventListener('buttonpress', (event: number[]) => {
+				const transfered_button_map = mapSettingsToController(controller_settings.XboxSettings);
+				let mutated_buttons: number = 0;
+				event.forEach((button: number) => { mutated_buttons |= transfered_button_map[button] });
+				if (wii_controller.current.getState().buttons_pressed == mutated_buttons) return;
+				wii_controller.current.setState(old_state => { return { ...old_state, buttons_pressed: Number(mutated_buttons) } });
+				console.log(wii_controller.current.getState());
+				window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.current.getState(), time: Date.now() }));
+			});
+
+			return () => {
+				controller.removeEventListener('buttonpress');
+			}
 		}
 	}, [])
+
+
 
 
 	return (

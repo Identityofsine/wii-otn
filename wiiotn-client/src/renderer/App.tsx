@@ -22,7 +22,7 @@ export interface StateModifier<T> {
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
 export const SettingsContext = createContext<StateModifier<ControllerSettings | {}>>({ state: {}, setState: () => { } });
-export const XboxControllerContext = createContext({ addEventListener: (_event_name: string, event: (button_pressed: number) => void) => { }, removeEventListener: (event: _event_name) => { } });
+export const XboxControllerContext = createContext({ addEventListener: (_event_name: string, _event: (button_pressed: number[]) => void) => { }, removeEventListener: (_event: string) => { } });
 
 export default function App() {
 
@@ -32,7 +32,7 @@ export default function App() {
 		id: 0,
 	});
 	const [is_connected, setIsConnected] = useState<boolean>(false);
-	const [user_settings, setUserSettings] = useState<ControllerSettings>();
+	const [user_settings, setUserSettings] = useState<ControllerSettings | {}>({});
 	const game_pad = useRef(useGamePadHook());
 
 
@@ -46,7 +46,7 @@ export default function App() {
 			setIsConnected(event?.success);
 			setSockAddr({ ...sock_addr, id: event.id });
 		});
-		const disconnect_listener = window.electron.ipcRenderer.on('udp-disconnect-reply', (event: any) => {
+		const disconnect_listener = window.electron.ipcRenderer.on('udp-disconnect-reply', (_event: any) => {
 			setIsConnected(false);
 			setSockAddr({ ...sock_addr, id: 0 });
 		});
