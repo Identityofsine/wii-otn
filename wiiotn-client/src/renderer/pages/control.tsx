@@ -4,6 +4,7 @@ import createState, { useConservativeState } from "../../obj/state";
 import { WIIOTNController, empty_wii_controller, key_map, mapSettingsToController } from "../../obj/interface";
 import { SettingsContext, XboxControllerContext } from "../App";
 import { ControllerSettings, WIIOTNSettings } from "../../storage";
+import { xbox_buttons_map } from "../../storage/exports";
 
 type ControlProps = {
 	socket_id: number
@@ -12,6 +13,7 @@ type ControlProps = {
 function Control(props: ControlProps) {
 
 	const [key_state_react, setKeyStateReact] = useState<KeyboardEvent>();
+	const [current_button, setCurrentButton] = useState<string>('');
 	const key_state = createState<Array<number>>([0]);
 	const wii_controller = useRef(useConservativeState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id }, { ignore: ['id'] }));
 	const controller_settings = useContext(SettingsContext).state as WIIOTNSettings;
@@ -55,7 +57,9 @@ function Control(props: ControlProps) {
 			controller.addEventListener('buttonpress', (event: number[]) => {
 				const transfered_button_map = mapSettingsToController(controller_settings.XboxSettings);
 				let mutated_buttons: number = 0;
-				event.forEach((button: number) => { mutated_buttons |= transfered_button_map[button] });
+				let string_buttons = '';
+				event.forEach((button: number) => { mutated_buttons |= transfered_button_map[button]; string_buttons += xbox_buttons_map[button] + ' ' });
+				setCurrentButton(string_buttons);
 				if (wii_controller.current.getState().buttons_pressed == mutated_buttons) return;
 				wii_controller.current.setState(old_state => { return { ...old_state, buttons_pressed: Number(mutated_buttons) } });
 				console.log(wii_controller.current.getState());
@@ -76,7 +80,11 @@ function Control(props: ControlProps) {
 			<div className="control-page-box center-text">
 				<span className="label select-none">Focus On This Window to Control Instance</span>
 			</div>
-			<span className="sub-label select-none flex">Current Key:{key_state_react?.key}</span>
+			{controller_settings.selected_controller === 'keyboard' ?
+				<span className="sub-label select-none flex">Current Key:{key_state_react?.key}</span>
+				:
+				<span className="sub-label select-none flex">Current Button:{current_button}</span>
+			}
 		</div>
 	)
 }

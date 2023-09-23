@@ -187,7 +187,7 @@ function Configure() {
 						<div className="flex column">
 							<Dropdown<typeof controller> className="black" options={[{ value: 'keyboard', label: 'Keyboard' }, { value: 'xbox', label: 'Xbox' }]} defaultValue={{ value: controller, label: controller }} onChange={(value: Option<typeof controller>) => setController(value.value)} />
 							{/* checkbox : set active?*/}
-							<input type="checkbox" id="active" name="active" checked={controller === active_controller} onChange={(_event) => { active_controller === controller }} />
+							<input type="checkbox" id="active" name="active" checked={controller === active_controller} onChange={(_event) => { setActiveController(controller) }} />
 						</div>
 						<div className="flex column align-center fit-height relative fill-container">
 							<span className="inter status">{status}</span>
