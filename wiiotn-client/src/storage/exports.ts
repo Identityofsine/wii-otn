@@ -76,7 +76,7 @@ export const default_xbox_layout: { [key in WIIOTNSettingsKey]: number } = {
 	0x0800: 5, //R
 	0x1000: 8, //ZL
 	0x2000: 9, //ZR
-	0x4000: 10, //LCLICK
+	0x4000: 16, //LCLICK
 }
 
 export const xbox_buttons_map: { [key: number]: string } = {
@@ -94,6 +94,7 @@ export const xbox_buttons_map: { [key: number]: string } = {
 	13: "🔽",
 	14: "⬅️",
 	15: "➡️",
+	16: "🏠"
 }
 
 

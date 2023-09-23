@@ -103,6 +103,7 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 	const update_button_map = (key: keyof ControllerSettings['key_map'], value: number) => {
 		if (button_map)
 			setButtonMap({ ...button_map, [key]: value });
+		console.log("[DEBUG] Button map: ", { ...button_map, [key]: value });
 	};
 
 	const grab_default_button = (key: number): number => {
@@ -154,7 +155,7 @@ function Configure() {
 				console.log('[DEBUG] Settings: ', settings_response.settings);
 				setKeyboardSettings(settings_response.settings?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
 				setXboxSettings(settings_response.settings?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout } as XboxSettings);
-				setController(settings_response.settings?.selected_controller ?? 'controller');
+				setActiveController(settings_response.settings?.selected_controller ?? 'controller');
 			}
 		});
 		const save_listener = window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
@@ -187,7 +188,10 @@ function Configure() {
 						<div className="flex column">
 							<Dropdown<typeof controller> className="black" options={[{ value: 'keyboard', label: 'Keyboard' }, { value: 'xbox', label: 'Xbox' }]} defaultValue={{ value: controller, label: controller }} onChange={(value: Option<typeof controller>) => setController(value.value)} />
 							{/* checkbox : set active?*/}
-							<input type="checkbox" id="active" name="active" checked={controller === active_controller} onChange={(_event) => { setActiveController(controller) }} />
+							<div className="flex align-center">
+								<input type="checkbox" name="active" className="checkbox" checked={controller === active_controller} onChange={(_event) => { setActiveController(controller) }} />
+								<span className="label checkbox-label inter">Set this controller as active</span>
+							</div>
 						</div>
 						<div className="flex column align-center fit-height relative fill-container">
 							<span className="inter status">{status}</span>

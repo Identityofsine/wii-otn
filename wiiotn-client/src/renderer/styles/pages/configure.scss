@@ -18,6 +18,16 @@
 			font-size: .45rem;
 			margin-bottom: .2rem;
 		}
+		.checkbox {
+			transform: scale(4);
+			transform-origin: 0 0;
+			margin-right: .5rem;
+		}
+		.checkbox-label  {
+			font-size: .22rem;
+			font-weight: 600;
+			transform: translateY(.23rem);
+		}
 	}
 	.bottom {
 		height: 7rem;

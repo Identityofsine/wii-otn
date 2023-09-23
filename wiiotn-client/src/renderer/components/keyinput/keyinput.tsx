@@ -101,11 +101,13 @@ export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
 	const controller = useContext(XboxControllerContext);
 
 	useEffect(() => {
-	}, [])
+		props.onKeyUpdate(props.key_identifier, button);
+	}, [button])
 
 	const onFocus = () => {
-		controller.addEventListener(`${props.key_identifier}-buttonpress`, (event: number) => {
-			setCurrentButton(event);
+		controller.addEventListener(`${props.key_identifier}-buttonpress`, (event: number[]) => {
+			if (event.length < 0) return;
+			setCurrentButton(event[0]);
 		});
 	}
 
