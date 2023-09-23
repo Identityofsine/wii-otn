@@ -12,7 +12,7 @@ function Control(props: ControlProps) {
 
 	const [key_state_react, setKeyStateReact] = useState<KeyboardEvent>();
 	const key_state = createState<Array<number>>([0]);
-	const wii_controller = (useConservativeState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id }, { ignore: ['id'] }));
+	const wii_controller = useRef(useConservativeState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id }, { ignore: ['id'] }));
 	const controller_settings = useContext(SettingsContext);
 
 	useEffect(() => {
@@ -22,10 +22,10 @@ function Control(props: ControlProps) {
 			const transfered_key_map = mapSettingsToController(controller_settings.state);
 			key.forEach((key) => { mutated_key |= transfered_key_map[key] });
 
-			if (wii_controller.getState().buttons_pressed == mutated_key) return;
-			wii_controller.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
-			console.log(wii_controller.getState());
-			window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.getState(), time: Date.now() }));
+			if (wii_controller.current.getState().buttons_pressed == mutated_key) return;
+			wii_controller.current.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
+			console.log(wii_controller.current.getState());
+			window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.current.getState(), time: Date.now() }));
 		}
 
 		key_state.addListener(key_state_listener);
