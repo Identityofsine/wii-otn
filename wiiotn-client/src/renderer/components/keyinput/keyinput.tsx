@@ -93,4 +93,21 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 	)
 }
 
+//for xbox controllers
+export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
+
+	return (
+		<div className="key-input flex column justify-center align-center" >
+			<span className="key-label inter" > {props.key_identifier ? button_map[props.key_identifier as number] : 'N/A'} </span>
+			<input
+				className="key-input-field inter select-none"
+				type="text"
+				value={props.default_value}
+				onChange={(event) => props.onKeyUpdate(props.key_identifier, event.target.value.toUpperCase().charCodeAt(0))}
+				readOnly={true}
+			/>
+		</div>
+	)
+}
+
 export default KeyInput;

@@ -1,0 +1,60 @@
+//breakpoint
+
+.dropdown {
+	height: fit-content;
+	min-width: 2.12rem;
+	max-width: 7rem;
+	padding: .05rem .12rem;
+	padding-top: .1rem;
+	padding-right: .215rem;
+	font-size: .35rem;
+	border: 2px solid black;
+	background-color:#fff;
+	z-index: 101;
+	//change width for mobile
+
+	.dropdown-options {
+		position: absolute;
+		max-height: 2rem;
+		min-height: .5rem;
+		opacity: 0;
+		background-color: white;
+		outline: black 2px solid;
+		top: .3rem;
+		left:0;
+		pointer-events: none;
+		z-index: -1000;
+		transition: 250ms opacity;
+
+		//adjust top and max-height for mobile 
+
+		&.open {
+			opacity: 1;
+			z-index: 100;
+			pointer-events: initial;
+		}
+		.option {
+			padding: 0.05rem 0.05rem;
+			&:hover{
+				background-color: #eeeeee;
+			}
+		}
+	}
+	.caption-text{
+		font-size: 0.09375rem;
+		//increase size for mobile
+	}
+	.caption-position{
+		top: 0.015rem;
+	}
+	.arrow-icon {
+		width: 0.140625rem;
+		height: 0.1015625rem;
+		right:.04rem;
+		top:50%;
+		transform: translateY(-50%);
+	}
+	.black {
+		color:black !important;
+	}
+}

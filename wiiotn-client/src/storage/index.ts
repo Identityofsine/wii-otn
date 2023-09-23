@@ -5,7 +5,8 @@ const Store = require('electron-store');
 export type WIIOTNSettingsKey = 0x0001 | 0x0002 | 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x0040 | 0x0080 | 0x0100 | 0x0200 | 0x0400 | 0x0800 | 0x1000 | 0x2000 | 0x4000;
 
 export interface WIIOTNSettings {
-	controller_settings: KeyboardSettings | XboxSettings,
+	KeyboardSettings: KeyboardSettings,
+	XboxSettings: XboxSettings,
 }
 
 export interface ControllerSettings {
@@ -42,7 +43,7 @@ function useSettings() {
 			return settings[key];
 		},
 		set: (key: keyof WIIOTNSettings, value: WIIOTNSettings[keyof WIIOTNSettings]) => {
-			settings[key] = value;
+			settings[key] = value as any;
 			console.log('[DEBUG]: SETTING SETTINGS: ', settings[key]);
 			store_api.set("settings", settings);
 		}
