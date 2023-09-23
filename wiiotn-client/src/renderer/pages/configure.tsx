@@ -94,6 +94,10 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 	}, [])
 
 	useEffect(() => {
+		props.onSettingsUpdate({ controller: 'xbox', key_map: button_map });
+	}, [button_map])
+
+	useEffect(() => {
 		if (game_pad) {
 			setGamePadConnected(true);
 		}
@@ -103,7 +107,6 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 	const update_button_map = (key: keyof ControllerSettings['key_map'], value: number) => {
 		if (button_map)
 			setButtonMap({ ...button_map, [key]: value });
-		console.log("[DEBUG] Button map: ", { ...button_map, [key]: value });
 	};
 
 	const grab_default_button = (key: number): number => {

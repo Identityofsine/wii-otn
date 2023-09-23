@@ -122,7 +122,6 @@ export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
 				className="key-input-field inter select-none"
 				type="text"
 				value={button != undefined ? xbox_buttons_map[button] : button}
-				onChange={(event) => props.onKeyUpdate(props.key_identifier, event.target.value.toUpperCase().charCodeAt(0))}
 				onFocus={() => { onFocus() }}
 				onBlur={() => { onBlur() }}
 				readOnly={true}

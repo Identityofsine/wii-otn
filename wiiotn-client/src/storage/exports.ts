@@ -66,17 +66,17 @@ export const default_xbox_layout: { [key in WIIOTNSettingsKey]: number } = {
 	0x0002: 1, //B
 	0x0004: 2, //X
 	0x0008: 3, //Y
-	0x0010: 8, //START
-	0x0020: 9, //SELECT
-	0x0040: 12, //UP
-	0x0080: 13, //DOWN
-	0x0100: 14, //LEFT
-	0x0200: 15, //RIGHT
-	0x0400: 4, //L
-	0x0800: 5, //R
-	0x1000: 8, //ZL
-	0x2000: 9, //ZR
-	0x4000: 16, //LCLICK
+	0x0010: 12, //UP 
+	0x0020: 13, //DOWN
+	0x0040: 14, //LEFT
+	0x0080: 15, //RIGHT
+	0x0100: 9, //START 
+	0x0200: 8, //SELECT
+	0x0400: 4, //LB
+	0x0800: 5, //RB
+	0x1000: 8, //LTD
+	0x2000: 9, //RTD
+	0x4000: 16, //HOME
 }
 
 export const xbox_buttons_map: { [key: number]: string } = {

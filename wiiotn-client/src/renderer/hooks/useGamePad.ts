@@ -72,10 +72,10 @@ export default function useGamePad(gamepad_index: number = 0): UseGamePadReturn 
 			gamepad?.buttons.forEach((button, index) => {
 				if (button.pressed) {
 					buttons_pressed.push(index);
-					GlobalVariable.getInstance().emitAll(buttons_pressed);
 					console.log("[DEBUG] Button Pressed: ", buttons_pressed);
 				}
 			});
+			GlobalVariable.getInstance().emitAll(buttons_pressed);
 			await new Promise((resolve) => setTimeout(resolve, 25));
 		}
 	}
