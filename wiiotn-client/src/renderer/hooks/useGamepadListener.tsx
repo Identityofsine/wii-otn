@@ -1,20 +1,18 @@
 import { useEffect, useRef, useState } from "react";
+import useGamePad, { UseGamePadReturn } from "./useGamePad";
 
 
-interface OnGamePadConnectedProps {
-	onGamePadConnected: (game_pad: Gamepad) => void;
-}
 
-export default function useGamePadHook(props: OnGamePadConnectedProps) {
+export default function useGamePadHook() {
 
 	const [game_pad, setGamePad] = useState<Gamepad | null>(null);
-	const listener_ref = useRef<Function[] | null>(null);
+	const gamepad_entity = useRef<UseGamePadReturn | null>(null);
 
 	useEffect(() => {
 		const gamePadListener = (e: GamepadEvent) => {
 			if (e.gamepad) {
 				setGamePad(e.gamepad);
-				props.onGamePadConnected(e.gamepad);
+				gamepad_entity.current = useGamePad(e.gamepad.index);
 			}
 		}
 		window.addEventListener('gamepadconnected', gamePadListener);
@@ -23,19 +21,16 @@ export default function useGamePadHook(props: OnGamePadConnectedProps) {
 		};
 	}, [])
 
-	const addEventListener = (listener: Function) => {
-		if (listener_ref.current === null) {
-			listener_ref.current = [];
+
+	const addEventListener = (event_name: string, listener: (button: number) => void) => {
+		if (gamepad_entity.current) {
+			gamepad_entity.current.addEventListener(event_name, listener);
 		}
-		listener_ref.current.push(listener);
 	}
 
-	const removeEventListener = (listener: Function) => {
-		if (listener_ref.current !== null) {
-			const index = listener_ref.current.indexOf(listener);
-			if (index !== -1) {
-				listener_ref.current.splice(index, 1);
-			}
+	const removeEventListener = (event_name: string) => {
+		if (gamepad_entity.current) {
+			gamepad_entity.current.removeEventListener(event_name);
 		}
 	}
 

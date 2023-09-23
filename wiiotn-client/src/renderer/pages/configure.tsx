@@ -1,12 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import '../styles/pages/configure.scss'
-import { ControllerSettings, WIIOTNSettingsKey } from "../../storage";
+import { ControllerSettings, KeyboardSettings, WIIOTNSettings, WIIOTNSettingsKey, XboxSettings } from "../../storage";
 import Button from "../components/button/Button";
 import { SettingsContext } from "../App";
 import KeyInput, { ButtonInput } from "../components/keyinput/keyinput";
 import Dropdown, { Option } from "../components/dropdown/dropdown";
-import { on } from "events";
-import useGamePad from "../hooks/useGamePad";
+import { default_keyboard_layout, default_xbox_layout } from "../../storage/exports";
 
 
 interface KeyboardSettingsProps {
@@ -15,7 +14,7 @@ interface KeyboardSettingsProps {
 }
 
 function KeyboardSettings(props: KeyboardSettingsProps) {
-	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>(props.settings?.key_map ?? {});
+	const [key_map, setKeyMap] = useState<ControllerSettings['key_map']>(props.settings?.key_map ?? default_keyboard_layout);
 
 	useEffect(() => {
 		props.onSettingsUpdate({ ...props.settings, key_map: key_map });
@@ -62,7 +61,7 @@ function XboxSettings(props: KeyboardSettingsProps) {
 	const [game_pad_connected, setGamePadConnected] = useState<boolean>(false);
 	const navigator = window.navigator as any;
 	const [game_pad, setGamePad] = useState<Gamepad | null>(null);
-	const [button_map, setButtonMap] = useState<ControllerSettings['key_map']>(props.settings?.key_map ?? {});
+	const [button_map, setButtonMap] = useState<ControllerSettings['key_map']>(props.settings?.key_map ?? default_xbox_layout);
 
 	useEffect(() => {
 
@@ -143,20 +142,17 @@ function Configure() {
 
 	useEffect(() => {
 		//call settings from ipc
-		window.electron.ipcRenderer.sendMessage('fetch-settings', 'controller');
+		window.electron.ipcRenderer.sendMessage('fetch-settings', JSON.stringify({ type: 'controller', controller: 'all' }));
 		const controller_listener = window.electron.ipcRenderer.on('fetch-settings-reply', (event) => {
-			const settings_response: { type: 'controller', settings: ControllerSettings } = event as any;
+			const settings_response: { type: 'controller', settings: WIIOTNSettings } = event as any;
 			if (settings_response.type === 'controller') {
-				if (settings_response.settings.controller === 'keyboard') {
-					setKeyboardSettings(settings_response.settings);
-				} else {
-					setXboxSettings(settings_response.settings);
-				}
+				setKeyboardSettings(settings_response.settings?.XboxSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
+				setXboxSettings(settings_response.settings?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout } as XboxSettings);
+				setController(settings_response.settings?.selected_controller ?? 'controller');
 			}
 		});
 		const save_listener = window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
 			if (event.success) {
-
 				setStatus('Settings Saved!')
 			}
 		});
@@ -169,14 +165,12 @@ function Configure() {
 
 
 	const save_settings = () => {
-		if (controller === 'keyboard') {
-			if (keyboard_settings) {
-				const new_settings = { ...keyboard_settings };
-				window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
-				global_settings.setState({ ...global_settings.state, ...new_settings });
-			}
+		const new_settings: WIIOTNSettings = {
+			selected_controller: controller,
+			KeyboardSettings: keyboard_settings as KeyboardSettings,
+			XboxSettings: xbox_settings as XboxSettings,
 		}
-
+		window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
 	}
 
 	return (

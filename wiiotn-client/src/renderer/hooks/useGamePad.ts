@@ -9,7 +9,44 @@ interface GamePadProps {
 	onButtonPressed?: (button: GamepadButton) => void;
 }
 
-export default function useGamePad(gamepad_index: number = 0): Gamepad | null {
+export interface UseGamePadReturn {
+	gamepad: Gamepad | null;
+	addEventListener: (event: string, callback: (event: number) => void) => void;
+	removeEventListener: (event: string) => void;
+}
+
+export class GlobalVariable {
+	private static _instance: GlobalVariable = new GlobalVariable();
+	private events = new Map<string, (event: number) => void>();
+
+	private constructor() {
+		if (GlobalVariable._instance) {
+			throw new Error("Error: Instantiation failed: Use GlobalVariable.getInstance() instead of new.");
+		}
+		GlobalVariable._instance = this;
+	}
+
+	public static getInstance(): GlobalVariable {
+		return GlobalVariable._instance;
+	}
+
+	public emitAll(value: number) {
+		this.events.forEach((callback, event) => {
+			callback(value);
+		});
+	}
+
+	public addEventListener(event: string, callback: (event: number) => void) {
+		this.events.set(event, callback);
+	}
+
+	public removeEventListener(event: string) {
+		this.events.delete(event);
+	}
+
+}
+
+export default function useGamePad(gamepad_index: number = 0): UseGamePadReturn {
 
 	console.log("[DEBUG] Gamepad Running ");
 
@@ -33,7 +70,8 @@ export default function useGamePad(gamepad_index: number = 0): Gamepad | null {
 			gamepad = navigator.getGamepads()[gamepad_index];
 			gamepad?.buttons.forEach((button, index) => {
 				if (button.pressed) {
-					console.log("[DEBUG] BUTTON PRESSED: [%s, %s]", button, index);
+					GlobalVariable.getInstance().emitAll(index);
+					console.log("[DEBUG] Button Pressed: ", index);
 				}
 			});
 			await new Promise((resolve) => setTimeout(resolve, 25));
@@ -42,5 +80,18 @@ export default function useGamePad(gamepad_index: number = 0): Gamepad | null {
 
 	loop_function();
 
-	return current_gamepad;
+
+	const addEventListener = (event: string, callback: (event: number) => void) => {
+		GlobalVariable.getInstance().addEventListener(event, callback);
+	}
+
+	const removeEventListener = (event: string) => {
+		GlobalVariable.getInstance().removeEventListener(event);
+	}
+
+	return {
+		gamepad: current_gamepad,
+		addEventListener,
+		removeEventListener
+	}
 }

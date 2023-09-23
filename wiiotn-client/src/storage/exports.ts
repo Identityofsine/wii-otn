@@ -41,3 +41,59 @@ export const button_map: { [key in WIIOTNSettingsKey | number]: string } = {
 	0x2000: "R STICKDOWN",
 	0x4000: "HOME"
 }
+
+//a -> A, b-> B, x -> X, y-> Y 
+export const default_keyboard_layout: { [key in WIIOTNSettingsKey]: number } = {
+	0x0001: 65, //A
+	0x0002: 66, //B
+	0x0004: 88, //X
+	0x0008: 89, //Y
+	0x0010: 32, //START
+	0x0020: 13, //SELECT
+	0x0040: 38, //UP
+	0x0080: 40, //DOWN
+	0x0100: 37, //LEFT
+	0x0200: 39, //RIGHT
+	0x0400: 87, //L
+	0x0800: 69, //R
+	0x1000: 81, //ZL
+	0x2000: 82, //ZR
+	0x4000: 16, //LCLICK
+}
+
+export const default_xbox_layout: { [key in WIIOTNSettingsKey]: number } = {
+	0x0001: 0, //A
+	0x0002: 1, //B
+	0x0004: 2, //X
+	0x0008: 3, //Y
+	0x0010: 8, //START
+	0x0020: 9, //SELECT
+	0x0040: 12, //UP
+	0x0080: 13, //DOWN
+	0x0100: 14, //LEFT
+	0x0200: 15, //RIGHT
+	0x0400: 4, //L
+	0x0800: 5, //R
+	0x1000: 8, //ZL
+	0x2000: 9, //ZR
+	0x4000: 10, //LCLICK
+}
+
+export const xbox_buttons_map: { [key: number]: string } = {
+	0: "A",
+	1: "B",
+	2: "X",
+	3: "Y",
+	4: "LB",
+	5: "RB",
+	8: "⏸️",
+	9: "▶️",
+	10: "LT",
+	11: "RT",
+	12: "🔼",
+	13: "🔽",
+	14: "⬅️",
+	15: "➡️",
+}
+
+

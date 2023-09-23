@@ -5,6 +5,7 @@ const Store = require('electron-store');
 export type WIIOTNSettingsKey = 0x0001 | 0x0002 | 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x0040 | 0x0080 | 0x0100 | 0x0200 | 0x0400 | 0x0800 | 0x1000 | 0x2000 | 0x4000;
 
 export interface WIIOTNSettings {
+	selected_controller: 'keyboard' | 'xbox',
 	KeyboardSettings: KeyboardSettings,
 	XboxSettings: XboxSettings,
 }
@@ -14,12 +15,12 @@ export interface ControllerSettings {
 	key_map: { [key in WIIOTNSettingsKey | number | string]: number },
 }
 
-interface KeyboardSettings extends ControllerSettings {
+export interface KeyboardSettings extends ControllerSettings {
 	controller: 'keyboard',
 	key_map: { [key in WIIOTNSettingsKey | number]: number },
 }
 
-interface XboxSettings extends ControllerSettings {
+export interface XboxSettings extends ControllerSettings {
 	controller: 'xbox',
 	key_map: { [key in WIIOTNSettingsKey | number]: number },
 }
@@ -50,6 +51,10 @@ function useSettings() {
 	}
 
 }
+
+
+
+
 
 /*
  *  const controllerSettings : ControllerSettings = settings.get("controller");

@@ -1,15 +1,12 @@
 import { createContext, useEffect, useRef, useState } from 'react';
-import { MemoryRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './app.scss';
 import Connect from './pages/connect';
 import Control from './pages/control';
 import PageContainer from './components/page-container/pagecontainer';
 import Configure from './pages/configure';
-import { ControllerSettings, WIIOTNSettings } from '../storage';
-import { WIIOTNController } from '../obj/interface';
-import { static_settings } from '../storage/exports';
-import useGamePad from './hooks/useGamePad';
 import useGamePadHook from './hooks/useGamepadListener';
+import { ControllerSettings } from '../storage';
 
 export type SockAddrIn = {
 	ip_address: string;
@@ -24,9 +21,8 @@ export interface StateModifier<T> {
 
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
-export const SettingsContext = createContext<StateModifier<ControllerSettings>>({ state: {}, setState: () => { } });
-
-export const XboxControllerContext = createContext<{ addEventListener: (listener: Function) => void, removeEventListener: (listener: Function) => void }>({ addEventListener: () => { }, removeEventListener: () => { } });
+export const SettingsContext = createContext<StateModifier<ControllerSettings | {}>>({ state: {}, setState: () => { } });
+export const XboxControllerContext = createContext({ addEventListener: (_event_name: string, event: (button_pressed: number) => void) => { }, removeEventListener: (event: _event_name) => { } });
 
 export default function App() {
 
@@ -36,8 +32,8 @@ export default function App() {
 		id: 0,
 	});
 	const [is_connected, setIsConnected] = useState<boolean>(false);
-	const [user_settings, setUserSettings] = useState<ControllerSettings>({});
-	const game_pad = useGamePadHook({ onGamePadConnected: (game_pad: Gamepad) => { useGamePad(game_pad.index) } });
+	const [user_settings, setUserSettings] = useState<ControllerSettings>();
+	const game_pad = useRef(useGamePadHook());
 
 
 	useEffect(() => {
@@ -55,7 +51,7 @@ export default function App() {
 			setSockAddr({ ...sock_addr, id: 0 });
 		});
 		//request settings
-		window.electron.ipcRenderer.sendMessage('fetch-settings', 'controller');
+		window.electron.ipcRenderer.sendMessage('fetch-settings', JSON.stringify({ type: 'controller', controller: 'all' }));
 		const settings_listener = window.electron.ipcRenderer.on('fetch-settings-reply', (event: any) => {
 			const settings_response: { type: 'controller', settings: any } = event as any;
 			if (settings_response.type === 'controller') {
@@ -80,7 +76,7 @@ export default function App() {
 	return (
 		<Router>
 			<SettingsContext.Provider value={{ state: user_settings, setState: setUserSettings }}>
-				<XboxControllerContext.Provider value={{ addEventListener: game_pad[1], removeEventListener: game_pad[2] }}>
+				<XboxControllerContext.Provider value={{ addEventListener: game_pad.current[1], removeEventListener: game_pad.current[2] }}>
 					<SocketContext.Provider value={{ state: sock_addr, setState: setSockAddr }}>
 						<ConnectionContext.Provider value={{ state: is_connected, setState: setIsConnected }}>
 							<PageContainer>

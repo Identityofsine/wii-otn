@@ -95,8 +95,13 @@ ipcMain.on('udp-disconnect-request', async (event, arg) => {
 });
 
 ipcMain.on('fetch-settings', async (event, arg) => {
-	if (arg === 'controller') {
-		event.reply('fetch-settings-reply', { type: arg, settings: settings.get('controller_settings') })
+	console.log(arg);
+	const arg_mutated: { type: 'controller', controller: 'keyboard' | 'xbox' | 'all' } = JSON.parse(arg);
+	if (arg_mutated.type === 'controller') {
+		if (arg_mutated.controller === 'all') {
+			const fetched_settings = settings.get('controller_settings');
+			event.reply('fetch-settings-reply', { type: arg_mutated.type, settings: fetched_settings });
+		}
 	}
 });
 
@@ -104,7 +109,8 @@ ipcMain.on('store-settings', async (event, arg) => {
 	const arg_mutated = JSON.parse(arg);
 	console.log('[DEBUG] : STORE SETTINGS: ', arg_mutated);
 	if (arg_mutated.type === 'controller') {
-		settings.set('controller_settings', arg_mutated.settings);
+		const fetched_settings = settings.get('controller_settings');
+		settings.set('controller_settings', { ...fetched_settings, ...arg_mutated.settings });
 		event.reply('store-settings-reply', { type: arg_mutated.type, success: true });
 	}
 });

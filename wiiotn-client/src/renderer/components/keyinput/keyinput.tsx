@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ControllerSettings } from "../../../storage";
-import { button_map } from "../../../storage/exports";
+import { button_map, xbox_buttons_map } from "../../../storage/exports";
+import { XboxControllerContext } from "../../App";
 
 interface KeyInputProp<T extends ControllerSettings> {
 	key_identifier: keyof T['key_map'];
@@ -96,14 +97,32 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 //for xbox controllers
 export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
 
+	const [button, setCurrentButton] = useState<number>(props.default_value || 0);
+	const controller = useContext(XboxControllerContext);
+
+	useEffect(() => {
+	}, [])
+
+	const onFocus = () => {
+		controller.addEventListener(`${props.key_identifier}-buttonpress`, (event: number) => {
+			setCurrentButton(event);
+		});
+	}
+
+	const onBlur = () => {
+		controller.removeEventListener(`${props.key_identifier}-buttonpress`);
+	}
+
 	return (
 		<div className="key-input flex column justify-center align-center" >
 			<span className="key-label inter" > {props.key_identifier ? button_map[props.key_identifier as number] : 'N/A'} </span>
 			<input
 				className="key-input-field inter select-none"
 				type="text"
-				value={props.default_value}
+				value={button != undefined ? xbox_buttons_map[button] : button}
 				onChange={(event) => props.onKeyUpdate(props.key_identifier, event.target.value.toUpperCase().charCodeAt(0))}
+				onFocus={() => { onFocus() }}
+				onBlur={() => { onBlur() }}
 				readOnly={true}
 			/>
 		</div>
