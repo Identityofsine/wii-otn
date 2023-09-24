@@ -181,7 +181,8 @@ function Configure() {
 			KeyboardSettings: keyboard_settings as KeyboardSettings,
 			XboxSettings: xbox_settings as XboxSettings,
 		}
-		global_settings.setState({ ...global_settings.state, controller: new_settings });
+		console.log('[DEBUG] Saving settings: ', new_settings);
+		global_settings.setState({ ...global_settings.state, ...new_settings });
 		window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
 	}
 

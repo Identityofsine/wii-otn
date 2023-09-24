@@ -14,6 +14,7 @@ export default function useGamePadHook() {
 			if (e.gamepad && !gamepad_entity.current) {
 				setGamePad(e.gamepad);
 				gamepad_entity.current = useGamePad(e.gamepad.index);
+
 				for (let event_name in event_backlog.current) {
 					gamepad_entity.current.addEventListener(event_name, event_backlog.current[event_name]);
 				}
