@@ -6,6 +6,7 @@ import TextInput from '../components/textinput/TextInput';
 import '../styles/pages/connect.scss';
 import { useNavigate } from 'react-router-dom';
 import { sendConnectClause } from '../socket_functions';
+import { getIPC } from '../IPC.e';
 
 
 type ConnectProps = {
@@ -19,13 +20,16 @@ function Connect(props: ConnectProps) {
 	const connection_context = useContext(ConnectionContext);
 
 	useEffect(() => {
-		window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
+		const udp_event = getIPC().addEventListener('udp-connect-reply', (event: any) => {
 			if (event.success && event.success == true) {
 				connection_context.setState(true);
 				navigate('/control');
 				props.SetSocketInfo({ ...props.SocketInfo, id: event.id })
 			}
 		});
+		return () => {
+			getIPC().removeEventListener('udp-connect-reply', udp_event);
+		}
 	}, [])
 
 	const submit_ipaddress = () => {

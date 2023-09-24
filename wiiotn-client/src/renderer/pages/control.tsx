@@ -6,6 +6,7 @@ import { SettingsContext } from "../App";
 import { WIIOTNSettings } from "../../storage";
 import { xbox_buttons_map } from "../../storage/exports";
 import { ControllerHandler } from "../hooks/useGamePad";
+import { getIPC } from "../IPC.e";
 
 type ControlProps = {
 	socket_id: number
@@ -31,7 +32,7 @@ function Control(props: ControlProps) {
 				if (wii_controller.current.getState().buttons_pressed == mutated_key) return;
 				wii_controller.current.setState(old_state => { return { ...old_state, buttons_pressed: mutated_key } });
 				console.log(wii_controller.current.getState());
-				window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.current.getState(), time: Date.now() }));
+				getIPC().send('udp-message', { ...wii_controller.current.getState(), time: Date.now() });
 			}
 
 			key_state.addListener(key_state_listener);
@@ -65,7 +66,7 @@ function Control(props: ControlProps) {
 				if (wii_controller.current.getState().buttons_pressed == mutated_buttons) return;
 				wii_controller.current.setState(old_state => { return { ...old_state, buttons_pressed: Number(mutated_buttons) } });
 				console.log(wii_controller.current.getState());
-				window.electron.ipcRenderer.sendMessage('udp-message', JSON.stringify({ ...wii_controller.current.getState(), time: Date.now() }));
+				getIPC().send('udp-message', { ...wii_controller.current.getState(), time: Date.now() });
 			});
 
 			return () => {

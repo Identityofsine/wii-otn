@@ -6,6 +6,7 @@ import { SettingsContext } from "../App";
 import KeyInput, { ButtonInput } from "../components/keyinput/keyinput";
 import Dropdown, { Option } from "../components/dropdown/dropdown";
 import { default_keyboard_layout, default_xbox_layout } from "../../storage/exports";
+import { getIPC } from "../IPC.e";
 
 
 interface KeyboardSettingsProps {
@@ -62,7 +63,6 @@ function KeyboardSettingsPage(props: KeyboardSettingsProps) {
 
 function XboxSettingsPage(props: KeyboardSettingsProps) {
 
-	const [game_pad_connected, setGamePadConnected] = useState<boolean>(false);
 	const navigator = window.navigator as any;
 	const [game_pad, setGamePad] = useState<Gamepad | null>(null);
 	const [button_map, setButtonMap] = useState<ControllerSettings['key_map']>({ ...default_xbox_layout, ...props.settings?.key_map });
@@ -77,19 +77,6 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 			}
 		}
 
-		const on_gamepad_connected = (event: GamepadEvent) => {
-			if (game_pad === null) {
-				console.log('[DEBUG] Gamepad connected at index %d: %s. %d buttons, %d axes.', event.gamepad.index, event.gamepad.id, event.gamepad.buttons.length, event.gamepad.axes.length);
-
-				setGamePad(event.gamepad);
-				setGamePadConnected(true);
-			}
-		};
-		window.addEventListener('gamepadconnected', on_gamepad_connected);
-
-		return () => {
-			window.removeEventListener('gamepadconnected', on_gamepad_connected);
-		}
 	}, [])
 
 	useEffect(() => {
@@ -98,7 +85,6 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 
 	useEffect(() => {
 		if (game_pad) {
-			setGamePadConnected(true);
 		}
 
 	}, [game_pad])
@@ -151,26 +137,28 @@ function Configure() {
 
 	useEffect(() => {
 		//call settings from ipc
-		window.electron.ipcRenderer.sendMessage('fetch-settings', JSON.stringify({ type: 'controller', controller: 'all' }));
-		const controller_listener = window.electron.ipcRenderer.on('fetch-settings-reply', (event) => {
-			const settings_response: { type: 'controller', settings: WIIOTNSettings } = event as any;
-			if (settings_response.type === 'controller') {
-				console.log('[DEBUG] Settings: ', settings_response.settings);
-				setKeyboardSettings(settings_response.settings?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
-				setXboxSettings(settings_response.settings?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout } as XboxSettings);
-				setActiveController(settings_response.settings?.selected_controller ?? 'controller');
-				setGeneralSettings({ ...settings_response.settings });
-			}
+		getIPC().send('fetch-settings', { type: 'controller', controller: 'all' });
+		const bulk_events = getIPC().addEvents({
+			'fetch-settings-reply': [(event) => {
+				const settings_response: { type: 'controller', settings: WIIOTNSettings } = event as any;
+				if (settings_response.type === 'controller') {
+					console.log('[DEBUG] Settings: ', settings_response.settings);
+					setKeyboardSettings(settings_response.settings?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
+					setXboxSettings(settings_response.settings?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout } as XboxSettings);
+					setActiveController(settings_response.settings?.selected_controller ?? 'controller');
+					setGeneralSettings({ ...settings_response.settings });
+				}
+			}],
+			'store-settings-reply': [(event) => {
+				if (event.success) {
+					setStatus('Settings Saved!')
+				}
+			}],
 		});
-		const save_listener = window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
-			if (event.success) {
-				setStatus('Settings Saved!')
-			}
-		});
+
 		return () => {
 			//remove listener
-			controller_listener();
-			save_listener();
+			bulk_events.unsubscribeAll();
 		}
 	}, [])
 
@@ -183,7 +171,7 @@ function Configure() {
 		}
 		console.log('[DEBUG] Saving settings: ', new_settings);
 		global_settings.setState({ ...global_settings.state, ...new_settings });
-		window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
+		getIPC().send('store-settings', { type: 'controller', settings: new_settings });
 	}
 
 	return (
