@@ -8,6 +8,7 @@ import Configure from './pages/configure';
 import useGamePadHook from './hooks/useGamepadListener';
 import { ControllerSettings, WIIOTNSettings } from '../storage';
 import { ControllerHandler } from './hooks/useGamePad';
+import { getIPC } from './IPC.e';
 
 export type SockAddrIn = {
 	ip_address: string;
@@ -38,33 +39,30 @@ export default function App() {
 
 
 	useEffect(() => {
-		//IPC REPLY HANDLERS
-		const debug_listener = window.electron.ipcRenderer.on('debug-message', (event: any) => {
-			console.log(event)
-		});
-		const connect_listener = window.electron.ipcRenderer.on('udp-connect-reply', (event: any) => {
-			console.log("[DEBUG -- udp-connect-reply] Event OBJ: ", event);
-			setIsConnected(event?.success);
-			setSockAddr({ ...sock_addr, id: event.id });
-		});
-		const disconnect_listener = window.electron.ipcRenderer.on('udp-disconnect-reply', (_event: any) => {
-			setIsConnected(false);
-			setSockAddr({ ...sock_addr, id: 0 });
-		});
-		//request settings
-		window.electron.ipcRenderer.sendMessage('fetch-settings', JSON.stringify({ type: 'controller', controller: 'all' }));
-		const settings_listener = window.electron.ipcRenderer.on('fetch-settings-reply', (event: any) => {
-			let settings_response: { settings: WIIOTNSettings } = event as any;
-			setUserSettings(settings_response.settings as WIIOTNSettings);
-			console.log("[DEBUG -- fetch-settings-reply] Settings: ", settings_response);
-		});
+
+		const _bulk_ipc_functions = getIPC().addEvents({
+			'udp-connect-reply': [((event: any) => {
+				console.log("[DEBUG -- udp-connect-reply] Event OBJ: ", event);
+				setIsConnected(event?.success);
+				setSockAddr({ ...sock_addr, id: event.id });
+			})],
+			'udp-disconnect-reply': [((_event: any) => {
+				setIsConnected(false);
+				setSockAddr({ ...sock_addr, id: 0 });
+			})],
+			'fetch-settings-reply': [((event: any) => {
+				let settings_response: { settings: WIIOTNSettings } = event as any;
+				setUserSettings(settings_response.settings as WIIOTNSettings);
+				console.log("[DEBUG -- fetch-settings-reply] Settings: ", settings_response);
+			})],
+		})
+
+		getIPC().send('fetch-settings', { type: 'controller', controller: 'all' });
+
 
 		return () => {
 			//REMOVE IPC LISTENERS
-			debug_listener();
-			connect_listener();
-			disconnect_listener();
-			settings_listener();
+			_bulk_ipc_functions.unsubscribeAll();
 		}
 	}, [])
 

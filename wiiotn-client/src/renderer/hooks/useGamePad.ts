@@ -1,19 +1,4 @@
 
-const static_button_map: { [key: number]: string } = {
-
-};
-
-
-interface GamePadProps {
-	gamepad_index?: number;
-	onButtonPressed?: (button: GamepadButton) => void;
-}
-
-export interface UseGamePadReturn {
-	gamepad: Gamepad | null;
-	addEventListener: (event: string, callback: (event: number[]) => void) => void;
-	removeEventListener: (event: string) => void;
-}
 
 export class ControllerHandler {
 	private static _instance: ControllerHandler = new ControllerHandler();
