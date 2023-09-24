@@ -6,7 +6,7 @@ import Control from './pages/control';
 import PageContainer from './components/page-container/pagecontainer';
 import Configure from './pages/configure';
 import useGamePadHook from './hooks/useGamepadListener';
-import { ControllerSettings } from '../storage';
+import { ControllerSettings, WIIOTNSettings } from '../storage';
 
 export type SockAddrIn = {
 	ip_address: string;
@@ -21,7 +21,7 @@ export interface StateModifier<T> {
 
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
-export const SettingsContext = createContext<StateModifier<ControllerSettings | {}>>({ state: {}, setState: () => { } });
+export const SettingsContext = createContext<StateModifier<WIIOTNSettings | {}>>({ state: {}, setState: () => { } });
 export const XboxControllerContext = createContext({ addEventListener: (_event_name: string, _event: (button_pressed: number[]) => void) => { }, removeEventListener: (_event: string) => { } });
 
 export default function App() {
@@ -32,7 +32,7 @@ export default function App() {
 		id: 0,
 	});
 	const [is_connected, setIsConnected] = useState<boolean>(false);
-	const [user_settings, setUserSettings] = useState<ControllerSettings | {}>({});
+	const [user_settings, setUserSettings] = useState<WIIOTNSettings | {}>({});
 	const game_pad = useRef(useGamePadHook());
 
 
@@ -53,11 +53,9 @@ export default function App() {
 		//request settings
 		window.electron.ipcRenderer.sendMessage('fetch-settings', JSON.stringify({ type: 'controller', controller: 'all' }));
 		const settings_listener = window.electron.ipcRenderer.on('fetch-settings-reply', (event: any) => {
-			const settings_response: { type: 'controller', settings: any } = event as any;
-			if (settings_response.type === 'controller') {
-				setUserSettings(settings_response!.settings as ControllerSettings);
-				console.log("[DEBUG -- fetch-settings-reply] Settings: ", settings_response!.settings as ControllerSettings);
-			}
+			let settings_response: { settings: WIIOTNSettings } = event as any;
+			setUserSettings(settings_response.settings as WIIOTNSettings);
+			console.log("[DEBUG -- fetch-settings-reply] Settings: ", settings_response);
 		});
 
 		return () => {

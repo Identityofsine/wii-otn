@@ -106,7 +106,7 @@ export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
 
 	const onFocus = () => {
 		controller.addEventListener(`${props.key_identifier}-buttonpress`, (event: number[]) => {
-			if (event.length < 0) return;
+			if (event.length <= 0) return;
 			setCurrentButton(event[0]);
 		});
 	}
@@ -121,7 +121,7 @@ export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
 			<input
 				className="key-input-field inter select-none"
 				type="text"
-				value={button != undefined ? xbox_buttons_map[button] : button}
+				value={button != undefined ? xbox_buttons_map[button] : 'N/A'}
 				onFocus={() => { onFocus() }}
 				onBlur={() => { onBlur() }}
 				readOnly={true}

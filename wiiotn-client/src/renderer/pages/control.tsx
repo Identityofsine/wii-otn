@@ -20,6 +20,7 @@ function Control(props: ControlProps) {
 	const controller = useContext(XboxControllerContext);
 
 	useEffect(() => {
+		console.log("[DEBUG] ControllerSettings: ", controller_settings);
 		if (controller_settings.selected_controller === 'keyboard') {
 			const key_state_listener = (key: Array<number>) => {
 				let mutated_key: number = 0;

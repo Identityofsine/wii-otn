@@ -65,10 +65,9 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 	const [game_pad_connected, setGamePadConnected] = useState<boolean>(false);
 	const navigator = window.navigator as any;
 	const [game_pad, setGamePad] = useState<Gamepad | null>(null);
-	const [button_map, setButtonMap] = useState<ControllerSettings['key_map']>(props.settings?.key_map ?? default_xbox_layout);
+	const [button_map, setButtonMap] = useState<ControllerSettings['key_map']>({ ...default_xbox_layout, ...props.settings?.key_map });
 
 	useEffect(() => {
-
 		//search for already connected gamepads
 		const game_pads = navigator.getGamepads();
 		for (let i = 0; i < game_pads.length; i++) {
@@ -126,7 +125,7 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 		<>
 			<div className="flex column input-field-gap input-field-margin">
 				<div className="input-group fill-width">
-					{grab_button_map(0, 18).map((key: string, _index: number) => (
+					{Object.keys(button_map).map((key: string, _index: number) => (
 						<ButtonInput
 							key={key}
 							key_identifier={key as unknown as WIIOTNSettingsKey}
@@ -146,6 +145,7 @@ function Configure() {
 	const [active_controller, setActiveController] = useState<'keyboard' | 'xbox'>('keyboard');
 	const [keyboard_settings, setKeyboardSettings] = useState<ControllerSettings>();
 	const [xbox_settings, setXboxSettings] = useState<ControllerSettings>();
+	const [general_settings, setGeneralSettings] = useState<WIIOTNSettings | null>();
 	const [status, setStatus] = useState<string>('');
 	const global_settings = useContext(SettingsContext);
 
@@ -159,6 +159,7 @@ function Configure() {
 				setKeyboardSettings(settings_response.settings?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
 				setXboxSettings(settings_response.settings?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout } as XboxSettings);
 				setActiveController(settings_response.settings?.selected_controller ?? 'controller');
+				setGeneralSettings({ ...settings_response.settings });
 			}
 		});
 		const save_listener = window.electron.ipcRenderer.on('store-settings-reply', (event: any) => {
@@ -180,6 +181,7 @@ function Configure() {
 			KeyboardSettings: keyboard_settings as KeyboardSettings,
 			XboxSettings: xbox_settings as XboxSettings,
 		}
+		global_settings.setState({ ...global_settings.state, controller: new_settings });
 		window.electron.ipcRenderer.sendMessage('store-settings', JSON.stringify({ type: 'controller', settings: new_settings }));
 	}
 
