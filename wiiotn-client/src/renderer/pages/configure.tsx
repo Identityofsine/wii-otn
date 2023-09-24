@@ -7,6 +7,7 @@ import KeyInput, { ButtonInput } from "../components/keyinput/keyinput";
 import Dropdown, { Option } from "../components/dropdown/dropdown";
 import { default_keyboard_layout, default_xbox_layout } from "../../storage/exports";
 import { getIPC } from "../IPC.e";
+import { getSettings } from "../hooks/useSettings";
 
 
 interface KeyboardSettingsProps {
@@ -128,27 +129,16 @@ function XboxSettingsPage(props: KeyboardSettingsProps) {
 function Configure() {
 
 	const [controller, setController] = useState<'keyboard' | 'xbox'>('keyboard');
-	const [active_controller, setActiveController] = useState<'keyboard' | 'xbox'>('keyboard');
-	const [keyboard_settings, setKeyboardSettings] = useState<ControllerSettings>();
-	const [xbox_settings, setXboxSettings] = useState<ControllerSettings>();
-	const [general_settings, setGeneralSettings] = useState<WIIOTNSettings | null>();
+	const [active_controller, setActiveController] = useState<'keyboard' | 'xbox'>(getSettings().getSettings()?.selected_controller ?? 'keyboard');
+	const [keyboard_settings, setKeyboardSettings] = useState<ControllerSettings>(getSettings().getSettings()?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout });
+	const [xbox_settings, setXboxSettings] = useState<ControllerSettings>(getSettings().getSettings()?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout });
 	const [status, setStatus] = useState<string>('');
-	const global_settings = useContext(SettingsContext);
+	const settings = useContext(SettingsContext);
 
 	useEffect(() => {
 		//call settings from ipc
 		getIPC().send('fetch-settings', { type: 'controller', controller: 'all' });
 		const bulk_events = getIPC().addEvents({
-			'fetch-settings-reply': [(event) => {
-				const settings_response: { type: 'controller', settings: WIIOTNSettings } = event as any;
-				if (settings_response.type === 'controller') {
-					console.log('[DEBUG] Settings: ', settings_response.settings);
-					setKeyboardSettings(settings_response.settings?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout } as KeyboardSettings);
-					setXboxSettings(settings_response.settings?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout } as XboxSettings);
-					setActiveController(settings_response.settings?.selected_controller ?? 'controller');
-					setGeneralSettings({ ...settings_response.settings });
-				}
-			}],
 			'store-settings-reply': [(event) => {
 				if (event.success) {
 					setStatus('Settings Saved!')
@@ -170,8 +160,8 @@ function Configure() {
 			XboxSettings: xbox_settings as XboxSettings,
 		}
 		console.log('[DEBUG] Saving settings: ', new_settings);
-		global_settings.setState({ ...global_settings.state, ...new_settings });
-		getIPC().send('store-settings', { type: 'controller', settings: new_settings });
+		getSettings().setSettings(new_settings);
+		settings.setState(new_settings);
 	}
 
 	return (

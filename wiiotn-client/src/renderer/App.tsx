@@ -9,6 +9,7 @@ import useGamePadHook from './hooks/useGamepadListener';
 import { ControllerSettings, WIIOTNSettings } from '../storage';
 import { ControllerHandler } from './hooks/useGamePad';
 import { getIPC } from './IPC.e';
+import { getSettings } from './hooks/useSettings';
 
 export type SockAddrIn = {
 	ip_address: string;
@@ -23,7 +24,7 @@ export interface StateModifier<T> {
 
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
-export const SettingsContext = createContext<StateModifier<WIIOTNSettings | {}>>({ state: {}, setState: () => { } });
+export const SettingsContext = createContext<StateModifier<{ type: 'controller', settings: WIIOTNSettings } | {}>>({ state: {}, setState: () => { } });
 
 export default function App() {
 
@@ -33,7 +34,7 @@ export default function App() {
 		id: 0,
 	});
 	const [is_connected, setIsConnected] = useState<boolean>(false);
-	const [user_settings, setUserSettings] = useState<WIIOTNSettings | {}>({});
+	const [user_settings, setUserSettings] = useState<{ type: 'controller', settings: WIIOTNSettings } | {}>(getSettings().getSettings() ?? {});
 	//initalize game_pad
 	const _game_pad = useRef(ControllerHandler.getInstance());
 
@@ -50,15 +51,9 @@ export default function App() {
 				setIsConnected(false);
 				setSockAddr({ ...sock_addr, id: 0 });
 			})],
-			'fetch-settings-reply': [((event: any) => {
-				let settings_response: { settings: WIIOTNSettings } = event as any;
-				setUserSettings(settings_response.settings as WIIOTNSettings);
-				console.log("[DEBUG -- fetch-settings-reply] Settings: ", settings_response);
-			})],
 		})
 
-		getIPC().send('fetch-settings', { type: 'controller', controller: 'all' });
-
+		setUserSettings(getSettings().getSettings() ?? {});
 
 		return () => {
 			//REMOVE IPC LISTENERS
