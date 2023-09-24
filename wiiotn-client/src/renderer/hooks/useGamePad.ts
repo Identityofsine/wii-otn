@@ -15,56 +15,33 @@ export interface UseGamePadReturn {
 	removeEventListener: (event: string) => void;
 }
 
-export class GlobalVariable {
-	private static _instance: GlobalVariable = new GlobalVariable();
+export class ControllerHandler {
+	private static _instance: ControllerHandler = new ControllerHandler();
 	private events = new Map<string, (event: number[]) => void>();
+	private loop_running: boolean = false;
 
 	private constructor() {
-		if (GlobalVariable._instance) {
-			throw new Error("Error: Instantiation failed: Use GlobalVariable.getInstance() instead of new.");
+		if (ControllerHandler._instance) {
+			throw new Error("Error: Instantiation failed: Use ControllerHandler.getInstance() instead of new.");
 		}
-		GlobalVariable._instance = this;
-	}
-
-	public static getInstance(): GlobalVariable {
-		return GlobalVariable._instance;
-	}
-
-	public emitAll(value: number[]) {
-		this.events.forEach((callback, event) => {
-			callback(value);
+		console.log("[DEBUG] ControllerHandler Running [Constructor]");
+		ControllerHandler._instance = this;
+		window.addEventListener("gamepadconnected", (e: GamepadEvent) => {
+			console.log("[DEBUG] Gamepad Connected [Constructor]");
+			this.startListeningLoop(e.gamepad.index);
 		});
 	}
 
-	public addEventListener(event: string, callback: (event: number[]) => void) {
-		this.events.set(event, callback);
+	public static getInstance(): ControllerHandler {
+		return ControllerHandler._instance;
 	}
-
-	public removeEventListener(event: string) {
-		this.events.delete(event);
-	}
-
-}
-
-export default function useGamePad(gamepad_index: number = 0): UseGamePadReturn {
-
-	console.log("[DEBUG] Gamepad Running ");
-
-	const v8_navigator = navigator as any;
-	const gamepads: Gamepad[] = v8_navigator.getGamepads();
-	let current_gamepad: Gamepad | null = null;
-
-	if (gamepads.filter(gamepad => gamepad !== null).length === 0) {
-		throw Error("No gamepads found");
-	}
-
-
-	current_gamepad = gamepads[gamepad_index];
-	if (current_gamepad === null) throw Error("Gamepad not found");
-
-	console.log("[DEBUG] Gamepad Found: ", current_gamepad);
-
-	const loop_function = async () => {
+	/*
+	 * @summary {This function launches the (one and only) loop that listens for button presses on the controller}
+	 */
+	public async startListeningLoop(gamepad_index: number = 0) {
+		if (this.loop_running) return;
+		this.loop_running = true;
+		console.log("[DEBUG] ControllerHandler Running [startListeningLoop]");
 		let gamepad: Gamepad | null = navigator.getGamepads()[gamepad_index];
 		while (gamepad?.connected ?? false) {
 			gamepad = navigator.getGamepads()[gamepad_index];
@@ -75,25 +52,27 @@ export default function useGamePad(gamepad_index: number = 0): UseGamePadReturn 
 					console.log("[DEBUG] Button Pressed: ", buttons_pressed);
 				}
 			});
-			GlobalVariable.getInstance().emitAll(buttons_pressed);
+			this.emitAll(buttons_pressed);
 			await new Promise((resolve) => setTimeout(resolve, 25));
 		}
+		this.loop_running = false;
+		console.log("[DEBUG] ControllerHandler ENDED [startListeningLoop] [END]");
 	}
 
-	loop_function();
-
-
-	const addEventListener = (event: string, callback: (event: number[]) => void) => {
-		GlobalVariable.getInstance().addEventListener(event, callback);
+	public emitAll(value: number[] = []) {
+		this.events.forEach((callback, _event) => {
+			callback(value);
+		});
 	}
 
-	const removeEventListener = (event: string) => {
-		GlobalVariable.getInstance().removeEventListener(event);
+	public addEventListener(event: string, callback: (event: number[]) => void) {
+		console.log("[DEBUG] ControllerHandler Running [addEventListener]");
+		this.events.set(event, callback);
 	}
 
-	return {
-		gamepad: current_gamepad,
-		addEventListener,
-		removeEventListener
+	public removeEventListener(event: string) {
+		this.events.delete(event);
 	}
+
 }
+

@@ -1,7 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ControllerSettings } from "../../../storage";
 import { button_map, xbox_buttons_map } from "../../../storage/exports";
 import { XboxControllerContext } from "../../App";
+import { ControllerHandler } from "../../hooks/useGamePad";
 
 interface KeyInputProp<T extends ControllerSettings> {
 	key_identifier: keyof T['key_map'];
@@ -98,7 +99,7 @@ function KeyInput<T extends ControllerSettings>(props: KeyInputProp<T>) {
 export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
 
 	const [button, setCurrentButton] = useState<number>(props.default_value || 0);
-	const controller = useContext(XboxControllerContext);
+	const controller = useRef(ControllerHandler.getInstance()).current;
 
 	useEffect(() => {
 		props.onKeyUpdate(props.key_identifier, button);

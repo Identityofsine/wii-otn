@@ -7,6 +7,7 @@ import PageContainer from './components/page-container/pagecontainer';
 import Configure from './pages/configure';
 import useGamePadHook from './hooks/useGamepadListener';
 import { ControllerSettings, WIIOTNSettings } from '../storage';
+import { ControllerHandler } from './hooks/useGamePad';
 
 export type SockAddrIn = {
 	ip_address: string;
@@ -22,7 +23,6 @@ export interface StateModifier<T> {
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
 export const SettingsContext = createContext<StateModifier<WIIOTNSettings | {}>>({ state: {}, setState: () => { } });
-export const XboxControllerContext = createContext({ addEventListener: (_event_name: string, _event: (button_pressed: number[]) => void) => { }, removeEventListener: (_event: string) => { } });
 
 export default function App() {
 
@@ -33,7 +33,8 @@ export default function App() {
 	});
 	const [is_connected, setIsConnected] = useState<boolean>(false);
 	const [user_settings, setUserSettings] = useState<WIIOTNSettings | {}>({});
-	const game_pad = useRef(useGamePadHook());
+	//initalize game_pad
+	const _game_pad = useRef(ControllerHandler.getInstance());
 
 
 	useEffect(() => {
@@ -74,19 +75,17 @@ export default function App() {
 	return (
 		<Router>
 			<SettingsContext.Provider value={{ state: user_settings, setState: setUserSettings }}>
-				<XboxControllerContext.Provider value={{ addEventListener: game_pad.current[1], removeEventListener: game_pad.current[2] }}>
-					<SocketContext.Provider value={{ state: sock_addr, setState: setSockAddr }}>
-						<ConnectionContext.Provider value={{ state: is_connected, setState: setIsConnected }}>
-							<PageContainer>
-								<Routes>
-									<Route path="/" element={<Connect SocketInfo={sock_addr} SetSocketInfo={setSockAddr} />} />
-									<Route path="/control" element={<Control socket_id={sock_addr.id} />} />
-									<Route path="/configure" element={<Configure />} />
-								</Routes>
-							</PageContainer>
-						</ConnectionContext.Provider>
-					</SocketContext.Provider>
-				</XboxControllerContext.Provider>
+				<SocketContext.Provider value={{ state: sock_addr, setState: setSockAddr }}>
+					<ConnectionContext.Provider value={{ state: is_connected, setState: setIsConnected }}>
+						<PageContainer>
+							<Routes>
+								<Route path="/" element={<Connect SocketInfo={sock_addr} SetSocketInfo={setSockAddr} />} />
+								<Route path="/control" element={<Control socket_id={sock_addr.id} />} />
+								<Route path="/configure" element={<Configure />} />
+							</Routes>
+						</PageContainer>
+					</ConnectionContext.Provider>
+				</SocketContext.Provider>
 			</SettingsContext.Provider>
 		</Router>
 	);

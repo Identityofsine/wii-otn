@@ -1,10 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import "../styles/pages/control.scss";
 import createState, { useConservativeState } from "../../obj/state";
-import { WIIOTNController, empty_wii_controller, key_map, mapSettingsToController } from "../../obj/interface";
-import { SettingsContext, XboxControllerContext } from "../App";
-import { ControllerSettings, WIIOTNSettings } from "../../storage";
+import { WIIOTNController, empty_wii_controller, mapSettingsToController } from "../../obj/interface";
+import { SettingsContext } from "../App";
+import { WIIOTNSettings } from "../../storage";
 import { xbox_buttons_map } from "../../storage/exports";
+import { ControllerHandler } from "../hooks/useGamePad";
 
 type ControlProps = {
 	socket_id: number
@@ -17,7 +18,7 @@ function Control(props: ControlProps) {
 	const key_state = createState<Array<number>>([0]);
 	const wii_controller = useRef(useConservativeState<WIIOTNController>({ ...empty_wii_controller, id: props.socket_id }, { ignore: ['id'] }));
 	const controller_settings = useContext(SettingsContext).state as WIIOTNSettings;
-	const controller = useContext(XboxControllerContext);
+	const controller = useRef(ControllerHandler.getInstance()).current;
 
 	useEffect(() => {
 		console.log("[DEBUG] ControllerSettings: ", controller_settings);
