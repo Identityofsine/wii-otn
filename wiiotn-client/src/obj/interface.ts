@@ -1,7 +1,7 @@
 import { Axis, ControllerAxis } from "../renderer/hooks/useGamePad";
 import { ControllerSettings } from "../storage";
 
-/*
+/**
 *	@summary Interface for the WIIOTNMessage Model, this is a protocol for the communication between the server and the client
 */
 export default interface WIIOTNMessage {
@@ -11,7 +11,7 @@ export default interface WIIOTNMessage {
 	id: number,
 }
 
-/*
+/**
 	@summary Currenlty unused, but will be used for the ping modulation.
 */
 export interface WIIOTNPing {
@@ -21,7 +21,7 @@ export interface WIIOTNPing {
 	id: number,
 }
 
-/*
+/**
  * @summary Interface for all WIIOTN compatible controllers, this is used to transmit the controller data to the server. 
  * @extends WIIOTNMessage
  *
@@ -77,10 +77,10 @@ export const key_map: { [key: number]: number } = {
 	192: 65536,
 };
 
-
-//convert a ControllerSettings object into a key_map object, shown above this function
-//@summary this is used to convert the settings into a format that can be used by the controller, we use this on the configure page
-//@warning this will not work if settings.key_map is not a valid key_map object
+/**
+* @summary this is used to convert the settings into a format that can be used by the controller, we use this on the configure page
+* @warning this will not work if settings.key_map is not a valid key_map object
+*/
 export const mapSettingsToController = (settings: ControllerSettings): { [key: number]: number } => {
 
 	if (!settings.key_map) return {};

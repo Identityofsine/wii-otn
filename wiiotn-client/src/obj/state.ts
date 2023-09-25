@@ -1,11 +1,17 @@
 /**
  * Create a state object
+ * @summary This function creates a state object that can be used to store data and allows for listeners to be added to the state object.
+ * @param default_value The default value of the state Object
+ * @type T The type of the state object, generic any value can be stored
  */
 function createState<T>(default_value: T | undefined = undefined) {
 	let state: T = default_value as T;
 	let listeners: ((new_state: T) => void)[] = [];
 	const getState = () => state;
 
+	/**
+	 * @summary Dual Argument Function that allows for direct replacement or maniuplation of old_state 
+	 */
 	const setState = (newState: T | ((old_state: T) => T)) => {
 		if (typeof newState === 'function')
 			state = (newState as (old_state: T) => T)(state);
@@ -31,10 +37,16 @@ function createState<T>(default_value: T | undefined = undefined) {
 
 }
 
+/**
+ * @summary This interface allows for the creation of a state object with options, mainly used in {useConservativeState} and {useStrictState}
+ */
 interface IUseStateOptions<T> {
 	ignore?: (keyof T)[];
 }
 
+/**
+ * @summary This function returns a normal state object but drops any data that is the same as the previous state
+ */
 export function useConservativeState<T>(default_value: T | undefined, options?: IUseStateOptions<T>) {
 	const current_state = createState(default_value);
 
@@ -68,22 +80,15 @@ export function useConservativeState<T>(default_value: T | undefined, options?: 
 
 }
 
+/**
+ * @summary This function returns a normal state object but only updates the state if the new state is different from the old state
+ */
 export function useStrictState<T>(default_value: T | undefined, options?: IUseStateOptions<T>) {
+
 	const current_state = createState<T>(default_value);
-
-
 	type TJSON = { [key: string]: any };
 	let new_state: T | TJSON;
 
-	const m_checkKeys = (value_in_check: TJSON): boolean => {
-		let is_same = true;
-		Object.keys(value_in_check).forEach(key => {
-			if (options?.ignore?.includes(key as keyof T)) return;
-			if ((value_in_check as TJSON)[key] !== (current_state.getState() as TJSON)[key])
-				is_same = false;
-		});
-		return is_same;
-	}
 
 	const setState = (new_value: T | ((old_state: T) => T)) => {
 		if (typeof new_value === 'function')

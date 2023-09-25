@@ -2,6 +2,12 @@ import * as process from 'process';
 import * as readline from 'readline';
 import createState from './state';
 
+
+/**
+ * @summary This namespace was used before the application transitioned to the Electron Framework
+ * @deprecated
+ *
+ */
 export namespace KeyboardListener {
 
 	export class KeyboardListener {
@@ -39,7 +45,7 @@ export namespace KeyboardListener {
 		}
 
 		addListener(event: 'keypress' | 'keyup', listener: (...arg0: any) => void) {
-			this.listeners[event].push(listener);
+			this?.listeners[event].push(listener);
 		}
 	}
 }
