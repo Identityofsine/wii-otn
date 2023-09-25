@@ -8,11 +8,15 @@
         "type": "tabs",
         "children": [
           {
-            "id": "c8ee0061869c809f",
+            "id": "45ba1f4429457839",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "readme.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -65,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "0db658d2ece3081a",
@@ -82,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "readme.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -98,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "readme.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -119,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "readme.md"
+              }
             }
           },
           {
@@ -149,11 +156,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "c8ee0061869c809f",
+  "active": "45ba1f4429457839",
   "lastOpenFiles": [
+    "ai_steps.md",
+    "readme.md",
+    "docs.md",
+    "Packet Map from Client to Server.md",
+    "Untitled.canvas",
     "winsock/Basics.md",
     "winsock",
-    "ai_steps.md",
     "vigem/Basic.md"
   ]
 }
