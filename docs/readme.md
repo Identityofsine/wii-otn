@@ -49,17 +49,18 @@ In-order to actually play with your friends using WiiOTN, you would have to scre
 
 ## Building and Using
 
-## Server 
+### Server 
 
 >**Note:** Building and Running the Server is only supported for Windows currently.
 
-To build the current server (*located at ./demos/socket-server*):
+To build the current server (*located at `./demos/socket-server*`):
 - [Install Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
 - Install CMake
 > **NOTE:** If you get any compiler errors, make sure to generate the project files using the `-G 'Visual Studio xx'` flag in CMake.
 
 ```powershell
-
+### Build Script
+.\build.bat
 
 ### Manually
 cd demos\socket-server
@@ -71,6 +72,22 @@ cmake --build .
 #run build
 Debug\socket-server-demo.exe 0.0.0.0
 ```
+
+>**NOTE:** You may encounter an error of `ViGEmClient.dll missing`, if you get this simply copy `ViGEmClient.dll` from `~/lib/ViGEmClient` into `~/demos/socket-server/build/Debug`
+
+### Client
+> *The Client is cross-platform*
+
+The client files are located at `~/wiiotn-client`
+##### To Run
+> **NOTE:** sure you have `nodejs` installed on your computer.
+
+- cd into `~/wiiotn-client`
+- run `npm install`
+- run `npm start` to start the application
+#### To Build
+
+Follow all the steps in `To Run` but instead of `npm start`, run `npm run package`. The build files will be placed in `~/wiiotn-client/release` 
 
 ### Libraries
 - [ViGEmClient](https://github.com/nefarius/ViGEmClient)
