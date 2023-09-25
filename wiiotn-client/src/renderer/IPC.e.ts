@@ -1,18 +1,14 @@
 import { Channels } from "../main/preload";
 
-
-//maybe have a type for each channel ?
-/*
- * export interface IPCMessageInterface [key in Channels]: (data: any) => void) {
- * 	//do something
- * 	}
- *
- *
- *
+/**
+ * @summary This interface defines the functions that are returned from the addEvents function
  */
-
 export type IPCMessageFunction<T extends any> = (data: T) => void;
 
+
+/**
+ * @summary How the end-developer will interact with the IPCController
+ */
 export interface IPCInterface {
 	addEventListener: (event: Channels, callback: (event: any) => void) => number;
 	removeEventListener: (event: Channels, event_id: number) => void;
@@ -20,7 +16,9 @@ export interface IPCInterface {
 }
 
 
-
+/**
+ * @summary This singleton class allows the end-developer to interact with the IPCRenderer throughout the entire application, this makes it easy to call functions and logic from the electorn-backend while keeping a rigid and robust system.
+ */
 class IPCController {
 	private static _instance = new IPCController();
 	private event_map = new Map<Channels, { id: number, removeEventListener: () => void }[]>();
@@ -37,6 +35,9 @@ class IPCController {
 		return IPCController._instance;
 	}
 
+	/**
+	 * @summary Add an event to the event_map, which is keyed by {Channels}, a type that defines all the possible messages in an IPCMessage
+	 */
 	public addEventListener(event: Channels, callback: (event: any) => void): number {
 		if (!this.event_map.has(event)) {
 			this.event_map.set(event, []);
@@ -49,6 +50,9 @@ class IPCController {
 		return event_id;
 	}
 
+	/**
+	 * @summary This bulk event function allows for a x amount of events to be added,it returns a function that will unsubscribe all the events that were added
+	 */
 	public addEvents(events: { [key in Channels | string]: ((event: any) => void)[] }): IPCBulkFunctions {
 		const ipc_instance = this;
 		const event_ids: { [key in Channels]: number[] } = {} as any;
@@ -70,6 +74,9 @@ class IPCController {
 		}
 	}
 
+	/**
+	 * @summary Remove an event from the event_map, which is keyed by {Channels}, a type that defines all the possible messages in an IPCMessage
+	 */
 	public removeEventListener(event: Channels, event_id: number): void {
 		const found_event = this.event_map.get(event)?.find((event) => event.id === event_id);
 		if (found_event) found_event.removeEventListener();
@@ -77,6 +84,9 @@ class IPCController {
 		this.event_map.set(event, this.event_map.get(event)?.filter((event) => event.id !== event_id) ?? []);
 	}
 
+	/**
+	 * @summary Send a message to the IPCMain, this will be picked up by the IPCMain and sent to the correct {Channels}
+	 */
 	public send<T>(event: Channels, data: T): void {
 		console.log("[DEBUG] IPC Sending:%s [send<T>]", event);
 		IPCController.ipc_renderer.sendMessage(event, JSON.stringify(data));

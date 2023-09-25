@@ -11,17 +11,27 @@ import { ControllerHandler } from './hooks/useGamePad';
 import { getIPC } from './IPC.e';
 import { getSettings } from './hooks/useSettings';
 
+/**
+ * @summary Socket Address In, for keeping socket data typesafe
+ */
 export type SockAddrIn = {
 	ip_address: string;
 	port: number;
 	id: number;
 };
 
+
+/**
+ * @summary This is used for state contexts throughout the app
+ */
 export interface StateModifier<T> {
 	state: T;
 	setState: React.Dispatch<React.SetStateAction<T>>;
 }
 
+/**
+ * many of these contexts will be changed or removed in the future
+ */
 export const ConnectionContext = createContext<StateModifier<boolean>>({ state: false, setState: () => { } });
 export const SocketContext = createContext<StateModifier<SockAddrIn>>({ state: { ip_address: '', port: 0, id: 0 }, setState: () => { } });
 export const SettingsContext = createContext<StateModifier<{ type: 'controller', settings: WIIOTNSettings } | {}>>({ state: {}, setState: () => { } });

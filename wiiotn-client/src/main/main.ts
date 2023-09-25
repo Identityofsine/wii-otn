@@ -34,6 +34,9 @@ let settings = useSettings();
 
 let mainWindow: BrowserWindow | null = null;
 
+/**
+ * @summary Sets up the socket instance and interface for the entire electron app.
+ */
 function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMainEvent) {
 	socket_instance.addListener('message', (msg: Buffer) => {
 
