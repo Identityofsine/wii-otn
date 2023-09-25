@@ -16,7 +16,9 @@ export const button_map: { [key in WIIOTNSettingsKey | number]: string } = {
 	0x0800: "R SHOULDER",
 	0x1000: "L STICKDOWN",
 	0x2000: "R STICKDOWN",
-	0x4000: "HOME"
+	0x4000: "HOME",
+	0x8000: "L TRIGGER",
+	0x10000: "R TRIGGER",
 }
 
 //a -> A, b-> B, x -> X, y-> Y 
@@ -54,6 +56,8 @@ export const default_xbox_layout: { [key in WIIOTNSettingsKey]: number } = {
 	0x1000: 8, //LTD
 	0x2000: 9, //RTD
 	0x4000: 16, //HOME
+	0x8000: 6,
+	0x10000: 7,
 }
 
 export const xbox_buttons_map: { [key: number]: string } = {
@@ -63,10 +67,12 @@ export const xbox_buttons_map: { [key: number]: string } = {
 	3: "Y",
 	4: "LB",
 	5: "RB",
+	6: "LT",
+	7: "RT",
 	8: "⏸️",
 	9: "▶️",
-	10: "LT",
-	11: "RT",
+	10: "LS",
+	11: "RS",
 	12: "🔼",
 	13: "🔽",
 	14: "⬅️",

@@ -25,16 +25,22 @@ export class Axis {
 
 	private returnRounded(value: number): number {
 		//convert to short [-1, 0, 1] --> [-32768, 0, 32767]
-		const rounded = this.applyDeadzone(value)
-		value = Math.round(rounded * 32767);
+		const rounded = this.applySensitivity(this.applyDeadzone(value))
+
+		let new_value = Math.round(rounded * 32767);
 
 		//round down
-		return value;
+		return new_value;
 	}
 
 	private applyDeadzone(value: number) {
 		const deadzone = 0.2;
 		return Math.abs(value) < deadzone ? 0 : value;
+	}
+
+	private applySensitivity(value: number) {
+		const sensitivity = 1;
+		return value * sensitivity;
 	}
 
 	public static AxisEquals(a: ControllerAxis, b: ControllerAxis): boolean {
