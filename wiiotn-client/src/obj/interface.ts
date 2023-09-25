@@ -1,3 +1,4 @@
+import { Axis, ControllerAxis } from "../renderer/hooks/useGamePad";
 import { ControllerSettings } from "../storage";
 
 export default interface WIIOTNMessage {
@@ -37,10 +38,7 @@ export interface WIIOTNController extends WIIOTNMessage {
 	name: string,
 	type: 'controller',
 	controller: 'wii' | 'xbox' | 'keyboard',
-	rThumbX: number,
-	rThumbY: number,
-	lThumbX: number,
-	lThumbY: number,
+	axis: ControllerAxis,
 	lTrigger: number,
 	rTrigger: number,
 	buttons_pressed: number, //should be binary encoded 01101110, each bit represents a buttons_pressed	
@@ -54,10 +52,12 @@ export const empty_wii_controller: WIIOTNController = {
 	name: '',
 	new: false,
 	buttons_pressed: 0,
-	lThumbX: 0,
-	lThumbY: 0,
-	rThumbX: 0,
-	rThumbY: 0,
+	axis: {
+		l_joystick_x: new Axis(0),
+		l_joystick_y: new Axis(0),
+		r_joystick_x: new Axis(0),
+		r_joystick_y: new Axis(0),
+	},
 	lTrigger: 0,
 	rTrigger: 0,
 };

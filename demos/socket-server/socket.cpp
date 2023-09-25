@@ -144,22 +144,46 @@ void WIIOTN::Socket::pingClients() {
 
 bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient* client, const json buffer_json) {
 	this->handlePing(client);
-	if(buffer_json.contains("buttons_pressed")) {
+	if(buffer_json.contains("buttons_pressed") && !buffer_json.contains("axis")) {
 		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
-		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed);
+		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed, WIIOTN_VC::ThumbstickPosition{0, 0, 0, 0});
+		m_virtual_controller.setThumbstickPosition(client->id, {0,0,0,0});
 		try{
 			m_virtual_controller.submitInput(client->id, controller_report);
+			return true;
 		} catch (const std::runtime_error& e) {
 			printf("Error submitting input: %s\n", e.what());
 			return false;
 		}
 		printf("ID : %d, used controller\n", client->id);
-	}
-	else {
-		m_virtual_controller.submitInput(client->id, m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK));
-		return false;
-	}
-	return true;
+	} else if(buffer_json.contains("buttons_pressed") && buffer_json.contains("axis")) {
+		const WIIOTN_VC::ThumbstickPosition thumbstick_position = getThumbStick(buffer_json["axis"]);
+		m_virtual_controller.setThumbstickPosition(client->id, thumbstick_position);
+		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());
+		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed, thumbstick_position);
+		//joystick positions
+		m_virtual_controller.setThumbstickPosition(client->id, thumbstick_position);
+		printf("ltx: %d, lty: %d, rtx: %d, rty: %d\n", thumbstick_position.l_thumb_x, thumbstick_position.l_thumb_y, thumbstick_position.r_thumb_x, thumbstick_position.r_thumb_y);
+		try{
+			m_virtual_controller.submitInput(client->id, controller_report);
+			return true;
+		} catch (const std::runtime_error& e) {
+			printf("Error submitting input: %s\n", e.what());
+			return false;
+		}
+	} else if (buffer_json.contains("buttons_pressed")) {
+		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());
+		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed, m_virtual_controller.getThumbstickPosition(client->id));
+		try{
+			m_virtual_controller.submitInput(client->id, controller_report);
+			return true;
+		} catch (const std::runtime_error& e) {
+			printf("Error submitting input: %s\n", e.what());
+			return false;
+		}
+	} else
+	//m_virtual_controller.submitInput(client->id, m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK, m_virtual_controller.getThumbstickPosition(client->id)));
+	return false;
 }
 
 const std::vector<WIIOTN_VC::BindedKeys> WIIOTN::handle_sinput(const int input_flags) {
@@ -345,6 +369,29 @@ json WIIOTN::connectionFactory(const int client_id, const bool is_new, const boo
 	return message;
 }
 
+WIIOTN_VC::ThumbstickPosition WIIOTN::getThumbStick(json incoming_data) {
+	
+	short l_joystick_x = 0;
+	short l_joystick_y = 0;
+	short r_joystick_x = 0;
+	short r_joystick_y = 0;
+
+	if(incoming_data.contains("l_joystick_x")) l_joystick_x = incoming_data["l_joystick_x"]["m_value"].get<short>();
+	if(incoming_data.contains("l_joystick_y")) l_joystick_y = incoming_data["l_joystick_y"]["m_value"].get<short>();
+	if(incoming_data.contains("r_joystick_x")) r_joystick_x = incoming_data["r_joystick_x"]["m_value"].get<short>();
+	if(incoming_data.contains("r_joystick_y")) r_joystick_y = incoming_data["r_joystick_y"]["m_value"].get<short>();
+
+	WIIOTN_VC::ThumbstickPosition thumbstick_position = {	
+		l_joystick_x,
+		l_joystick_y,
+		r_joystick_x,
+		r_joystick_y
+	};
+	return thumbstick_position;
+}
+
+
+
 namespace SocketUtils {
 
 	RequestType assignRequest(const json buffer_json) {
@@ -357,5 +404,13 @@ namespace SocketUtils {
 		}
 		return RequestType::TYPE_UNKNOWN;
 	} 
+
+	short mapPercentageToShort(const short percentage) {
+		short new_value = percentage;	
+
+    short result = static_cast<short>(new_value * 32767);
+	
+    return result;
+}
 	
 }

@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { ControllerSettings } from "../../../storage";
 import { button_map, xbox_buttons_map } from "../../../storage/exports";
 import { XboxControllerContext } from "../../App";
-import { ControllerHandler } from "../../hooks/useGamePad";
+import { ControllerEvent, ControllerHandler } from "../../hooks/useGamePad";
 
 interface KeyInputProp<T extends ControllerSettings> {
 	key_identifier: keyof T['key_map'];
@@ -106,9 +106,9 @@ export function ButtonInput(props: KeyInputProp<ControllerSettings>) {
 	}, [button])
 
 	const onFocus = () => {
-		controller.addEventListener(`${props.key_identifier}-buttonpress`, (event: number[]) => {
-			if (event.length <= 0) return;
-			setCurrentButton(event[0]);
+		controller.addEventListener(`${props.key_identifier}-buttonpress`, (event: ControllerEvent) => {
+			if (event.buttons.length <= 0) return;
+			setCurrentButton(event.buttons[0]);
 		});
 	}
 

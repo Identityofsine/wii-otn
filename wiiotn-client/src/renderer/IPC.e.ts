@@ -78,6 +78,7 @@ class IPCController {
 	}
 
 	public send<T>(event: Channels, data: T): void {
+		console.log("[DEBUG] IPC Sending:%s [send<T>]", event);
 		IPCController.ipc_renderer.sendMessage(event, JSON.stringify(data));
 	}
 

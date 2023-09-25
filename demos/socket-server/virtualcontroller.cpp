@@ -35,16 +35,22 @@ WIIOTN_VC::VirtualController::~VirtualController() {
 	vigem_free(m_client);
 }
 
-const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vector<BindedKeys> pressed_keys) {
+const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vector<BindedKeys> pressed_keys, ThumbstickPosition thumbstick_position = {}) {
 
 	//create empty controller_report
 	XUSB_REPORT controller_report;
 	
+	controller_report.bLeftTrigger = controller_report.bRightTrigger = 0 ;
+
 	//set all joystick values to 0
-	controller_report.sThumbLX = controller_report.sThumbLY = controller_report.sThumbRX = controller_report.sThumbRY = 0;
+	controller_report.sThumbLX = thumbstick_position.l_thumb_x;
+	controller_report.sThumbLY = thumbstick_position.l_thumb_y;
+	controller_report.sThumbRX = thumbstick_position.r_thumb_x;
+	controller_report.sThumbRY = thumbstick_position.r_thumb_y;
+
+	printf("LX: %d, LY: %d, RX: %d, RY: %d\n", controller_report.sThumbLX, controller_report.sThumbLY, controller_report.sThumbRX, controller_report.sThumbRY);
 
 	//[0,255]
-	controller_report.bLeftTrigger = controller_report.bRightTrigger = 0 ;
 
 	controller_report.wButtons = 0;
 	
@@ -105,13 +111,14 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vec
 }
 
 //overload for single inputs
-const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(BindedKeys pressed_key) {
+const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(BindedKeys pressed_key, WIIOTN_VC::ThumbstickPosition thumbstick_position) {
 
 	//create empty controller_report
 	XUSB_REPORT controller_report;
 	
 	//set all joystick values to 0
 	controller_report.sThumbLX = controller_report.sThumbLY = controller_report.sThumbRX = controller_report.sThumbRY = 0;
+	controller_report.bLeftTrigger = controller_report.bRightTrigger = 0;
 
 	//switch statement to set the correct button
 	switch (pressed_key) {
@@ -213,4 +220,26 @@ bool WIIOTN_VC::VirtualController::disconnectController(const int controller_id)
 		}
 	}
 	return true;
+}
+
+WIIOTN_VC::ThumbstickPosition WIIOTN_VC::VirtualController::getThumbstickPosition(const int client_id) {
+	WIIOTN_VC::ThumbstickPosition thumbstick_position = {0,0,0,0};
+
+	for(auto controller_handle : m_targets) {
+		if(controller_handle.id == client_id) {
+			thumbstick_position = controller_handle.thumbstick_position;
+			break;
+		}
+	}
+	return thumbstick_position;
+}
+
+void WIIOTN_VC::VirtualController::setThumbstickPosition(const int client_id, ThumbstickPosition thumbstick_position) {
+	//save thumbstick_position to controller_handle, find it in the vector
+	for(auto &controller_handle : m_targets) {
+		if(controller_handle.id == client_id) {
+			controller_handle.thumbstick_position = thumbstick_position;
+			break;
+		}
+	}
 }

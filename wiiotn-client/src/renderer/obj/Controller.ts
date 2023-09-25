@@ -3,12 +3,12 @@ import createState, { useConservativeState } from "../../obj/state";
 import { WIIOTNSettings } from "../../storage";
 import { xbox_buttons_map } from "../../storage/exports";
 import { getIPC } from "../IPC.e";
-import { ControllerHandler } from "../hooks/useGamePad";
+import { Axis, static_axes, ControllerEvent, ControllerHandler } from "../hooks/useGamePad";
 import { getSettings } from "../hooks/useSettings";
 
 class Controller {
 	private static _instance: Controller = new Controller();
-	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id'] })
+	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id', 'axis'] })
 
 
 	private constructor() {
@@ -64,15 +64,29 @@ class Controller {
 	private m_gamepadDaemon<DataType>(side_effect: (key: DataType) => void): () => void {
 
 		const xbox_controller = ControllerHandler.getInstance();
-		xbox_controller.addEventListener("buttonpress", (event: number[]) => {
-			const xbox_controls = getSettings().getSettings()?.XboxSettings;
+		const xbox_controls = getSettings().getSettings()?.XboxSettings;
+		xbox_controller.addEventListener("buttonpress", (event: ControllerEvent) => {
 			if (!xbox_controls) return;
 			let mutated_key: number = 0;
 			let string_buttons = '';
 			const transfered_key_map = mapSettingsToController(xbox_controls);
-			event.forEach((key) => { mutated_key |= transfered_key_map[key]; string_buttons += xbox_buttons_map[key] + ' ' });
-			if (this.wii_controller.getState().buttons_pressed == mutated_key) return;
-			this.wii_controller.setState(old_state => { return { ...old_state, buttons_pressed: Number(mutated_key) } });
+			event.buttons.forEach((key) => { mutated_key |= transfered_key_map[key]; string_buttons += xbox_buttons_map[key] + ' ' });
+			if (this.wii_controller.getState().buttons_pressed === Number(mutated_key) && Axis.AxisEquals(this.wii_controller.getState().axis, event.axes)) return;
+
+
+			this.wii_controller.setState(old_state => {
+				return {
+					...old_state,
+					buttons_pressed: Number(mutated_key),
+					axis: event.axes
+				}
+			});
+			//check if the axes are zero
+			const zero_checker = Axis.AnyZero(this.wii_controller.getState().axis);
+			if (zero_checker !== '') {
+				console.log("[DEBUG] Zero Detected: %s [AnyZero]", zero_checker);
+			}
+			console.log("[DEBUG] Packet Sent:", { ...this.wii_controller.getState(), time: Date.now() });
 			getIPC().send('udp-message', { ...this.wii_controller.getState(), time: Date.now() });
 			side_effect(string_buttons as DataType);
 		});

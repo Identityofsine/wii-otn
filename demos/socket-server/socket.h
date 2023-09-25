@@ -19,6 +19,7 @@ namespace SocketUtils {
 	};
 
 	RequestType assignRequest(json request_json);
+	short mapPercentageToShort(const short percentage);
 }
 
 namespace WIIOTN {
@@ -65,5 +66,6 @@ namespace WIIOTN {
 	bool isValidResponse(json incoming_data);
 	json connectionFactory(const int client_id, const bool is_new, const bool success);
 	bool isTypeKeyPresent(json incoming_data);
+	WIIOTN_VC::ThumbstickPosition getThumbStick(json incoming_data);
 
 }

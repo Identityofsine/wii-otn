@@ -18,6 +18,7 @@ export interface ControllerSettings {
 export interface KeyboardSettings extends ControllerSettings {
 	controller: 'keyboard',
 	key_map: { [key in WIIOTNSettingsKey | number]: number },
+	map_mouse_to_ljoystick: boolean,
 }
 
 export interface XboxSettings extends ControllerSettings {

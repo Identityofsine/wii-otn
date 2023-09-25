@@ -23,10 +23,18 @@ namespace WIIOTN_VC {
 		BREAK, 
 	};
 
+	struct ThumbstickPosition {
+		short l_thumb_x;	
+		short l_thumb_y;
+		short r_thumb_x;
+		short r_thumb_y;
+	};
+
 
 	struct ControllerHandle {
 		int id;
 		PVIGEM_TARGET target;
+		ThumbstickPosition thumbstick_position;
 	};
 
 	class VirtualController {
@@ -38,11 +46,13 @@ namespace WIIOTN_VC {
 	public: 
 		VirtualController();	
 		~VirtualController();
-		const XUSB_REPORT controllerReportFactory(std::vector<BindedKeys> pressed_key); //handle multiple
-		const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key); //handle single keypress
+		const XUSB_REPORT controllerReportFactory(std::vector<BindedKeys> pressed_key, ThumbstickPosition thumbstick_position); //handle multiple
+		const XUSB_REPORT controllerReportFactory(BindedKeys pressed_key, ThumbstickPosition thumbstick_position); //handle single keypress
 		VIGEM_ERROR submitInput(const int controller_id, const XUSB_REPORT controller_report);
 		bool connectController();
 		bool disconnectController(const int controller_id);	
+		ThumbstickPosition getThumbstickPosition(const int controller_id);
+		void setThumbstickPosition(const int controller_id, ThumbstickPosition thumbstick_position);
 
 	};
 
