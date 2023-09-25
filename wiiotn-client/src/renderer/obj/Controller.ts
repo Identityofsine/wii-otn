@@ -3,12 +3,12 @@ import createState, { useConservativeState } from "../../obj/state";
 import { WIIOTNSettings } from "../../storage";
 import { xbox_buttons_map } from "../../storage/exports";
 import { getIPC } from "../IPC.e";
-import { Axis, static_axes, ControllerEvent, ControllerHandler } from "../hooks/useGamePad";
+import { Axis, static_axes, ControllerEvent, ControllerHandler, ControllerAxis } from "../hooks/useGamePad";
 import { getSettings } from "../hooks/useSettings";
 
 class Controller {
 	private static _instance: Controller = new Controller();
-	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id', 'axis'] })
+	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id'] })
 
 
 	private constructor() {
@@ -71,18 +71,22 @@ class Controller {
 			let string_buttons = '';
 			const transfered_key_map = mapSettingsToController(xbox_controls);
 			event.buttons.forEach((key) => { mutated_key |= transfered_key_map[key]; string_buttons += xbox_buttons_map[key] + ' ' });
-			if (this.wii_controller.getState().buttons_pressed === Number(mutated_key) && Axis.AxisEquals(this.wii_controller.getState().axis, event.axes)) return;
+			if (this.wii_controller.getState().buttons_pressed === Number(mutated_key) && Axis.AxisEquals({ ...static_axes, ...this.wii_controller.getState().axis }, event.axes)) return;
 
 
 			this.wii_controller.setState(old_state => {
+				//check if the axes are zero or equal to the previous static
+				let axes_intermediate: ControllerAxis = { ...event.axes };
+				let old_state_intermediate: ControllerAxis = { ...static_axes, ...old_state.axis };
+
 				return {
 					...old_state,
 					buttons_pressed: Number(mutated_key),
-					axis: event.axes
+					axis: axes_intermediate,
 				}
 			});
 			//check if the axes are zero
-			const zero_checker = Axis.AnyZero(this.wii_controller.getState().axis);
+			const zero_checker = Axis.AnyZero({ ...static_axes, ...this.wii_controller.getState().axis });
 			if (zero_checker !== '') {
 				console.log("[DEBUG] Zero Detected: %s [AnyZero]", zero_checker);
 			}

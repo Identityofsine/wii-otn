@@ -21,6 +21,10 @@ export class Axis {
 
 	constructor(value: number) {
 		this.m_value = this.returnRounded(value);
+		Axis.prototype.valueOf = () => {
+			console.log('[DEBUG] Axis.valueof() called[Axis]');
+			return this.value
+		};
 	}
 
 	private returnRounded(value: number): number {
@@ -64,6 +68,9 @@ export class Axis {
 
 	public set value(value: number) {
 		this.m_value = this.returnRounded(value);
+	}
+
+	public valueOf(): number {
 	}
 }
 
