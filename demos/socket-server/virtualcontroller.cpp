@@ -102,6 +102,12 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vec
 			case HOME:
 				controller_report.wButtons |= XUSB_GAMEPAD_GUIDE;
 				break;
+			case LT:
+				controller_report.bLeftTrigger = 255;
+				break;
+			case RT:
+				controller_report.bRightTrigger = 255;
+				break;
 			default:
 				break;
 		}

@@ -21,6 +21,8 @@ namespace WIIOTN_VC {
 		RTD,
 		HOME,
 		BREAK, 
+		LT,
+		RT
 	};
 
 	struct ThumbstickPosition {

@@ -77,7 +77,8 @@ void WIIOTN::Socket::start() {
 			json message = {
 				{"type", "disconnect"},
 				{"id", client_id},
-				{"success", true}
+				{"success", true},
+				{"time", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()}
 			};
 			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
 			continue;
@@ -246,7 +247,12 @@ const std::vector<WIIOTN_VC::BindedKeys> WIIOTN::handle_sinput(const int input_f
 
 	if (input_flags & 0x4000)
 		keys_pressed.push_back(WIIOTN_VC::BindedKeys::HOME);
-		
+
+	if (input_flags & 0x8000)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::LT);
+
+	if (input_flags & 0x10000)
+		keys_pressed.push_back(WIIOTN_VC::BindedKeys::RT);
 
 	for (const auto &key : keys_pressed)
 		printf("Key pressed: %d\n", key);
