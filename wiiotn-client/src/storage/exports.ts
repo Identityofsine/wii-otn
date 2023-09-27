@@ -38,6 +38,8 @@ export const default_keyboard_layout: { [key in WIIOTNSettingsKey]: number } = {
 	0x1000: 81, //ZL
 	0x2000: 82, //ZR
 	0x4000: 16, //LCLICK
+	0x8000: 17, //RCLICK
+	0x10000: 0, //UNUSED
 }
 
 export const default_xbox_layout: { [key in WIIOTNSettingsKey]: number } = {

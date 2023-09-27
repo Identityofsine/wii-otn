@@ -28,24 +28,25 @@ class Controller {
 	//mouse daemon, convert this into a joystick axis
 	private m_mouseDaemon<DataType>(side_effect: (key: DataType) => void): () => void {
 		console.log("[DEBUG] Controller Running [m_mouseDaemon]");
-		const mouse_state = createState<{ x: number, y: number }>({ x: 0, y: 0 });
-		const mouse_state_listener = (key: { x: number, y: number }) => {
-			console.log("[DEBUG] Mouse State Changed:", key);
-			const converted_axis = { x: new Axis(key.x), y: new Axis(key.y) };
-			const state_axis = { ...static_axes, ...this.wii_controller.getState().axis };
+		const mouse_state = createState<{ x: number, y: number, l_thumb: boolean }>({ x: 0, y: 0, l_thumb: false });
+		const mouse_state_listener = (key: { x: number, y: number, l_thumb: boolean }) => {
+			const converted_axis = { x: new Axis(key.x, 10, false), y: new Axis(key.y, 10, false) };
+
+			console.log("[DEBUG] Mouse State Changed - x:%d, y:%d [m_mouseDaemon]", converted_axis.x.value, converted_axis.y.value);
 			//if (Axis.Equals(converted_axis.x, state_axis.l_joystick_x) && Axis.Equals(converted_axis.y, state_axis.l_joystick_y)) return;
-			this.wii_controller.setState(old_state => { return { ...old_state, axis: { ...old_state.axis, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } });
+			if (key.l_thumb)
+				this.wii_controller.setState(old_state => { return { ...old_state, axis: { ...static_axes, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } });
+			else
+				this.wii_controller.setState(old_state => { return { ...old_state, axis: { ...static_axes, r_joystick_x: converted_axis.x, r_joystick_y: converted_axis.y } } });
 			getIPC().send('udp-message', { ...this.wii_controller.getState(), time: Date.now() });
 		}
 		mouse_state.addListener(mouse_state_listener);
 
 		const mousemove_daemon = (event: MouseEvent) => {
 			side_effect(event as DataType);
-			//adjust x and y to have the center in the middle of the window
-			const mutated_mouse_pos = { x: event.clientX - window.innerWidth / 2, y: event.clientY - window.innerHeight / 2 };
-			setTimeout(() => { mouse_state.setState({ x: (mutated_mouse_pos.x / window.innerWidth) * 2, y: (mutated_mouse_pos.y / window.innerHeight) * -2 }) }, 100);
-			//sleep
 
+			const mutated_mouse_pos = { x: event.clientX - window.innerWidth / 2, y: event.clientY - window.innerHeight / 2 };
+			mouse_state.setState({ x: (mutated_mouse_pos.x / window.innerWidth) * 2, y: (mutated_mouse_pos.y / window.innerHeight) * -2, l_thumb: false })
 		}
 		window.addEventListener("mousemove", mousemove_daemon);
 

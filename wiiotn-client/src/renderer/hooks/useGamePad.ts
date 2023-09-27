@@ -19,22 +19,20 @@ export interface ControllerEvent {
 export class Axis {
 	private m_value: number = 0;
 
-	constructor(value: number) {
-		this.m_value = this.returnRounded(value);
+	constructor(value: number, roundto: number = 1, applyDeadzone = true) {
+		this.m_value = this.returnRounded(value, roundto, applyDeadzone);
 		Axis.prototype.valueOf = () => {
 			console.log('[DEBUG] Axis.valueof() called[Axis]');
 			return this.value
 		};
 	}
 
-	private returnRounded(value: number): number {
+	private returnRounded(value: number, roundto: number, applyDeadzone: boolean): number {
 		//convert to short [-1, 0, 1] --> [-32768, 0, 32767]
-		const rounded = this.applySensitivity(this.applyDeadzone(value))
-
-		let new_value = Math.round(rounded * 32767);
+		const rounded = Math.round((value * 32767) * roundto) / roundto;
 
 		//round down
-		return new_value;
+		return applyDeadzone ? this.applyDeadzone(rounded) : rounded;
 	}
 
 	private applyDeadzone(value: number) {

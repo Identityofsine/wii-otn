@@ -75,6 +75,7 @@ export const key_map: { [key: number]: number } = {
 	27: 16384,
 	9: 32768,
 	192: 65536,
+	219: 131072,
 };
 
 /**
