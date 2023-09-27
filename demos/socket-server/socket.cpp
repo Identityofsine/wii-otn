@@ -145,45 +145,25 @@ void WIIOTN::Socket::pingClients() {
 
 bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient* client, const json buffer_json) {
 	this->handlePing(client);
-	if(buffer_json.contains("buttons_pressed") && !buffer_json.contains("axis")) {
-		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());	
-		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed, WIIOTN_VC::ThumbstickPosition{0, 0, 0, 0});
-		m_virtual_controller.setThumbstickPosition(client->id, {0,0,0,0});
-		try{
-			m_virtual_controller.submitInput(client->id, controller_report);
-			return true;
-		} catch (const std::runtime_error& e) {
-			printf("Error submitting input: %s\n", e.what());
-			return false;
-		}
-		printf("ID : %d, used controller\n", client->id);
-	} else if(buffer_json.contains("buttons_pressed") && buffer_json.contains("axis")) {
-		const WIIOTN_VC::ThumbstickPosition thumbstick_position = getThumbStick(buffer_json["axis"]);
-		m_virtual_controller.setThumbstickPosition(client->id, thumbstick_position);
-		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());
-		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed, thumbstick_position);
-		//joystick positions
-		m_virtual_controller.setThumbstickPosition(client->id, thumbstick_position);
-		printf("ltx: %d, lty: %d, rtx: %d, rty: %d\n", thumbstick_position.l_thumb_x, thumbstick_position.l_thumb_y, thumbstick_position.r_thumb_x, thumbstick_position.r_thumb_y);
-		try{
-			m_virtual_controller.submitInput(client->id, controller_report);
-			return true;
-		} catch (const std::runtime_error& e) {
-			printf("Error submitting input: %s\n", e.what());
-			return false;
-		}
-	} else if (buffer_json.contains("buttons_pressed")) {
-		const auto keys_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());
-		const auto controller_report = m_virtual_controller.controllerReportFactory(keys_pressed, m_virtual_controller.getThumbstickPosition(client->id));
-		try{
-			m_virtual_controller.submitInput(client->id, controller_report);
-			return true;
-		} catch (const std::runtime_error& e) {
-			printf("Error submitting input: %s\n", e.what());
-			return false;
-		}
-	} else
-	//m_virtual_controller.submitInput(client->id, m_virtual_controller.controllerReportFactory(WIIOTN_VC::BindedKeys::BREAK, m_virtual_controller.getThumbstickPosition(client->id)));
+	
+	std::vector<WIIOTN_VC::BindedKeys> key_pressed = {};
+	WIIOTN_VC::ThumbstickPosition joystick_position = m_virtual_controller.getThumbstickPosition(client->id);	
+	if(buffer_json.contains("axis")) {
+		joystick_position = getThumbStick(buffer_json["axis"]);
+	}
+	if(buffer_json.contains("buttons_pressed")) {
+		key_pressed = handle_sinput(buffer_json["buttons_pressed"].get<int>());
+	}
+	m_virtual_controller.setThumbstickPosition(client->id, joystick_position);
+	const auto controller_report = m_virtual_controller.controllerReportFactory(key_pressed, joystick_position);
+
+	try {
+		m_virtual_controller.submitInput(client->id, controller_report);
+		return true;
+	} catch (const std::exception& e) {
+		printf("[ERROR] Error: %s[Socket::handleInput]\n", e.what());
+		return false;
+	}
 	return false;
 }
 

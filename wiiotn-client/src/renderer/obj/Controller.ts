@@ -26,12 +26,14 @@ class Controller {
 	}
 
 	//mouse daemon, convert this into a joystick axis
-	private m_mouseDaemon<DataType>(side_effect: (key: DateType) => void): () => void {
+	private m_mouseDaemon<DataType>(side_effect: (key: DataType) => void): () => void {
 		console.log("[DEBUG] Controller Running [m_mouseDaemon]");
 		const mouse_state = createState<{ x: number, y: number }>({ x: 0, y: 0 });
 		const mouse_state_listener = (key: { x: number, y: number }) => {
+			console.log("[DEBUG] Mouse State Changed:", key);
 			const converted_axis = { x: new Axis(key.x), y: new Axis(key.y) };
-			if (Axis.Equals(converted_axis.x, this.wii_controller.getState().axis.l_joystick_x) && Axis.Equals(converted_axis.y, this.wii_controller.getState().axis.l_joystick_y)) return;
+			const state_axis = { ...static_axes, ...this.wii_controller.getState().axis };
+			//if (Axis.Equals(converted_axis.x, state_axis.l_joystick_x) && Axis.Equals(converted_axis.y, state_axis.l_joystick_y)) return;
 			this.wii_controller.setState(old_state => { return { ...old_state, axis: { ...old_state.axis, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } });
 			getIPC().send('udp-message', { ...this.wii_controller.getState(), time: Date.now() });
 		}
@@ -39,9 +41,11 @@ class Controller {
 
 		const mousemove_daemon = (event: MouseEvent) => {
 			side_effect(event as DataType);
-			//transform the mouse position to a percentage of the screen.
-			const mutated_mouse_pos = { x: event.movementX / window.innerWidth, y: event.movementY / window.innerHeight };
-			mouse_state.setState({ x: mutated_mouse_pos.x, y: event.movementY });
+			//adjust x and y to have the center in the middle of the window
+			const mutated_mouse_pos = { x: event.clientX - window.innerWidth / 2, y: event.clientY - window.innerHeight / 2 };
+			setTimeout(() => { mouse_state.setState({ x: (mutated_mouse_pos.x / window.innerWidth) * 2, y: (mutated_mouse_pos.y / window.innerHeight) * -2 }) }, 100);
+			//sleep
+
 		}
 		window.addEventListener("mousemove", mousemove_daemon);
 
@@ -130,10 +134,12 @@ class Controller {
 	public launchControllerProfile<DataType>(selected_controller: WIIOTNSettings['selected_controller'], side_effect: (key: DataType) => void): () => void {
 
 		if (selected_controller === 'keyboard') {
-
+			const run_keyboard = this.m_keyboardDaemon<DataType>(side_effect);
+			const run_mouse = this.m_mouseDaemon<DataType>(side_effect);
 			return () => {
-				this.m_keyboardDaemon<DataType>(side_effect);
-				this.m_mouseDaemon<DataType>(side_effect);
+				console.log("[DEBUG] Controller ENDED [m_keyboardDaemon + m_mouseDaemon] [END]");
+				run_keyboard();
+				run_mouse();
 			}
 		}
 		if (selected_controller === 'xbox') return this.m_gamepadDaemon<DataType>(side_effect);
