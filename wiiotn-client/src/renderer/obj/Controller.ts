@@ -32,6 +32,7 @@ class Controller {
 		const mouse_state_listener = (key: { x: number, y: number }) => {
 			const converted_axis = { x: new Axis(key.x), y: new Axis(key.y) };
 			if (Axis.Equals(converted_axis.x, this.wii_controller.getState().axis.l_joystick_x) && Axis.Equals(converted_axis.y, this.wii_controller.getState().axis.l_joystick_y)) return;
+			this.wii_controller.setState(old_state => { return { ...old_state, axis: { ...old_state.axis, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } });
 			getIPC().send('udp-message', { ...this.wii_controller.getState(), time: Date.now() });
 		}
 		mouse_state.addListener(mouse_state_listener);
@@ -40,9 +41,15 @@ class Controller {
 			side_effect(event as DataType);
 			//transform the mouse position to a percentage of the screen.
 			const mutated_mouse_pos = { x: event.movementX / window.innerWidth, y: event.movementY / window.innerHeight };
-			mouse_state.setState(old_state => { return { x: mutated_mouse_pos.x, y: event.movementY } });
+			mouse_state.setState({ x: mutated_mouse_pos.x, y: event.movementY });
 		}
+		window.addEventListener("mousemove", mousemove_daemon);
 
+		return () => {
+			console.log("[DEBUG] Controller ENDED [m_mouseDaemon] [END]");
+			mouse_state.removeListener(mouse_state_listener);
+			window.removeEventListener("mousemove", mousemove_daemon);
+		}
 	}
 
 	private m_keyboardDaemon<DataType>(side_effect: (key: DataType) => void): () => void {
@@ -122,7 +129,13 @@ class Controller {
 
 	public launchControllerProfile<DataType>(selected_controller: WIIOTNSettings['selected_controller'], side_effect: (key: DataType) => void): () => void {
 
-		if (selected_controller === 'keyboard') return this.m_keyboardDaemon<DataType>(side_effect);
+		if (selected_controller === 'keyboard') {
+
+			return () => {
+				this.m_keyboardDaemon<DataType>(side_effect);
+				this.m_mouseDaemon<DataType>(side_effect);
+			}
+		}
 		if (selected_controller === 'xbox') return this.m_gamepadDaemon<DataType>(side_effect);
 		return () => { }
 	}
