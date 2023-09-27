@@ -48,7 +48,6 @@ const XUSB_REPORT WIIOTN_VC::VirtualController::controllerReportFactory(std::vec
 	controller_report.sThumbRX = thumbstick_position.r_thumb_x;
 	controller_report.sThumbRY = thumbstick_position.r_thumb_y;
 
-	printf("LX: %d, LY: %d, RX: %d, RY: %d\n", controller_report.sThumbLX, controller_report.sThumbLY, controller_report.sThumbRX, controller_report.sThumbRY);
 
 	//[0,255]
 

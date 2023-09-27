@@ -78,7 +78,6 @@ void WIIOTN::Socket::start() {
 				{"type", "disconnect"},
 				{"id", client_id},
 				{"success", true},
-				{"time", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()}
 			};
 			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
 			continue;
@@ -86,20 +85,7 @@ void WIIOTN::Socket::start() {
 
 		WIIOTN::ConnectedClient client;
 
-		//get current time
-		auto currentTime = std::chrono::system_clock::now();
-    auto durationSinceEpoch = currentTime.time_since_epoch();
-    auto seconds = std::chrono::duration_cast<std::chrono::milliseconds>(durationSinceEpoch);
-
-		//calculate input lag
-
-		long long input_lag = 0;
-
-		if(buffer_json.contains("time")) {
-			input_lag = seconds.count() - buffer_json["time"].get<long long>();
-		}
-
-		printf("\nRECV_JSON:%s, TIME:%lld\nINPUT_LAG:%lldms\n", buffer_json.dump().c_str(), seconds.count(), input_lag);
+		//printf("\nRECV_JSON:%s, TIME:%lld\nINPUT_LAG:%lldms\n", buffer_json.dump().c_str(), seconds.count(), input_lag);
 
 		bool is_new = isNew(buffer_json);	
 		int client_id = clients_size;
@@ -121,12 +107,12 @@ void WIIOTN::Socket::start() {
 		else {
 			for(ConnectedClient *client : m_connected_clients) {
 				if(client->id == client_id) {
-					printf("\nClient already connected, id: %d\n", client->id);
+					//printf("\nClient already connected, id: %d\n", client->id);
 					this->handleInput(client, buffer_json);
 					this->sendSuccessPacket(client);
 					break;
 				}
-				printf("ID : %d, IP : %s\n", client->id, inet_ntoa(client->address.sin_addr));
+				//printf("ID : %d, IP : %s\n", client->id, inet_ntoa(client->address.sin_addr));
 			}
 		}
 	}
@@ -149,7 +135,6 @@ void WIIOTN::Socket::sendSuccessPacket(WIIOTN::ConnectedClient* client) {
 		{"type", "success"},
 		{"id", client->id},
 		{"success", true},
-		{"time", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()}
 	};
 	sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&client->address, sizeof(client->address));
 }
@@ -245,8 +230,8 @@ const std::vector<WIIOTN_VC::BindedKeys> WIIOTN::handle_sinput(const int input_f
 	if (input_flags & 0x10000)
 		keys_pressed.push_back(WIIOTN_VC::BindedKeys::RT);
 
-	for (const auto &key : keys_pressed)
-		printf("Key pressed: %d\n", key);
+	//for (const auto &key : keys_pressed)
+		//printf("Key pressed: %d\n", key);
 
 	return keys_pressed;
 }
