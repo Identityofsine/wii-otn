@@ -8,7 +8,7 @@ import { getSettings } from "../hooks/useSettings";
 
 class Controller {
 	private static _instance: Controller = new Controller();
-	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id'] })
+	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id', 'buttons_pressed'] })
 
 
 	private constructor() {
@@ -32,12 +32,12 @@ class Controller {
 		const mouse_state_listener = (key: { x: number, y: number, l_thumb: boolean }) => {
 			const converted_axis = { x: new Axis(key.x, 10, false), y: new Axis(key.y, 10, false) };
 
-			console.log("[DEBUG] Mouse State Changed - x:%d, y:%d [m_mouseDaemon]", converted_axis.x.value, converted_axis.y.value);
 			//if (Axis.Equals(converted_axis.x, state_axis.l_joystick_x) && Axis.Equals(converted_axis.y, state_axis.l_joystick_y)) return;
+			console.log("[DEBUG] wii_controller: ", this.wii_controller.getState());
 			if (key.l_thumb)
-				this.wii_controller.setState(old_state => { return { ...old_state, axis: { ...static_axes, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } });
+				this.wii_controller.setState((old_state: WIIOTNController) => { return { ...this.wii_controller.getState(), axis: { ...static_axes, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } });
 			else
-				this.wii_controller.setState(old_state => { return { ...old_state, axis: { ...static_axes, r_joystick_x: converted_axis.x, r_joystick_y: converted_axis.y } } });
+				this.wii_controller.setState((old_state: WIIOTNController) => { return { ...this.wii_controller.getState(), axis: { ...static_axes, r_joystick_x: converted_axis.x, r_joystick_y: converted_axis.y } } });
 			getIPC().send('udp-message', { ...this.wii_controller.getState(), time: Date.now() });
 		}
 		mouse_state.addListener(mouse_state_listener);
@@ -85,10 +85,12 @@ class Controller {
 		window.addEventListener("keydown", keydown);
 		window.addEventListener("keyup", keyup);
 
+		const mouse_daemon = this.m_mouseDaemon<DataType>(side_effect);
 
 		return () => {
 			console.log("[DEBUG] Controller ENDED [m_keyboardDaemon] [END]");
 			key_state.removeListener(key_state_listener);
+			mouse_daemon();
 			window.removeEventListener("keydown", keydown);
 			window.removeEventListener("keyup", keyup);
 		};
@@ -137,11 +139,9 @@ class Controller {
 
 		if (selected_controller === 'keyboard') {
 			const run_keyboard = this.m_keyboardDaemon<DataType>(side_effect);
-			const run_mouse = this.m_mouseDaemon<DataType>(side_effect);
 			return () => {
 				console.log("[DEBUG] Controller ENDED [m_keyboardDaemon + m_mouseDaemon] [END]");
 				run_keyboard();
-				run_mouse();
 			}
 		}
 		if (selected_controller === 'xbox') return this.m_gamepadDaemon<DataType>(side_effect);
