@@ -53,13 +53,15 @@ export class Axis {
 			a.r_joystick_x.value == b.r_joystick_x.value &&
 			a.r_joystick_y.value == b.r_joystick_y.value;
 	};
+	public static Equals(a: Axis, b: Axis): boolean {
+		return a.value == b.value;
+	}
 	public static AnyZero(a: ControllerAxis): keyof ControllerAxis | '' {
 		if (a.l_joystick_x.value == 0) return 'l_joystick_x';
 		if (a.l_joystick_y.value == 0) return 'l_joystick_y';
 		if (a.r_joystick_x.value == 0) return 'r_joystick_x';
 		if (a.r_joystick_y.value == 0) return 'r_joystick_y';
 		return '';
-
 	}
 
 	public get value(): number {
@@ -70,8 +72,6 @@ export class Axis {
 		this.m_value = this.returnRounded(value);
 	}
 
-	public valueOf(): number {
-	}
 }
 
 export const static_axes: ControllerAxis = {

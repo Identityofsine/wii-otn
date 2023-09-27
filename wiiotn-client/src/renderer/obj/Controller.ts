@@ -25,6 +25,26 @@ class Controller {
 		return Controller._instance;
 	}
 
+	//mouse daemon, convert this into a joystick axis
+	private m_mouseDaemon<DataType>(side_effect: (key: DateType) => void): () => void {
+		console.log("[DEBUG] Controller Running [m_mouseDaemon]");
+		const mouse_state = createState<{ x: number, y: number }>({ x: 0, y: 0 });
+		const mouse_state_listener = (key: { x: number, y: number }) => {
+			const converted_axis = { x: new Axis(key.x), y: new Axis(key.y) };
+			if (Axis.Equals(converted_axis.x, this.wii_controller.getState().axis.l_joystick_x) && Axis.Equals(converted_axis.y, this.wii_controller.getState().axis.l_joystick_y)) return;
+			getIPC().send('udp-message', { ...this.wii_controller.getState(), time: Date.now() });
+		}
+		mouse_state.addListener(mouse_state_listener);
+
+		const mousemove_daemon = (event: MouseEvent) => {
+			side_effect(event as DataType);
+			//transform the mouse position to a percentage of the screen.
+			const mutated_mouse_pos = { x: event.movementX / window.innerWidth, y: event.movementY / window.innerHeight };
+			mouse_state.setState(old_state => { return { x: mutated_mouse_pos.x, y: event.movementY } });
+		}
+
+	}
+
 	private m_keyboardDaemon<DataType>(side_effect: (key: DataType) => void): () => void {
 		console.log("[DEBUG] Controller Running [m_keyboardDaemon]");
 		const key_state = createState<Array<number>>([0]);

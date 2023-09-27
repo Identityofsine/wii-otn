@@ -80,4 +80,11 @@ export const xbox_buttons_map: { [key: number]: string } = {
 	16: "🏠"
 }
 
+export const static_settings = {
+	type: 'controller',
+	settings: {
+		KeyboardSettings: default_keyboard_layout,
+		XboxSettings: default_xbox_layout
+	}
+}
 
