@@ -19,6 +19,7 @@ export const button_map: { [key in WIIOTNSettingsKey | number]: string } = {
 	0x4000: "HOME",
 	0x8000: "L TRIGGER",
 	0x10000: "R TRIGGER",
+	0x20000: "LJOY",
 }
 
 //a -> A, b-> B, x -> X, y-> Y 

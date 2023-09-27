@@ -44,9 +44,9 @@ class Controller {
 
 		const mousemove_daemon = (event: MouseEvent) => {
 			side_effect(event as DataType);
-
+			const l_thumb_on: boolean = event.buttons == 1;
 			const mutated_mouse_pos = { x: event.clientX - window.innerWidth / 2, y: event.clientY - window.innerHeight / 2 };
-			mouse_state.setState({ x: (mutated_mouse_pos.x / window.innerWidth) * 2, y: (mutated_mouse_pos.y / window.innerHeight) * -2, l_thumb: false })
+			mouse_state.setState({ x: (mutated_mouse_pos.x / window.innerWidth) * 2, y: (mutated_mouse_pos.y / window.innerHeight) * -2, l_thumb: l_thumb_on })
 		}
 		window.addEventListener("mousemove", mousemove_daemon);
 
@@ -78,6 +78,7 @@ class Controller {
 			key_state.setState(old_state => { return [...old_state, event.keyCode] });
 		}
 		const keyup = (event: KeyboardEvent) => {
+			event.preventDefault();
 			side_effect(event as DataType);
 			key_state.setState(old_state => { return old_state.filter((key) => key != event.keyCode) });
 		}

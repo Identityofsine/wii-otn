@@ -18,6 +18,8 @@ const mutate_key_code = (key_code: number) => {
 	if (key_code === 8) key_char = 'Backspace';
 	if (key_code === 9) key_char = 'Tab';
 	if (key_code === 27) key_char = 'Esc';
+	if (key_code === 16) key_char = 'Shift';
+	if (key_code === 17) key_char = 'Ctrl';
 	//arrow keys
 	if (key_code === 37) key_char = '←';
 	if (key_code === 38) key_char = '↑';

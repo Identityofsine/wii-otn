@@ -130,7 +130,7 @@ function Configure() {
 
 	const [controller, setController] = useState<'keyboard' | 'xbox'>('keyboard');
 	const [active_controller, setActiveController] = useState<'keyboard' | 'xbox'>(getSettings().getSettings()?.selected_controller ?? 'keyboard');
-	const [keyboard_settings, setKeyboardSettings] = useState<ControllerSettings>(getSettings().getSettings()?.KeyboardSettings ?? { controller: 'keyboard', key_map: default_keyboard_layout });
+	const [keyboard_settings, setKeyboardSettings] = useState<ControllerSettings>({ controller: 'keyboard', key_map: { ...default_keyboard_layout, ...getSettings().getSettings()?.KeyboardSettings?.key_map ?? default_keyboard_layout } });
 	const [xbox_settings, setXboxSettings] = useState<ControllerSettings>(getSettings().getSettings()?.XboxSettings ?? { controller: 'xbox', key_map: default_xbox_layout });
 	const [status, setStatus] = useState<string>('');
 	const settings = useContext(SettingsContext);
