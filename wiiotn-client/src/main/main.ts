@@ -63,6 +63,10 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 			socket_id = msg_obj.id;
 		}
 
+		if (msg_obj.type === 'success') {
+			event.reply('udp-success-packet', msg_obj);
+		}
+
 		//generic sender
 		if (mainWindow) {
 			mainWindow.webContents.send('udp-message', msg);

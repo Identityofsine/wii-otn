@@ -8,7 +8,7 @@ import { getSettings } from "../hooks/useSettings";
 
 class Controller {
 	private static _instance: Controller = new Controller();
-	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id', 'buttons_pressed'] })
+	private wii_controller = useConservativeState<WIIOTNController>({ ...empty_wii_controller }, { ignore: ['id'] })
 
 
 	private constructor() {
@@ -35,9 +35,9 @@ class Controller {
 			//if (Axis.Equals(converted_axis.x, state_axis.l_joystick_x) && Axis.Equals(converted_axis.y, state_axis.l_joystick_y)) return;
 			console.log("[DEBUG] wii_controller: ", this.wii_controller.getState());
 			if (key.l_thumb)
-				this.wii_controller.setState((old_state: WIIOTNController) => { return { ...this.wii_controller.getState(), axis: { ...static_axes, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } });
+				this.wii_controller.setState((old_state: WIIOTNController) => { return { ...old_state, axis: { ...static_axes, l_joystick_x: converted_axis.x, l_joystick_y: converted_axis.y } } }, { ignore: ['buttons_pressed'] });
 			else
-				this.wii_controller.setState((old_state: WIIOTNController) => { return { ...this.wii_controller.getState(), axis: { ...static_axes, r_joystick_x: converted_axis.x, r_joystick_y: converted_axis.y } } });
+				this.wii_controller.setState((old_state: WIIOTNController) => { return { ...old_state, axis: { ...static_axes, r_joystick_x: converted_axis.x, r_joystick_y: converted_axis.y } } }, { ignore: ['buttons_pressed'] });
 			getIPC().send('udp-message', { ...this.wii_controller.getState(), time: Date.now() });
 		}
 		mouse_state.addListener(mouse_state_listener);

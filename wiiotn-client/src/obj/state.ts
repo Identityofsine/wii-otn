@@ -50,7 +50,7 @@ interface IUseStateOptions<T> {
 export function useConservativeState<T>(default_value: T | undefined, options?: IUseStateOptions<T>) {
 	const current_state = createState(default_value);
 
-	const setState = (new_value: T | ((old_state: T) => T)) => {
+	const setState = (new_value: T | ((old_state: T) => T), immediate_ignore?: IUseStateOptions<T>) => {
 		/* compare current_state and previous_state and create a new object that only contains changed data*/
 
 		type TJSON = { [key: string]: any };
@@ -64,6 +64,7 @@ export function useConservativeState<T>(default_value: T | undefined, options?: 
 
 		Object.keys(new_state as TJSON).forEach(key => {
 			if (options?.ignore?.includes(key as keyof T)) return;
+			if (immediate_ignore?.ignore?.includes(key as keyof T)) return;
 			if ((new_state as TJSON)[key] === (current_state.getState() as TJSON)[key])
 				delete (new_state as TJSON)[key];
 		});

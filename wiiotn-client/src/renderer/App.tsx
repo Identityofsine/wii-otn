@@ -60,7 +60,7 @@ export default function App() {
 			'udp-disconnect-reply': [((_event: any) => {
 				setIsConnected(false);
 				setSockAddr({ ...sock_addr, id: 0 });
-			})],
+			})]
 		})
 
 		setUserSettings(getSettings().getSettings() ?? {});

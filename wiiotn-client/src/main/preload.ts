@@ -2,7 +2,7 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'udp-connect-request' | 'udp-message' | 'udp-error' | 'udp-connect-reply' | 'udp-disconnect-request' | 'udp-disconnect-reply' | 'debug-message' | 'fetch-settings' | 'fetch-settings-reply' | 'store-settings' | 'store-settings-reply';
+export type Channels = 'udp-connect-request' | 'udp-message' | 'udp-error' | 'udp-connect-reply' | 'udp-disconnect-request' | 'udp-disconnect-reply' | 'debug-message' | 'fetch-settings' | 'fetch-settings-reply' | 'store-settings' | 'store-settings-reply' | 'udp-success-packet';
 
 const electronHandler = {
 	ipcRenderer: {

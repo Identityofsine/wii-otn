@@ -123,6 +123,7 @@ void WIIOTN::Socket::start() {
 				if(client->id == client_id) {
 					printf("\nClient already connected, id: %d\n", client->id);
 					this->handleInput(client, buffer_json);
+					this->sendSuccessPacket(client);
 					break;
 				}
 				printf("ID : %d, IP : %s\n", client->id, inet_ntoa(client->address.sin_addr));
@@ -141,6 +142,16 @@ void WIIOTN::Socket::pingClients() {
 			}
 		}
 	}
+}
+
+void WIIOTN::Socket::sendSuccessPacket(WIIOTN::ConnectedClient* client) {
+	json message = {
+		{"type", "success"},
+		{"id", client->id},
+		{"success", true},
+		{"time", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()}
+	};
+	sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&client->address, sizeof(client->address));
 }
 
 bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient* client, const json buffer_json) {

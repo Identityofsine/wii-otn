@@ -52,6 +52,7 @@ namespace WIIOTN {
 			bool handlePing(WIIOTN::ConnectedClient* client);
 			bool handleInput(WIIOTN::ConnectedClient* client, const json buffer_json);
 			void pingClients();
+			void sendSuccessPacket(WIIOTN::ConnectedClient* client);
 			
 			
 
