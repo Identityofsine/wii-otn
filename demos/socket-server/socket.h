@@ -30,15 +30,20 @@ namespace WIIOTN {
 		bool is_connected;
 		int id;
 		int ping_count;
+		long long last_ping;
 	};
 
 	class Socket{
 		private:
+			/* SOCKET SETTINGS */
 			const int m_port;
 			const char* m_ip;
 			SOCKET m_socket;
 			SOCKADDR_IN m_addr_settings;
 			const int m_protocol;
+			int m_max_ping_delay;
+			long long m_last_ping = 0;
+			/* */
 			WIIOTN_VC::VirtualController m_virtual_controller;
 			std::vector<ConnectedClient*> m_connected_clients;	
 			WIIOTN::ConnectedClient clientFactory(sockaddr_in sender_address, int client_size);	
@@ -49,10 +54,14 @@ namespace WIIOTN {
 			int sendClient(WIIOTN::ConnectedClient client, const json message); 
 			int pingClient(WIIOTN::ConnectedClient* client);
 			bool handlePing(WIIOTN::ConnectedClient* client, const json buffer_json);
-			bool handlePing(WIIOTN::ConnectedClient* client);
+			bool handlePing(WIIOTN::ConnectedClient* client);	
 			bool handleInput(WIIOTN::ConnectedClient* client, const json buffer_json);
 			void pingClients();
 			void sendSuccessPacket(WIIOTN::ConnectedClient* client);
+			void sendPings();
+			void handlePingPacket(WIIOTN::ConnectedClient* client);
+			void sendDisconnectPacket(const json buffer_json);
+			void sendDisconnectPacket(WIIOTN::ConnectedClient* client);
 			
 			
 

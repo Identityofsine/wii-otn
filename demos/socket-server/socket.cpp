@@ -49,6 +49,8 @@ void WIIOTN::Socket::start() {
 		int sender_address_size = sizeof(sender_address);
 		const int clients_size = (int)m_connected_clients.size();
 
+		//send ping to all clients
+		this->sendPings();
 
 		bytes_received = recvfrom(m_socket, buffer, buffer_length, 0, (struct sockaddr*)&sender_address, &sender_address_size);
 		if(bytes_received == SOCKET_ERROR) {
@@ -66,26 +68,16 @@ void WIIOTN::Socket::start() {
 			break;
 		}
 
+		RequestType request_type = assignRequest(buffer_json);
 		/* Check if connection type is disconnect */
-		if(assignRequest(buffer_json) == RequestType::DISCONNECT) {
-			//first check if id is present in clients
-			const int client_id = buffer_json["id"].get<int>();
-			bool is_present = this->isClientConnected(client_id);	
-			if(!is_present) continue;
-			printf("Client disconnected, id: %d\n", buffer_json["id"].get<int>());
-			this->removeClient(client_id);
-			json message = {
-				{"type", "disconnect"},
-				{"id", client_id},
-				{"success", true},
-			};
-			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
+		if(request_type == RequestType::DISCONNECT) {
+			this->sendDisconnectPacket(buffer_json);
 			continue;
 		}
 
+
 		WIIOTN::ConnectedClient client;
 
-		//printf("\nRECV_JSON:%s, TIME:%lld\nINPUT_LAG:%lldms\n", buffer_json.dump().c_str(), seconds.count(), input_lag);
 
 		bool is_new = isNew(buffer_json);	
 		int client_id = clients_size;
@@ -102,12 +94,13 @@ void WIIOTN::Socket::start() {
 			this->addClient(&client);
 			printf("\nNew client connected, id: %d, ip:%s\n", client.id, inet_ntoa(client.address.sin_addr));
 			json message = connectionFactory(client.id, is_new, true);
-			sendto(m_socket, message.dump().c_str(), message.dump().length(), 0, (struct sockaddr*)&sender_address, sizeof(sender_address));
+			this->sendClient(client, message);
 		}
 		else {
 			for(ConnectedClient *client : m_connected_clients) {
 				if(client->id == client_id) {
-					//printf("\nClient already connected, id: %d\n", client->id);
+					//check if client is pinging server
+					this->handlePingPacket(client);
 					this->handleInput(client, buffer_json);
 					this->sendSuccessPacket(client);
 					break;
@@ -124,6 +117,13 @@ void WIIOTN::Socket::pingClients() {
 		if(client->is_connected) {
 			if(this->pingClient(client) == SOCKET_ERROR) {
 				printf("Client disconnected, id: %d\n", client->id);
+				this->removeClient(client->id);
+			} else if(client->ping_count < m_max_ping_delay){
+				printf("Client pinged, id: %d\n", client->id);
+				client->ping_count++;
+			} else {
+				printf("Client disconnected, id: %d\n", client->id);
+				this->sendDisconnectPacket(client);
 				this->removeClient(client->id);
 			}
 		}
@@ -292,21 +292,12 @@ int WIIOTN::Socket::sendClient(const WIIOTN::ConnectedClient client, const json 
 }
 
 int WIIOTN::Socket::pingClient(WIIOTN::ConnectedClient* client) {
-	//debug
-	printf("Client %d ping count: %d\n", client->id, client->ping_count);
-	if(client->ping_count >= 5) {
-		printf("Client %d disconnected\n", client->id);
-		client->is_connected = false;
-		client->ping_count = 0;
-		return -1;
-	}
 	json message = {
 		{"type", "ping"},
 		{"message", "ping"},
 		{"id", client->id},
 		{"success", true}
 	};
-	client->ping_count += 1;
 	return sendClient(*client, message);
 }
 
@@ -321,9 +312,50 @@ bool WIIOTN::Socket::handlePing(WIIOTN::ConnectedClient* client, const json buff
 	return false;
 };
 
+
 bool WIIOTN::Socket::handlePing(WIIOTN::ConnectedClient* client) {
-	client->ping_count = 0;	
 	return true;
+}
+
+void WIIOTN::Socket::sendPings() {
+	//send a ping every 10 seconds
+	if(std::chrono::system_clock::now().time_since_epoch().count() - this->m_last_ping > 10000) {
+		this->pingClients();
+		this->m_last_ping = std::chrono::system_clock::now().time_since_epoch().count();
+	}
+}
+
+void WIIOTN::Socket::sendDisconnectPacket(const json buffer_json) {
+	if(!buffer_json.contains("id")) return;
+	const int client_id = buffer_json["id"].get<int>();
+	bool is_present = this->isClientConnected(client_id);	
+	if(!is_present) return;
+	printf("Client disconnected, id: %d\n", buffer_json["id"].get<int>());
+	json message = {
+		{"type", "disconnect"},
+		{"id", client_id},
+		{"success", true},
+	};
+	this->sendClient(*this->removeClient(client_id), message);
+}
+
+void WIIOTN::Socket::sendDisconnectPacket(WIIOTN::ConnectedClient* client) {
+	const int client_id = client->id;
+	bool is_present = this->isClientConnected(client_id);	
+	if(!is_present) return;
+	printf("Client disconnected, id: %d\n", client_id);
+	json message = {
+		{"type", "disconnect"},
+		{"id", client_id},
+		{"success", true},
+	};
+	this->sendClient(*this->removeClient(client_id), message);
+}
+
+//this function is only ran when the client responds with a message type of 'ping'
+void WIIOTN::Socket::handlePingPacket(WIIOTN::ConnectedClient* client) {
+	client->ping_count = 0;
+	client->last_ping = std::chrono::system_clock::now().time_since_epoch().count();
 }
 
 bool WIIOTN::isNew(json incoming_data) {
