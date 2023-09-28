@@ -49,8 +49,8 @@ void WIIOTN::Socket::t_main_loop() {
 
 		bytes_received = recvfrom(m_socket, buffer, buffer_length, 0, (struct sockaddr*)&sender_address, &sender_address_size);
 		if(bytes_received == SOCKET_ERROR) {
-			printf("recvfrom failed --- error: %d\n", WSAGetLastError());
-			break;
+			printf("recvfrom failed --- user most likely crashed -- error: %d\n", WSAGetLastError());
+			continue;
 		}
 		buffer[bytes_received] = '\0';
 	
@@ -60,7 +60,7 @@ void WIIOTN::Socket::t_main_loop() {
 		//check if json parsed without error
 		if(buffer_json.is_discarded()) {
 			printf("Error parsing json\n");
-			break;
+			continue;
 		}
 
 		RequestType request_type = assignRequest(buffer_json);
@@ -130,8 +130,8 @@ void WIIOTN::Socket::pingClients() {
 			if(this->pingClient(client) == SOCKET_ERROR) {
 				printf("Client disconnected, id: %d\n", client->id);
 				this->removeClient(client->id);
-			} else if(client->ping_count < m_max_ping_delay){
-				printf("Client pinged, id: %d\n", client->id);
+			} else if(client->ping_count < m_client_ping_disconnect){
+				printf("Client pinged, id: %d, ping_count:%d\n", client->id, client->ping_count);
 				client->ping_count++;
 			} else {
 				printf("Client disconnected, id: %d\n", client->id);
