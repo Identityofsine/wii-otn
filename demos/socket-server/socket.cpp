@@ -34,8 +34,7 @@ using json = nlohmann::json;
 
 void WIIOTN::Socket::t_ping_loop() {
 	while(1) {
-		this->pingClients();
-		std::this_thread::sleep_for(std::chrono::milliseconds(this->m_max_ping_delay));
+		this->sendPings();
 	}
 }
 
@@ -47,9 +46,6 @@ void WIIOTN::Socket::t_main_loop() {
 		struct sockaddr_in sender_address;
 		int sender_address_size = sizeof(sender_address);
 		const int clients_size = (int)m_connected_clients.size();
-
-		//send ping to all clients
-		this->sendPings();
 
 		bytes_received = recvfrom(m_socket, buffer, buffer_length, 0, (struct sockaddr*)&sender_address, &sender_address_size);
 		if(bytes_received == SOCKET_ERROR) {
@@ -124,8 +120,6 @@ void WIIOTN::Socket::start() {
 	t_main_thread = std::thread(&WIIOTN::Socket::t_main_loop, this);
 	//udp server
 	while(1) {
-		t_ping_thread.join();
-		t_main_thread.join();	
 	}
 }
 
