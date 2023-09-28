@@ -55,7 +55,11 @@ function setupSocketInstance(socket_instance: WIISocket, event: Electron.IpcMain
 		}
 
 		if (msg_obj.type === 'ping') {
-			event.reply('udp-message', {});
+			//handle ping here
+			event.reply('udp-ping', {});
+			if (socket) {
+				socket.sendMessage({ type: 'ping', id: socket_id, name: '', new: false });
+			}
 		}
 
 		if (msg_obj.type === 'disconnect') {
