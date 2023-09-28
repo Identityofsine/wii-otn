@@ -32,15 +32,14 @@ WIIOTN::Socket::~Socket() {
 
 using json = nlohmann::json;
 
-void WIIOTN::Socket::start() {
-	//bind socket
-	const int bind_response = bind(m_socket, (sockaddr*)&m_addr_settings, sizeof(m_addr_settings));
-	if(bind_response == SOCKET_ERROR) {
-		printf("Bind failed --- error: %d\n", WSAGetLastError());
-		closesocket(m_socket);
-		WSACleanup();
+void WIIOTN::Socket::t_ping_loop() {
+	while(1) {
+		this->pingClients();
+		std::this_thread::sleep_for(std::chrono::milliseconds(this->m_max_ping_delay));
 	}
-	//udp server
+}
+
+void WIIOTN::Socket::t_main_loop() {
 	while(1) {
 		int bytes_received;
 		char buffer[1025];
@@ -107,7 +106,26 @@ void WIIOTN::Socket::start() {
 				}
 				//printf("ID : %d, IP : %s\n", client->id, inet_ntoa(client->address.sin_addr));
 			}
-		}
+		}	
+	}
+}
+
+void WIIOTN::Socket::start() {
+	//bind socket
+	const int bind_response = bind(m_socket, (sockaddr*)&m_addr_settings, sizeof(m_addr_settings));
+	this->m_max_ping_delay = 1000; //nanoseconds
+	this->m_client_ping_disconnect = 5;
+	if(bind_response == SOCKET_ERROR) {
+		printf("Bind failed --- error: %d\n", WSAGetLastError());
+		closesocket(m_socket);
+		WSACleanup();
+	}
+	t_ping_thread = std::thread(&WIIOTN::Socket::t_ping_loop, this);
+	t_main_thread = std::thread(&WIIOTN::Socket::t_main_loop, this);
+	//udp server
+	while(1) {
+		t_ping_thread.join();
+		t_main_thread.join();	
 	}
 }
 
@@ -319,9 +337,10 @@ bool WIIOTN::Socket::handlePing(WIIOTN::ConnectedClient* client) {
 
 void WIIOTN::Socket::sendPings() {
 	//send a ping every 10 seconds
-	if(std::chrono::system_clock::now().time_since_epoch().count() - this->m_last_ping > 10000) {
+	const unsigned long miliseconds = std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+	if(miliseconds - this->m_last_ping > this->m_max_ping_delay) {
 		this->pingClients();
-		this->m_last_ping = std::chrono::system_clock::now().time_since_epoch().count();
+		this->m_last_ping = miliseconds;
 	}
 }
 

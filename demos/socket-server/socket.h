@@ -1,4 +1,6 @@
 #include "virtualcontroller.h"
+#include <thread>
+#include <mutex>
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <string>
@@ -42,7 +44,15 @@ namespace WIIOTN {
 			SOCKADDR_IN m_addr_settings;
 			const int m_protocol;
 			int m_max_ping_delay;
+			int m_client_ping_disconnect;
 			long long m_last_ping = 0;
+			/* */
+			/* threaded loops & locks*/
+			std::mutex m_client_lock;
+			std::thread t_ping_thread;
+			std::thread t_main_thread;
+			void t_ping_loop();
+			void t_main_loop();
 			/* */
 			WIIOTN_VC::VirtualController m_virtual_controller;
 			std::vector<ConnectedClient*> m_connected_clients;	
