@@ -11,15 +11,36 @@
             "id": "45ba1f4429457839",
             "type": "leaf",
             "state": {
+              "type": "empty",
+              "state": {}
+            }
+          },
+          {
+            "id": "c41f38c0a6b1adb2",
+            "type": "leaf",
+            "state": {
               "type": "markdown",
               "state": {
-                "file": "readme.md",
+                "file": "HID (Human Interface Devices).md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "9199a322b6800192",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Simple Driver.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -69,7 +90,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "0db658d2ece3081a",
@@ -85,7 +107,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "readme.md",
+                "file": "Simple Driver.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +124,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "readme.md",
+                "file": "Simple Driver.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +147,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "readme.md"
+                "file": "Simple Driver.md"
               }
             }
           },
@@ -156,8 +178,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "45ba1f4429457839",
+  "active": "9199a322b6800192",
   "lastOpenFiles": [
+    "HID (Human Interface Devices).md",
+    "Simple Driver.md",
+    "wdk",
     "ai_steps.md",
     "readme.md",
     "docs.md",
