@@ -17,6 +17,7 @@ export default class WIISocket implements SocketInterface {
 	private socket: Socket;
 	private ip: string;
 	private port: number;
+	private queue: WIIOTNMessage[] = [];
 
 	constructor(ip: string, port: number) {
 		//construct socket

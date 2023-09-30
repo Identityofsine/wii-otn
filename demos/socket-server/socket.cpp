@@ -34,7 +34,7 @@ using json = nlohmann::json;
 
 void WIIOTN::Socket::t_ping_loop() {
 	while(1) {
-		this->sendPings();
+		//this->sendPings();
 	}
 }
 
@@ -95,9 +95,9 @@ void WIIOTN::Socket::t_main_loop() {
 			for(ConnectedClient *client : m_connected_clients) {
 				if(client->id == client_id) {
 					//check if client is pinging server
-					this->handlePingPacket(client);
+					//this->handlePingPacket(client);
 					this->handleInput(client, buffer_json);
-					this->sendSuccessPacket(client);
+					//this->sendSuccessPacket(client);
 					break;
 				}
 				//printf("ID : %d, IP : %s\n", client->id, inet_ntoa(client->address.sin_addr));
@@ -116,7 +116,7 @@ void WIIOTN::Socket::start() {
 		closesocket(m_socket);
 		WSACleanup();
 	}
-	t_ping_thread = std::thread(&WIIOTN::Socket::t_ping_loop, this);
+	//t_ping_thread = std::thread(&WIIOTN::Socket::t_ping_loop, this);
 	t_main_thread = std::thread(&WIIOTN::Socket::t_main_loop, this);
 	//udp server
 	while(1) {
@@ -152,8 +152,6 @@ void WIIOTN::Socket::sendSuccessPacket(WIIOTN::ConnectedClient* client) {
 }
 
 bool WIIOTN::Socket::handleInput(WIIOTN::ConnectedClient* client, const json buffer_json) {
-	this->handlePing(client);
-	
 	std::vector<WIIOTN_VC::BindedKeys> key_pressed = {};
 	WIIOTN_VC::ThumbstickPosition joystick_position = m_virtual_controller.getThumbstickPosition(client->id);	
 	if(buffer_json.contains("axis")) {
